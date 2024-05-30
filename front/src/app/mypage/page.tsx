@@ -1,9 +1,13 @@
 import React from "react";
 
-export const page = () => {
+const page = () => {
   return (
     <div>
-      <p>마이페이지</p>
+      <a href="/mypage/home">
+        <p>마이페이지</p>
+      </a>
     </div>
   );
 };
+
+export default page;

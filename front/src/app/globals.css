@@ -1,6 +1,6 @@
 html {
-  background-color: black;
-  color: white;
+  background-color: white;
+  color: rgb(0, 0, 0);
   font-family: "esamanru Bold";
 }
 
@@ -8,5 +8,5 @@ html {
 @font-face {
   font-family: "esamanru Bold";
   font-weight: 400;
-  src: url("../public/fonts/esamanru\ Bold.ttf") format("truetype");
+  src: url("../../public/fonts/esamanru\ Bold.ttf") format("truetype");
 }
