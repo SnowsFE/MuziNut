@@ -4,6 +4,9 @@ html {
   font-family: "esamanru Bold";
 }
 
+body {
+  margin: 0;
+}
 /* 이사 만루 폰트 bold */
 @font-face {
   font-family: "esamanru Bold";
