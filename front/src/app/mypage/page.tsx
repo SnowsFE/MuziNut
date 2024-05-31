@@ -1,4 +1,5 @@
 import React from "react";
+import Event from "../eventpage/event/page";
 
 const page = () => {
   return (
@@ -6,6 +7,7 @@ const page = () => {
       <a href="/mypage/home">
         <p>마이페이지</p>
       </a>
+      <Event />
     </div>
   );
 };
