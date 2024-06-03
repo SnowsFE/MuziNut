@@ -50,7 +50,8 @@ const Navcontainer = styled.div`
   z-index: 9999;
   display: flex;
   align-items: center;
-  justify-content: space-between; // 검색창과 MusicFunction을 양 끝에 배치
+  justify-content: space-between;
+  border-bottom: 1px solid #ccc; // 바텀 라인 추가
 `;
 
 // 햄버거 바 메뉴
