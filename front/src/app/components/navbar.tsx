@@ -14,7 +14,7 @@ export const navbar = () => {
 export default navbar;
 
 const Navcontainer = styled.div`
-  background-color: var(--color-bg-01);
+  background-color: white;
   color: var(--color-content-02);
   height: 60px;
   left: 0;
