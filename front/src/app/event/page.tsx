@@ -22,6 +22,7 @@ const event = () => {
 
 // 이벤트 페이지 디자인
 const Eventbox = styled.div`
+  padding-left: 78px;
   max-width: 1280px;
   margin: 0 auto;
 `;

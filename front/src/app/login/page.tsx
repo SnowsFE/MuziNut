@@ -15,6 +15,7 @@ const login = () => {
 };
 
 const Background = styled.div`
+  padding-left: 78px;
   background: linear-gradient(135deg, #1bb373 0%, #2ecf75 100%);
   height: 100vh;
   padding: 0px 30px;
