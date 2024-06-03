@@ -2,8 +2,8 @@
 import React from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import Login from "../../../public/images/login.png";
-import banner from "../../../public/images/banner.png";
+import Login from "../../../../public/images/login.png";
+import banner from "../../../../public/images/banner.png";
 
 interface WriteType {
   ProfileName?: string;
@@ -22,7 +22,7 @@ const mypage: React.FC<WriteType> = () => {
         <Image src={Login} alt="프로필 이미지" width={160} height={160}></Image>
         <ProfileInfo>
           <ProfileName>닉네임</ProfileName>
-          <FollowInfo>팔로잉 팔로워 수</FollowInfo>
+          <FollowInfo>팔로잉 1 팔로워 1</FollowInfo>
           <ProfileDescription>자기소개</ProfileDescription>
           <FollowButton>팔로우</FollowButton>
         </ProfileInfo>
