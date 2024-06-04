@@ -51,7 +51,7 @@ const Navcontainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #ccc; // 바텀 라인 추가
+  border-bottom: 1px solid #ccc; // 바텀 라인
 `;
 
 // 햄버거 바 메뉴
