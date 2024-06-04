@@ -9,6 +9,7 @@ import alarm from "../../../public/svgs/alarm.svg";
 import profile from "../../../public/svgs/profile.svg";
 import search from "../../../public/svgs/search.svg";
 import downarrow from "../../../public/svgs/downarrow.svg";
+import Link from "next/link";
 
 export const navbar = () => {
   return (
@@ -18,7 +19,9 @@ export const navbar = () => {
           <Image src={menu} alt="Menu" width={24} height={24} />
         </Menu>
         <Logo>
-          <span>MuziNut</span>
+          <Link href={"/"}>
+            <span>MuziNut</span>
+          </Link>
         </Logo>
       </LeftSection>
       <SearchBar>
@@ -28,9 +31,9 @@ export const navbar = () => {
       </SearchBar>
       <MusicFunction>
         <Image src={addalbum} alt="addalbum" width={36} height={36} />
-        <Image src={chat} alt="addalbum" width={40} height={40} />
-        <Image src={alarm} alt="addalbum" width={40} height={40} />
-        <Image src={profile} alt="addalbum" width={36} height={36} />
+        <Image src={chat} alt="chat" width={40} height={40} />
+        <Image src={alarm} alt="alarm" width={40} height={40} />
+        <Image src={profile} alt="profile" width={36} height={36} />
       </MusicFunction>
     </Navcontainer>
   );
@@ -77,6 +80,10 @@ const Menu = styled.button`
 // 로고
 const Logo = styled.div`
   margin-left: 15px;
+  span {
+    color: black;
+    text-decoration: none;
+  }
 `;
 
 // 좌측 섹션 (메뉴와 로고)
