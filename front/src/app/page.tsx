@@ -4,7 +4,10 @@ const MainPage = () => {
   return (
     <div>
       <a href="/profile/userid">
-        <Main>음악 프로젝트</Main>
+        <Main>남이 보는 마이페이지</Main>
+      </a>
+      <a href="/profile">
+        <Main>내가 보는 마이페이지</Main>
       </a>
     </div>
   );
