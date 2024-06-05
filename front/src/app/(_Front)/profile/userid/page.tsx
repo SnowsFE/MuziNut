@@ -2,19 +2,13 @@
 import React from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import Login from "../../../../public/images/login.png";
-import banner from "../../../../public/images/banner.png";
+import Login from "../../../../../public/images/login.png";
+import banner from "../../../../../public/images/banner.png";
+import Link from "next/link";
 
-interface WriteType {
-  ProfileName?: string;
-  FollowInfo?: string;
-  ProfileDescription?: string;
-  FollowButton?: string;
-}
-
-const mypage: React.FC<WriteType> = () => {
+const UseridProfile: React.FC = () => {
   return (
-    <MypageContainer>
+    <ProfileContainer>
       <Banner>
         <Image src={banner} alt="배너 이미지" />
       </Banner>
@@ -29,20 +23,36 @@ const mypage: React.FC<WriteType> = () => {
       </Profile>
       <SelectBar>
         <SelectContainer>
-          <Select1>메인</Select1>
-          <Select2>라운지</Select2>
+          <StyledLink href={"/profile/userid"}>
+            <Select1>메인</Select1>
+          </StyledLink>
+          <StyledLink href={"/profile/userid/lounge"}>
+            <Select2>라운지</Select2>
+          </StyledLink>
         </SelectContainer>
       </SelectBar>
-    </MypageContainer>
+      <MainAlbum>
+        <MainAlbumContainer>
+          <Image src={Login} alt="메인 앨범" width={500} height={400}></Image>
+          <AlbumInformation>
+            <Info1>앨범 설명</Info1>
+            <Info2>앨범 설명</Info2>
+            <Info3>앨범 설명</Info3>
+            <Info4>앨범 설명</Info4>
+            <Info5>앨범 설명</Info5>
+          </AlbumInformation>
+        </MainAlbumContainer>
+      </MainAlbum>
+    </ProfileContainer>
   );
 };
 
-export default mypage;
+export default UseridProfile;
 
 // 마이페이지 전체를 감싸는 컨테이너
-const MypageContainer = styled.div`
+const ProfileContainer = styled.div`
   padding-top: 60px;
-  margin: auto;
+  padding-left: 88px;
 `;
 
 // 배너
@@ -58,7 +68,6 @@ const Banner = styled.div`
 `;
 
 // -------------------------------------------------------------------------------------------------------
-
 // 프로필
 const Profile = styled.div`
   padding-right: calc(50% - 642px);
@@ -83,25 +92,26 @@ const ProfileInfo = styled.div`
 `;
 
 // 프로필 정보 [닉네임]
-const ProfileName = styled.span<WriteType>`
+const ProfileName = styled.span`
   font-weight: bold;
   font-size: 36px;
+  color: #000000;
 `;
 
 // 프로필 정보 [팔로우 팔로워 수]
-const FollowInfo = styled.span<WriteType>`
+const FollowInfo = styled.span`
   font-size: 14px;
   margin-top: 8px;
 `;
 
 // 프로필 정보 [자기소개]
-const ProfileDescription = styled.span<WriteType>`
+const ProfileDescription = styled.span`
   font-size: 14px;
   margin-top: 8px;
 `;
 
 // 프로필 정보 [팔로우 버튼]
-const FollowButton = styled.button<WriteType>`
+const FollowButton = styled.button`
   background-color: white;
   border: 1px solid yellowgreen;
   border-radius: 50px;
@@ -116,10 +126,10 @@ const FollowButton = styled.button<WriteType>`
 
   transition: transform 0.3s ease; /* 스케일 변화에 대한 부드러운 전환 효과 추가 */
 `;
-// -------------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------------
 
+// -------------------------------------------------------------------------------------------------------
 // 메인, 라운지 선택바
 const SelectBar = styled.div`
   padding-right: calc(50% - 642px);
@@ -130,14 +140,57 @@ const SelectBar = styled.div`
   font-size: 16px;
 `;
 
+// 메인 라운지를 나란히 하기위한 Flex 박스 컨테이너
 const SelectContainer = styled.div`
   width: 100%;
   display: flex;
   gap: 10px;
-  border: 1px solid black;
+  border-bottom: 1px solid #ccc;
   padding: 10px;
+`;
+
+// 메인 라운지 링크 태그 스타일을 주기위한 요소 추가
+const StyledLink = styled(Link)`
+  color: black;
+  text-decoration: none;
 `;
 const Select1 = styled.div``;
 
 const Select2 = styled.div``;
 // -------------------------------------------------------------------------------------------------------
+
+// -------------------------------------------------------------------------------------------------------
+// 메인 앨범
+const MainAlbum = styled.div`
+  padding-right: calc(50% - 642px);
+  padding-left: calc(50% - 642px);
+  padding-top: 16px;
+`;
+
+// 앨범 이미지와 설명을 감싸는 컨테이너
+const MainAlbumContainer = styled.div`
+  display: flex;
+  align-items: center;
+  border: 1px solid black;
+  border-radius: 12px;
+  padding: 35px;
+  gap: 5%;
+
+  img {
+    border: none;
+    border-radius: 12px;
+  }
+`;
+// 앨범 설명 세로 정렬
+const AlbumInformation = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+`;
+
+// 앨범 설명 목록
+const Info1 = styled.div``;
+const Info2 = styled.div``;
+const Info3 = styled.div``;
+const Info4 = styled.div``;
+const Info5 = styled.div``;

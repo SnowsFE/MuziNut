@@ -1,7 +1,7 @@
 const MainPage = () => {
   return (
     <div>
-      <a href="/mypage">
+      <a href="/profile">
         <p>음악 프로젝트</p>
       </a>
     </div>
