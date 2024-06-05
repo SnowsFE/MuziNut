@@ -37,31 +37,6 @@ const UseridProfile: React.FC = () => {
           </StyledLink>
         </SelectContainer>
       </SelectBar>
-      <MainAlbum>
-        <MainAlbumContainer>
-          <Image src={Login} alt="메인 앨범" width={500} height={400}></Image>
-          <Like>💚 130</Like>
-          <AlbumInformation>
-            <Info1>앨범 이름</Info1>
-            <Info2>앨범 소개</Info2>
-            <Info3>참여한 아티스트</Info3>
-          </AlbumInformation>
-        </MainAlbumContainer>
-      </MainAlbum>
-      <BodyAlbum>
-        <AlbumName>앨범</AlbumName>
-        <AlbumList>
-          {images.map((img, index) => (
-            <Image
-              key={index}
-              src={img}
-              alt={`바디 앨범 ${index + 1}`}
-              width={150}
-              height={150}
-            />
-          ))}
-        </AlbumList>
-      </BodyAlbum>
     </ProfileContainer>
   );
 };
@@ -196,64 +171,3 @@ const StyledLink = styled(Link)`
 // -------------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------------
-// 메인 앨범
-const MainAlbum = styled.div`
-  padding-right: calc(50% - 642px);
-  padding-left: calc(50% - 642px);
-  padding-top: 16px;
-`;
-
-// 앨범 이미지와 설명을 감싸는 컨테이너
-const MainAlbumContainer = styled.div`
-  display: flex;
-  position: relative;
-  align-items: center;
-  padding: 35px;
-  gap: 5%;
-
-  img {
-    border: none;
-    border-radius: 12px;
-  }
-`;
-
-// 좋아요
-const Like = styled.div`
-  position: absolute;
-  right: 0;
-  top: 0;
-  padding: 33px 40px;
-  font-size: 18px;
-`;
-
-// 앨범 설명 세로 정렬
-const AlbumInformation = styled.div`
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  gap: 60px;
-`;
-
-// 앨범 설명
-const Info1 = styled.div``;
-const Info2 = styled.div``;
-const Info3 = styled.div``;
-// -------------------------------------------------------------------------------------------------------
-
-// -------------------------------------------------------------------------------------------------------
-// 바디 앨범
-const BodyAlbum = styled.div`
-  padding-right: calc(50% - 642px);
-  padding-left: calc(50% - 642px);
-  padding-top: 16px;
-`;
-// 앨범 타이틀
-const AlbumName = styled.div`
-  padding: 10px 35px 0px 35px;
-`;
-// 앨범 목록
-const AlbumList = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 35px 0px 35px;
-`;

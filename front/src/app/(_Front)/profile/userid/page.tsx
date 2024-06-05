@@ -8,8 +8,9 @@ import Link from "next/link";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("main");
-  const images = [Login, Login, Login, Login];
+  const images = [Login, Login, Login, Login, Login];
   const imagesName = [
+    "앨범 제목 | 발매일",
     "앨범 제목 | 발매일",
     "앨범 제목 | 발매일",
     "앨범 제목 | 발매일",
@@ -223,6 +224,7 @@ const MainAlbumContainer = styled.div`
   align-items: center;
   padding: 35px;
   gap: 5%;
+  border-bottom: 1px solid #ccc;
 
   img {
     border: none;

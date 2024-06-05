@@ -4,11 +4,13 @@ import styled from "styled-components";
 import Image from "next/image";
 import Login from "../../../../../../public/images/login.png";
 import banner from "../../../../../../public/images/banner.png";
+import threedot from "../../../../../../public/svgs/threedot.svg";
+import like from "../../../../../../public/svgs/like.svg";
+import comment from "../../../../../../public/svgs/comment.svg";
 import Link from "next/link";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("lounge");
-  const images = [Login, Login, Login, Login];
 
   return (
     <ProfileContainer>
@@ -40,31 +42,66 @@ const UseridProfile: React.FC = () => {
           </StyledLink>
         </SelectContainer>
       </SelectBar>
-      <MainAlbum>
-        <MainAlbumContainer>
-          <Image src={Login} alt="메인 앨범" width={500} height={400}></Image>
-          <Like>💚 130</Like>
-          <AlbumInformation>
-            <Info1>앨범 이름</Info1>
-            <Info2>앨범 소개</Info2>
-            <Info3>참여한 아티스트</Info3>
-          </AlbumInformation>
-        </MainAlbumContainer>
-      </MainAlbum>
-      <BodyAlbum>
-        <AlbumName>앨범</AlbumName>
-        <AlbumList>
-          {images.map((img, index) => (
-            <Image
-              key={index}
-              src={img}
-              alt={`바디 앨범 ${index + 1}`}
-              width={150}
-              height={150}
-            />
-          ))}
-        </AlbumList>
-      </BodyAlbum>
+      {/* 라운지 큰 컨테이너 */}
+      <Lounge>
+        {/* 라운지 Border 컨테이너 */}
+        <LoungeContainer>
+          {/* 라운지 프로필 */}
+          <LoungeProfileInfo>
+            {/* 라운지 프로필 이미지 */}
+            <LoungeProfileImage>
+              <Image
+                src={Login}
+                alt="프로필 이미지"
+                width={50}
+                height={50}
+              ></Image>
+            </LoungeProfileImage>
+            {/* 라운지 프로필 닉네임 */}
+            <LoungeProfileName>코딩</LoungeProfileName>
+            {/* 라운지 프로필 업로드 시간 ~ 기간 */}
+            <LoungeProfileUploadTime>3일전</LoungeProfileUploadTime>
+            {/* 라운지 (공유하기, 신고하기 기능) */}
+            <LoungeProfileDetail>
+              {" "}
+              <Image
+                src={threedot}
+                alt="공유하기, 신고하기 기능"
+                width={24}
+                height={24}
+              ></Image>
+            </LoungeProfileDetail>
+          </LoungeProfileInfo>
+          {/* 라운지 글작성 컨테이너 */}
+          <LoungeWriteContainer>
+            {/* 라운지 글작성 */}
+            <LoungeWrite>
+              안녕하세요 여러분..! 유튜브를 개설한지 하루만에 구독자 1000명을
+              달성했습니다!!
+            </LoungeWrite>
+            {/* 라운지 글작성 이미지 */}
+            <LoungeImage>
+              <Image
+                src={banner}
+                alt="프로필 이미지"
+                width={1280}
+                height={256}
+              ></Image>
+            </LoungeImage>
+          </LoungeWriteContainer>
+          {/* 라운지 좋아요 댓글 컨테이너 */}
+          <LoungeLikeCommentContainer>
+            <LoungeLike>
+              <Image src={like} alt="좋아요" width={24} height={24}></Image>
+              24
+            </LoungeLike>
+            <LoungeComment>
+              <Image src={comment} alt="댓글" width={24} height={24}></Image>
+              35
+            </LoungeComment>
+          </LoungeLikeCommentContainer>
+        </LoungeContainer>
+      </Lounge>
     </ProfileContainer>
   );
 };
@@ -199,64 +236,102 @@ const StyledLink = styled(Link)`
 // -------------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------------
-// 메인 앨범
-const MainAlbum = styled.div`
+// 라운지를 감싸는 큰 컨테이너
+const Lounge = styled.div`
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
   padding-top: 16px;
 `;
 
-// 앨범 이미지와 설명을 감싸는 컨테이너
-const MainAlbumContainer = styled.div`
-  display: flex;
-  position: relative;
-  align-items: center;
-  padding: 35px;
-  gap: 5%;
+// 라운지 Border 컨테이너
+const LoungeContainer = styled.div`
+  border: 1px solid #ccc;
+  border-radius: 12px;
+`;
 
-  img {
-    border: none;
-    border-radius: 12px;
+// -------------------------------------------------------------------------------------------------------
+// 라운지 프로필 정보를 감싸는 컨테이너
+const LoungeProfileInfo = styled.div`
+  display: flex;
+  padding: 15px 15px 15px 15px;
+  gap: 10px;
+  align-items: center;
+  :first-child {
+    margin-right: 1px;
   }
 `;
 
-// 좋아요
-const Like = styled.div`
-  position: absolute;
-  right: 0;
-  top: 0;
-  padding: 33px 40px;
-  font-size: 18px;
+// 라운지 게시글 프로필 정보
+const LoungeProfileImage = styled.div`
+  img {
+    border-radius: 32px;
+  }
 `;
 
-// 앨범 설명 세로 정렬
-const AlbumInformation = styled.div`
+// 라운지 프로필 닉네임
+const LoungeProfileName = styled.div``;
+
+// 라운지 프로필 업로드 시간 ~ 기간
+const LoungeProfileUploadTime = styled.div``;
+
+// 라운지 프로필 삼각점바 (공유하기, 신고하기 기능)
+const LoungeProfileDetail = styled.div`
+  display: flex;
+  align-items: center;
+  margin-left: auto; /* 오른쪽 끝으로 이동 */
+  cursor: pointer;
+
+  &:hover {
+    border: 1px;
+    border-radius: 7px;
+    background-color: #e7e7e7;
+  }
+`;
+// -------------------------------------------------------------------------------------------------------
+
+// -------------------------------------------------------------------------------------------------------
+// 라운지 글쓰기 컨테이너
+const LoungeWriteContainer = styled.div`
   display: flex;
   flex-direction: column;
-  position: relative;
-  gap: 60px;
+  padding: 0px 15px 25px 15px;
 `;
 
-// 앨범 설명
-const Info1 = styled.div``;
-const Info2 = styled.div``;
-const Info3 = styled.div``;
-// -------------------------------------------------------------------------------------------------------
+// 라운지 글쓰기
+const LoungeWrite = styled.div`
+  padding: 0 0 10px 0;
+`;
 
+// 라운지 글쓰기 이미지
+const LoungeImage = styled.div`
+  img {
+    width: 100%;
+    border-radius: 12px;
+  }
+`;
 // -------------------------------------------------------------------------------------------------------
-// 바디 앨범
-const BodyAlbum = styled.div`
-  padding-right: calc(50% - 642px);
-  padding-left: calc(50% - 642px);
-  padding-top: 16px;
-`;
-// 앨범 타이틀
-const AlbumName = styled.div`
-  padding: 10px 35px 0px 35px;
-`;
-// 앨범 목록
-const AlbumList = styled.div`
+// 라운지 좋아요, 댓글 컨테이너
+const LoungeLikeCommentContainer = styled.div`
   display: flex;
-  justify-content: space-between;
-  padding: 10px 35px 0px 35px;
+  align-items: center;
+  padding: 0px 15px 25px 15px;
+  gap: 20px;
+`;
+
+// 라운지 좋아요
+const LoungeLike = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+// 라운지 댓글
+const LoungeComment = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  img {
+    transform: scaleX(-1);
+  }
 `;
