@@ -7,14 +7,8 @@ import banner from "../../../../../public/images/banner.png";
 import Link from "next/link";
 
 const UseridProfile: React.FC = () => {
-  const [selectedTab, setSelectedTab] = useState("main");
+  const [selectedTab, setSelectedTab] = useState("lounge");
   const images = [Login, Login, Login, Login];
-  const imagesName = [
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-  ];
 
   return (
     <ProfileContainer>
@@ -24,24 +18,19 @@ const UseridProfile: React.FC = () => {
       <Profile>
         <Image src={Login} alt="프로필 이미지" width={160} height={160}></Image>
         <ProfileInfo>
-          <ProfileName>닉네임 (? String)</ProfileName>
-          <FollowInfo>
-            팔로잉 (데이터 값 : Number) 팔로워 (데이터 값 : Number)
-          </FollowInfo>
+          <ProfileName>닉네임</ProfileName>
+          <FollowInfo>팔로잉 1 팔로워 1</FollowInfo>
           <ProfileDescription>자기소개</ProfileDescription>
           <FollowButton>팔로우</FollowButton>
         </ProfileInfo>
       </Profile>
       <SelectBar>
         <SelectContainer>
-          <StyledLink
-            href={"/profile/userid"}
-            onClick={() => setSelectedTab("main")}
-          >
+          <StyledLink href={"/profile"} onClick={() => setSelectedTab("main")}>
             <SelectItem selected={selectedTab === "main"}>메인</SelectItem>
           </StyledLink>
           <StyledLink
-            href={"/profile/userid/lounge"}
+            href={"/profile/lounge"}
             onClick={() => setSelectedTab("lounge")}
           >
             <SelectItem selected={selectedTab === "lounge"}>라운지</SelectItem>
@@ -63,15 +52,13 @@ const UseridProfile: React.FC = () => {
         <AlbumName>앨범</AlbumName>
         <AlbumList>
           {images.map((img, index) => (
-            <AlbumItem key={index}>
-              <Image
-                src={img}
-                alt={`바디 앨범 ${index + 1}`}
-                width={150}
-                height={150}
-              />
-              <AlbumTitle>{imagesName[index]}</AlbumTitle>
-            </AlbumItem>
+            <Image
+              key={index}
+              src={img}
+              alt={`바디 앨범 ${index + 1}`}
+              width={150}
+              height={150}
+            />
           ))}
         </AlbumList>
       </BodyAlbum>
@@ -260,7 +247,7 @@ const BodyAlbum = styled.div`
   padding-left: calc(50% - 642px);
   padding-top: 16px;
 `;
-// 바디 앨범 타이틀 [앨범]
+// 앨범 타이틀
 const AlbumName = styled.div`
   padding: 10px 35px 0px 35px;
 `;
@@ -269,19 +256,4 @@ const AlbumList = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 10px 35px 0px 35px;
-`;
-
-// 앨범 이미지
-const AlbumItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 0 0 5% 0;
-`;
-
-// 앨범 설명
-const AlbumTitle = styled.div`
-  margin-top: 8px;
-  font-size: 14px;
 `;

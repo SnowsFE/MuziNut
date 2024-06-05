@@ -8,6 +8,7 @@ import Link from "next/link";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("lounge");
+  const images = [Login, Login, Login, Login];
 
   return (
     <ProfileContainer>
@@ -42,15 +43,28 @@ const UseridProfile: React.FC = () => {
       <MainAlbum>
         <MainAlbumContainer>
           <Image src={Login} alt="메인 앨범" width={500} height={400}></Image>
+          <Like>💚 130</Like>
           <AlbumInformation>
-            <Info1>앨범 설명</Info1>
-            <Info2>앨범 설명</Info2>
-            <Info3>앨범 설명</Info3>
-            <Info4>앨범 설명</Info4>
-            <Info5>앨범 설명</Info5>
+            <Info1>앨범 이름</Info1>
+            <Info2>앨범 소개</Info2>
+            <Info3>참여한 아티스트</Info3>
           </AlbumInformation>
         </MainAlbumContainer>
       </MainAlbum>
+      <BodyAlbum>
+        <AlbumName>앨범</AlbumName>
+        <AlbumList>
+          {images.map((img, index) => (
+            <Image
+              key={index}
+              src={img}
+              alt={`바디 앨범 ${index + 1}`}
+              width={150}
+              height={150}
+            />
+          ))}
+        </AlbumList>
+      </BodyAlbum>
     </ProfileContainer>
   );
 };
@@ -121,7 +135,7 @@ const ProfileDescription = styled.span`
 // 프로필 정보 [팔로우 버튼]
 const FollowButton = styled.button`
   background-color: white;
-  border: 1px solid yellowgreen;
+  border: 1px solid #1bb373;
   border-radius: 50px;
   padding: 10px;
   margin-top: 16px;
@@ -152,7 +166,7 @@ const SelectBar = styled.div`
 const SelectContainer = styled.div`
   width: 100%;
   display: flex;
-  gap: 10px;
+  gap: 15px;
   border-bottom: 1px solid #ccc;
 
   position: relative;
@@ -195,9 +209,8 @@ const MainAlbum = styled.div`
 // 앨범 이미지와 설명을 감싸는 컨테이너
 const MainAlbumContainer = styled.div`
   display: flex;
+  position: relative;
   align-items: center;
-  border: 1px solid black;
-  border-radius: 12px;
   padding: 35px;
   gap: 5%;
 
@@ -206,16 +219,44 @@ const MainAlbumContainer = styled.div`
     border-radius: 12px;
   }
 `;
+
+// 좋아요
+const Like = styled.div`
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 33px 40px;
+  font-size: 18px;
+`;
+
 // 앨범 설명 세로 정렬
 const AlbumInformation = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  position: relative;
+  gap: 60px;
 `;
 
-// 앨범 설명 목록
+// 앨범 설명
 const Info1 = styled.div``;
 const Info2 = styled.div``;
 const Info3 = styled.div``;
-const Info4 = styled.div``;
-const Info5 = styled.div``;
+// -------------------------------------------------------------------------------------------------------
+
+// -------------------------------------------------------------------------------------------------------
+// 바디 앨범
+const BodyAlbum = styled.div`
+  padding-right: calc(50% - 642px);
+  padding-left: calc(50% - 642px);
+  padding-top: 16px;
+`;
+// 앨범 타이틀
+const AlbumName = styled.div`
+  padding: 10px 35px 0px 35px;
+`;
+// 앨범 목록
+const AlbumList = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 35px 0px 35px;
+`;
