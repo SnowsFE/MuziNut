@@ -2,12 +2,12 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import Login from "../../../../../public/images/login.png";
-import banner from "../../../../../public/images/banner.png";
+import Login from "../../../../../../public/images/login.png";
+import banner from "../../../../../../public/images/banner.png";
 import Link from "next/link";
 
 const UseridProfile: React.FC = () => {
-  const [selectedTab, setSelectedTab] = useState("main");
+  const [selectedTab, setSelectedTab] = useState("lounge");
 
   return (
     <ProfileContainer>
