@@ -77,7 +77,17 @@ const UseridProfile: React.FC = () => {
             {/* 라운지 글작성 */}
             <LoungeWrite>
               안녕하세요 여러분..! 유튜브를 개설한지 하루만에 구독자 1000명을
-              달성했습니다!!
+              달성했습니다!! 앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
+              하겠습니다!! 앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
+              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
+              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
+              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
+              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
+              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
+              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
+              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
+              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
+              하겠습니다!!
             </LoungeWrite>
             {/* 라운지 글작성 이미지 */}
             <LoungeImage>
@@ -154,7 +164,6 @@ const ProfileInfo = styled.div`
 const ProfileName = styled.span`
   font-weight: bold;
   font-size: 36px;
-  color: #000000;
 `;
 
 // 프로필 정보 [팔로우 팔로워 수]
@@ -205,7 +214,6 @@ const SelectContainer = styled.div`
   display: flex;
   gap: 15px;
   border-bottom: 1px solid #ccc;
-
   position: relative;
 `;
 
@@ -222,7 +230,7 @@ const SelectItem = styled.div<{ selected: boolean }>`
     left: 0;
     width: 100%;
     height: 2px;
-    background-color: black;
+    background-color: var(--text-color);
     transform: scaleX(${(props) => (props.selected ? 1 : 0)});
     transition: transform 0.3s ease;
   }
@@ -230,7 +238,7 @@ const SelectItem = styled.div<{ selected: boolean }>`
 
 // 메인 라운지 링크 태그 스타일을 주기위한 요소 추가
 const StyledLink = styled(Link)`
-  color: black;
+  color: var(--text-color);
   text-decoration: none;
 `;
 // -------------------------------------------------------------------------------------------------------
@@ -305,7 +313,8 @@ const LoungeWrite = styled.div`
 // 라운지 글쓰기 이미지
 const LoungeImage = styled.div`
   img {
-    width: 100%;
+    max-width: 100%;
+    max-height: none;
     border-radius: 12px;
   }
 `;
@@ -323,6 +332,11 @@ const LoungeLike = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+
+  img,
+  svg {
+    fill: var(--text-color);
+  }
 `;
 
 // 라운지 댓글
@@ -331,7 +345,9 @@ const LoungeComment = styled.div`
   align-items: center;
   gap: 10px;
 
-  img {
+  img,
+  svg {
+    fill: var(--text-color);
     transform: scaleX(-1);
   }
 `;

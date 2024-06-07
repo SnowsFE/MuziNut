@@ -10,6 +10,7 @@ import profile from "../../../public/svgs/profile.svg";
 import search from "../../../public/svgs/search.svg";
 import downarrow from "../../../public/svgs/downarrow.svg";
 import Link from "next/link";
+import DarkMode from "./darkmode/globalstyle";
 
 export const navbar = () => {
   return (
@@ -34,6 +35,7 @@ export const navbar = () => {
         <Image src={chat} alt="chat" width={40} height={40} />
         <Image src={alarm} alt="alarm" width={40} height={40} />
         <Image src={profile} alt="profile" width={36} height={36} />
+        <DarkMode />
       </MusicFunction>
     </Navcontainer>
   );

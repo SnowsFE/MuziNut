@@ -15,6 +15,11 @@ const UseridProfile: React.FC = () => {
     "앨범 제목 | 발매일",
     "앨범 제목 | 발매일",
     "앨범 제목 | 발매일",
+    "앨범 제목 | 발매일",
+    "앨범 제목 | 발매일",
+    "앨범 제목 | 발매일",
+    "앨범 제목 | 발매일",
+    "앨범 제목 | 발매일",
   ];
 
   return (
@@ -55,8 +60,15 @@ const UseridProfile: React.FC = () => {
           <Like>💚 130</Like>
           <AlbumInformation>
             <Info1>앨범 이름</Info1>
-            <Info2>앨범 소개</Info2>
-            <Info3>참여한 아티스트</Info3>
+            <Info2>참여한 아티스트</Info2>
+            <Info3>발매일</Info3>
+            <Info4>장르</Info4>
+            <AlbumIntro>
+              <AlbumIntroTitle>앨범 소개</AlbumIntroTitle>
+              <AlbumIntroBody>
+                오늘은 2024년 6월 7일입니다 랩 신곡 업로드 가겠습니다..!
+              </AlbumIntroBody>
+            </AlbumIntro>
           </AlbumInformation>
         </MainAlbumContainer>
       </MainAlbum>
@@ -246,13 +258,41 @@ const AlbumInformation = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
-  gap: 60px;
+  gap: 10px;
 `;
 
 // 앨범 설명
-const Info1 = styled.div``;
-const Info2 = styled.div``;
-const Info3 = styled.div``;
+const Info1 = styled.div`
+  font-size: 32px;
+`;
+const Info2 = styled.div`
+  font-size: 28px;
+`;
+const Info3 = styled.div`
+  padding-top: 24px;
+  font-size: 23px;
+`;
+const Info4 = styled.div`
+  font-size: 23px;
+`;
+
+// 앨범 소개
+const AlbumIntro = styled.div`
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+// 앨범 소개 제목
+const AlbumIntroTitle = styled.div`
+  font-size: 23px;
+`;
+
+// 앨범 소개 본문
+const AlbumIntroBody = styled.div`
+  font-size: 18px;
+`;
 // -------------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------------
@@ -273,6 +313,12 @@ const AlbumList = styled.div`
   padding: 10px 35px 0px 35px;
 `;
 
+// 앨범 설명
+const AlbumTitle = styled.div`
+  margin-top: 8px;
+  font-size: 14px;
+`;
+
 // 앨범 이미지
 const AlbumItem = styled.div`
   display: flex;
@@ -281,9 +327,4 @@ const AlbumItem = styled.div`
   text-align: center;
   padding: 0 0 5% 0;
 `;
-
-// 앨범 설명
-const AlbumTitle = styled.div`
-  margin-top: 8px;
-  font-size: 14px;
-`;
+// -------------------------------------------------------------------------------------------------------

@@ -1,13 +1,24 @@
-html {
-  background-color: white;
-  color: rgb(0, 0, 0);
+/* 전역 스타일 정의 */
+:root {
+  --text-color: black; /* 라이트 모드 */
   font-family: "esamanru Bold";
 }
 
+[data-theme="dark"] {
+  --text-color: white; /* 다크 모드 */
+}
+
+img,
+svg {
+  fill: var(--text-color);
+}
+
 body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
   margin: 0;
 }
-/* 이사 만루 폰트 bold */
+
 @font-face {
   font-family: "esamanru Bold";
   font-weight: 400;
