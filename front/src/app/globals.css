@@ -8,11 +8,6 @@
   --text-color: white; /* 다크 모드 */
 }
 
-img,
-svg {
-  fill: var(--text-color);
-}
-
 body {
   background-color: var(--bg-color);
   color: var(--text-color);

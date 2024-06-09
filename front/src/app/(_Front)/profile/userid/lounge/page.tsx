@@ -332,11 +332,6 @@ const LoungeLike = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-
-  img,
-  svg {
-    fill: var(--text-color);
-  }
 `;
 
 // 라운지 댓글
@@ -345,9 +340,7 @@ const LoungeComment = styled.div`
   align-items: center;
   gap: 10px;
 
-  img,
-  svg {
-    fill: var(--text-color);
+  img {
     transform: scaleX(-1);
   }
 `;
