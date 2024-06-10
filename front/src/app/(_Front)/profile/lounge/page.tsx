@@ -5,8 +5,9 @@ import Image from "next/image";
 import Login from "../../../../../public/images/login.png";
 import banner from "../../../../../public/images/banner.png";
 import Link from "next/link";
+import { UserIdProps } from "../useridprops";
 
-const UseridProfile: React.FC = () => {
+const UseridProfile: React.FC<UserIdProps> = ({ userinfo }) => {
   const [selectedTab, setSelectedTab] = useState("lounge");
   const images = [Login, Login, Login, Login];
 
@@ -18,9 +19,9 @@ const UseridProfile: React.FC = () => {
       <Profile>
         <Image src={Login} alt="프로필 이미지" width={160} height={160}></Image>
         <ProfileInfo>
-          <ProfileName>닉네임</ProfileName>
-          <FollowInfo>팔로잉 1 팔로워 1</FollowInfo>
-          <ProfileDescription>자기소개</ProfileDescription>
+          <ProfileName>{userinfo.name}닉네임</ProfileName>
+          <FollowInfo>{userinfo.follow}팔로잉 1 팔로워 1</FollowInfo>
+          <ProfileDescription>{userinfo.introduce}자기소개</ProfileDescription>
           <FollowButton>팔로우</FollowButton>
         </ProfileInfo>
       </Profile>

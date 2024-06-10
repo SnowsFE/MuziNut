@@ -5,12 +5,14 @@ import Image from "next/image";
 import Login from "../../../../../../public/images/login.png";
 import banner from "../../../../../../public/images/banner.png";
 import threedot from "../../../../../../public/svgs/threedot.svg";
-import comment from "../../../../../../public/svgs/comment.svg";
 import Link from "next/link";
-import { LikeIcon, CommentIcon } from "@/app/components/darkmode/icon";
+import { LikeIcon, CommentIcon } from "../../../../../app/components/icon";
+import { Userdata } from "../../userdata";
 
+// UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("lounge");
+  const userinfo = Userdata[0];
 
   return (
     <ProfileContainer>
@@ -20,9 +22,14 @@ const UseridProfile: React.FC = () => {
       <Profile>
         <Image src={Login} alt="프로필 이미지" width={160} height={160}></Image>
         <ProfileInfo>
-          <ProfileName>닉네임</ProfileName>
-          <FollowInfo>팔로잉 1 팔로워 1</FollowInfo>
-          <ProfileDescription>자기소개</ProfileDescription>
+          {/* userinfo를 props로 받아온 데이터를 사용합니다. */}
+          <ProfileName>닉네임 : {userinfo.name}</ProfileName>
+          <FollowInfo>
+            팔로잉 {userinfo.follow} &nbsp; 팔로워 {userinfo.follower}
+          </FollowInfo>
+          <ProfileDescription>
+            자기소개 : {userinfo.introduce}
+          </ProfileDescription>
           <FollowButton>팔로우</FollowButton>
         </ProfileInfo>
       </Profile>

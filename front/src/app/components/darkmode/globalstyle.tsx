@@ -29,13 +29,13 @@ const DarkMode: React.FC = () => {
 
   // 테마 정의
   const lightTheme = {
-    bgColor: "#ffffff",
-    textColor: "#000000",
+    bgColor: "#fff",
+    textColor: "#0f0f0f",
   };
 
   const darkTheme = {
-    bgColor: "#000000",
-    textColor: "#ffffff",
+    bgColor: "#0f0f0f",
+    textColor: "#f1f1f1",
   };
 
   return (

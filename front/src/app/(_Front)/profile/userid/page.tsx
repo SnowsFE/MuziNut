@@ -140,7 +140,6 @@ const ProfileInfo = styled.div`
 const ProfileName = styled.span`
   font-weight: bold;
   font-size: 36px;
-  color: #000000;
 `;
 
 // 프로필 정보 [팔로우 팔로워 수]
@@ -208,7 +207,7 @@ const SelectItem = styled.div<{ selected: boolean }>`
     left: 0;
     width: 100%;
     height: 2px;
-    background-color: black;
+    background-color: var(--text-color);
     transform: scaleX(${(props) => (props.selected ? 1 : 0)});
     transition: transform 0.3s ease;
   }
@@ -216,7 +215,7 @@ const SelectItem = styled.div<{ selected: boolean }>`
 
 // 메인 라운지 링크 태그 스타일을 주기위한 요소 추가
 const StyledLink = styled(Link)`
-  color: black;
+  color: var(--text-color);
   text-decoration: none;
 `;
 // -------------------------------------------------------------------------------------------------------
