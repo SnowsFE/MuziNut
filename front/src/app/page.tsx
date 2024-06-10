@@ -9,6 +9,9 @@ const MainPage = () => {
       <a href="/profile">
         <Main>내가 보는 마이페이지</Main>
       </a>
+      <a href="/mypick/bestpick">
+        <Main>마이픽</Main>
+      </a>
     </div>
   );
 };

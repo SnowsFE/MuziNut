@@ -26,7 +26,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/app/components/usedarkmode"
+    "src/app/components/usedarkmode",
+    "src/app/(_Front)/mypick/components"
   ],
   "exclude": ["node_modules"]
 }

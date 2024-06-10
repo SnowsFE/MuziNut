@@ -33,7 +33,33 @@ export const CommentIcon = () => {
   );
 };
 
+export const StarIcon = () => {
+  return (
+    <Star>
+      <StyledSVG
+        xmlns="http://www.w3.org/2000/svg"
+        version="1.1"
+        viewBox="-5.0 -10.0 110.0 135.0"
+      >
+        <path
+          d="m50 78.969-19.531 10.27c-4.207 2.2109-9.125-1.3594-8.3242-6.0469l3.7305-21.75-15.801-15.402c-3.4062-3.3203-1.5273-9.1016 3.1797-9.7852l21.836-3.1758 9.7656-19.789c2.1055-4.2617 8.1836-4.2617 10.289 0l9.7656 19.789 21.84 3.1719c4.7031 0.68359 6.582 6.4648 3.1797 9.7852l-15.801 15.402 3.7305 21.75c0.80469 4.6875-4.1133 8.2578-8.3242 6.0469z"
+          fill="rgb(243, 239, 0)"
+        />
+      </StyledSVG>
+    </Star>
+  );
+};
+
 const Like = styled.div``;
 const Comment = styled.div`
   transform: scaleX(-1);
+`;
+const Star = styled.div`
+  width: 32px;
+  height: 32px;
+  margin-top: 2px;
+`;
+const StyledSVG = styled.svg`
+  width: 100%;
+  height: 100%;
 `;
