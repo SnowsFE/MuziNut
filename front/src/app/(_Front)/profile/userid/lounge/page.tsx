@@ -5,9 +5,9 @@ import Image from "next/image";
 import Login from "../../../../../../public/images/login.png";
 import banner from "../../../../../../public/images/banner.png";
 import threedot from "../../../../../../public/svgs/threedot.svg";
-import like from "../../../../../../public/svgs/like.svg";
 import comment from "../../../../../../public/svgs/comment.svg";
 import Link from "next/link";
+import { LikeIcon, CommentIcon } from "@/app/components/darkmode/icon";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("lounge");
@@ -102,11 +102,11 @@ const UseridProfile: React.FC = () => {
           {/* 라운지 좋아요 댓글 컨테이너 */}
           <LoungeLikeCommentContainer>
             <LoungeLike>
-              <Image src={like} alt="좋아요" width={24} height={24}></Image>
+              <LikeIcon />
               24
             </LoungeLike>
             <LoungeComment>
-              <Image src={comment} alt="댓글" width={24} height={24}></Image>
+              <CommentIcon />
               35
             </LoungeComment>
           </LoungeLikeCommentContainer>
@@ -339,8 +339,4 @@ const LoungeComment = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-
-  img {
-    transform: scaleX(-1);
-  }
 `;
