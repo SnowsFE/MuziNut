@@ -1,0 +1,48 @@
+.container {
+  margin-top: 40px;
+  /* padding: 30px; */
+  /* width: 40%; */
+  height: 876px;
+  border-radius: 40px;
+  background-color: white;
+  /* border: 1px solid green; */
+  /* border: none; */
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center;
+    align-items: center; */
+}
+
+.list__contents__wrap {
+  padding: 30px;
+  /* border: 30px solid red; */
+}
+
+.list__contents__wrap > ul {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  list-style: none;
+}
+
+/* 아티스트 리스트 */
+.list__conatiner {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  /* gap: 350px; */
+  border-radius: 30px;
+  /* border: none; */
+  background-color: rgb(235, 235, 235);
+  height: 140px;
+  padding: 10px 20px;
+}
+
+.list__container__row {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    gap: 10px;
+    /* border: 1px solid black; */
+}

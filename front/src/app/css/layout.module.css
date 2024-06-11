@@ -1,0 +1,15 @@
+.container {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    grid-template-rows: 60px 1fr;
+    height: 100vh;
+    grid-template-areas:
+      "header header"
+      "sidebar main";
+  }
+  
+  .main__page {
+    grid-area: main;
+    overflow: auto; /* 내용이 많아지면 스크롤바 자동 생성 */
+    padding: 20px;
+  }

@@ -1,0 +1,118 @@
+/* 공통 */
+.sidebar a {
+  text-decoration: none;
+  padding: 8px 5px;
+  display: flex;
+  align-items: center;
+  transition: 0.3s;
+  color: black;
+}
+.sidebar li {
+  list-style-type: none;
+}
+
+.sidebar {
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #e3e3e3f8;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+  z-index: 1;
+}
+
+.close__text {
+  margin-top: 7px;
+  font-size: 12px;
+  text-align: center;
+  display: block;
+}
+.sidebar.open .close__text {
+  display: none;
+}
+.closed {
+  width: 80px;
+}
+
+.open {
+  width: 240px;
+}
+
+.sidebar > ul > li:first-child {
+  /* background-color: red; */
+}
+
+.open__contents > ul > li:first-child {
+  /* background-color: aqua; */
+  color: gray;
+  margin-top: 8px;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.sidebar a:hover {
+  color: rgba(13, 71, 48, 0.899);
+  /* background-color: rgb(106, 155, 107); */
+  border-radius: 20px;
+}
+
+.openBtn {
+  cursor: pointer;
+  /* background-color: #ffffff; */
+  padding: 10px 15px;
+  border: none;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+}
+
+#main-content {
+  transition: margin-left 0.5s;
+  padding: 16px;
+}
+
+.openContent {
+  margin-left: 250px;
+}
+
+.open__contents__container {
+  margin-top: 19px;
+  margin-left: 0;
+  /* border: 1px solid yellow; */
+  padding: 0;
+}
+
+.open__contents {
+  /* border: 5px solid red; */
+  display: flex;
+  /* flex-direction: column; */
+  gap: 20px;
+  position: relative;
+  margin-bottom: 20px;
+  margin-left: 20px;
+}
+
+.open__contents > a {
+  /* border: 1px solid green; */
+  overflow: none;
+  top: 0;
+  left: 0;
+  height: 60px;
+  position: relative;
+  display: block;
+  margin-top: 8px;
+}
+.open__contents > a > Image {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.open__contents > ul {
+  /* border: 1px solid black; */
+  margin: 0;
+  padding: 0;
+}

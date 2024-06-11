@@ -1,0 +1,48 @@
+.container {
+  margin-top: 40px;
+  padding: 30px;
+  /* padding: 30px; */
+  /* width: 50%; */
+  height: 876px;
+border-radius: 40px;
+  background-color: white;
+  /* border: 1px solid green; */
+  /* border: none; */
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center;
+      align-items: center; */
+}
+
+.table__list {
+  display: block;
+  padding: 20px;
+}
+
+.table__list:hover {
+  background-color: #f0f0f0; /* 마우스를 올렸을 때 배경색 변경 */
+}
+
+.checkbox {
+  width: 5%;
+}
+.ranking,
+.thumb__picture,
+.play__btn
+{
+  width: 10%;
+}
+
+.song {
+  width: 50%;
+}
+
+.artist {
+  width: 30%;
+}
+
+.table__container {
+  border-collapse: separate;
+  border-spacing: 0 20px; /* 원하는 간격 값으로 설정 */
+}
+

@@ -1,0 +1,53 @@
+.container {
+  margin-top: 20px;
+  padding: 30px;
+  width: 100%;
+  border-radius: 40px;
+  background-color: white;
+  /* border: 1px solid green; */
+}
+
+.table__container {
+  width: 100%;
+  border-collapse: collapse;
+}
+.artist__list td {
+  padding: 50px 0 50px 20px;
+}
+/* 버튼 오른쪽 정렬 */
+.artist__list td:last-child {
+  text-align: right;
+}
+.ranking{
+  font-size: larger;
+  font-weight: bold;
+}
+.picture {
+  width: 14%;
+}
+
+/* info__section 부분 */
+.name {
+  font-size: xx-large;
+  font-weight: bold;
+  width: 400px;
+}
+.info__section__bottom {
+  margin-top: 30px;
+  font-size: 20px;
+  display: flex;
+  gap: 49px;
+}
+.follow__btn button {
+  border: none;
+  width: 130px; 
+}
+
+
+/* 모든 tr 요소에 적용 */
+.a tr {
+  border-bottom: 2px solid rgb(202, 202, 202);
+}
+.a tr:last-child {
+  border-bottom: none;
+}

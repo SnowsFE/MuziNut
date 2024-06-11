@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navbar from "./components/navbar";
+import { useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import styles from "./css/layout.module.css";
+import HeaderAndSide from "./components/HeaderAndSide/HeaderAndSide";
 
 export const metadata: Metadata = {
   title: "뮤지넛",
@@ -15,11 +18,25 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  
   return (
     <html lang="ko">
+      <head>
+        {/* <link
+          rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css"
+        /> */}
+      </head>
       <body>
-        <Navbar />
-        {children}
+        <div className={styles.container}>
+        
+          <HeaderAndSide />
+
+          <section className={styles.main__page}>
+            {children} {/* MainPage가 여기에 렌더링 */}
+          </section>
+        </div>
       </body>
     </html>
   );
