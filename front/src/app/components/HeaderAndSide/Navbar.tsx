@@ -8,7 +8,6 @@ import addalbum from "@/../public/images/addMusic.png";
 import chat from "@/../public/images/addMusic.png";
 import alarm from "@/../public/images/addMusic.png";
 import profile from "@/../public/images/addMusic.png";
-import AddAlbumModal from "../../submit/album/page";
 
 interface NavbarProps {
   toggleSidebar: () => void;
