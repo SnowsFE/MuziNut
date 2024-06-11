@@ -3,22 +3,30 @@ export const bestArtists = [
     id: 1,
     name: "마냥",
     profileImage:
-      "https://nng-phinf.pstatic.net/MjAyNDAzMDNfNTgg/MDAxNzA5NDEyMzkyODU5.I8fQ4Q1rgBKUpCC1snCPZriOgN0vDxA6gBZJM6erlVEg.z1qLrqMiWjLAJOsJ4bB4bY2dmOoSPWubB78lpa4erD4g.PNG/jj.png?type=f120_120_na",
+      "http://stimg.afreecatv.com/LOGO/ma/maluckitty/maluckitty.webp",
     music: "그래도 나 사랑하지",
-    votes: 10012,
+    votes: 100,
+    voterate: 55,
   },
   {
     id: 2,
-    name: "Artist 2",
-    profileImage: "url_to_image",
-    music: "Song Title 2",
+    name: "얼그레",
+    profileImage:
+      "http://stimg.afreecatv.com/LOGO/ea/earlgre0u0/earlgre0u0.webp",
+    music: "Brand New",
     votes: 200,
+    voterate: 35,
   },
   {
     id: 3,
-    name: "Artist 3",
-    profileImage: "url_to_image",
-    music: "Song Title 3",
+    name: "움츠키",
+    profileImage: "http://stimg.afreecatv.com/LOGO/ts/tsukizz6/tsukizz6.jpg",
+    music: "Heaven",
     votes: 300,
+    voterate: 15,
   },
 ];
+
+export const Comment = {
+  comment: 3,
+};

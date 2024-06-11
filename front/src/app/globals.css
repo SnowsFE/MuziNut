@@ -19,3 +19,15 @@ body {
   font-weight: 400;
   src: url("../../public/fonts/esamanru\ Bold.ttf") format("truetype");
 }
+
+@font-face {
+  font-family: "esamanru Light";
+  font-weight: 700;
+  src: url("../../public/fonts/esamanru\ Light.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "esamanru Medium";
+  font-weight: 700;
+  src: url("../../public/fonts/esamanru\ Medium.ttf") format("truetype");
+}

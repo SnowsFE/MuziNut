@@ -52,6 +52,7 @@ const DarkMode: React.FC = () => {
 
 export default DarkMode;
 
+// 다크 모드 버튼
 const DarkModeButton = styled.div`
   width: 24px;
   height: 24px;
