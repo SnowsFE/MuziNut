@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 import styles from "./css/layout.module.css";
 import HeaderAndSide from "./components/HeaderAndSide/HeaderAndSide";
 
@@ -18,19 +16,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-  
   return (
     <html lang="ko">
-      <head>
-        {/* <link
-          rel="stylesheet"
-          href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css"
-        /> */}
-      </head>
       <body>
         <div className={styles.container}>
-        
           <HeaderAndSide />
 
           <section className={styles.main__page}>

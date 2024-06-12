@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import styled from "styled-components";
-import { StarIcon } from "@/app/components/darkmode/icon";
+import { StarIcon } from "../../../components/icon";
 
 const Vote: React.FC = () => {
   const [inputValue, setInputValue] = useState("");
