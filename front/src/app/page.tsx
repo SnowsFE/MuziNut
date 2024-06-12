@@ -8,37 +8,41 @@ import { BestMusic } from "./components/main/BestMusic";
 
 const MainPage = () => {
   return (
-    <div className={styles.container} id="main__section">
+    <div className={styles.container}>
       <div className={styles.divided__section}>
+        <div className={styles.section__title}>
+          <h1>최신 음악(추천 음악)</h1>
+        </div>
         <div className={styles.new__section}>
-          <h2>최신 음악(추천 음악)</h2>
+          <div>←</div>
           <NewMusic />
+          <div>→</div>
+
         </div>
       </div>
 
       {/* 중간부분 */}
       <div className={styles.divided__section}>
-        <div className={styles.music__section__title}>
-          <div>
-            <h2>인기 차트 Top 10</h2>
-            <h6>최근 1주일 조회수를 기준으로 순위가 매겨집니다.</h6>
-          </div>
-
-          <div>
-            <h2>
-              인기 아티스트
-              <br /> Top 10
-            </h2>
-          </div>
-        </div>
         <div className={styles.music__section}>
-          <div className={styles.music__section__left} >
+          <div className={styles.music__section__left}>
+            <div className={styles.section__title}>
+              <div>
+                <h2>인기 차트 Top 10</h2>
+                <h6>최근 1주일 조회수를 기준으로 순위가 매겨집니다.</h6>
+              </div>
+            </div>
             <BestMusic />
           </div>
           <div className={styles.music__section__right}>
-          <BestArtist />
+            <div className={styles.section__title}>
+              <div>
+                <h2> 인기 아티스트</h2>
+                <h2 > Top 5</h2>
+              </div>
+            </div>
+
+            <BestArtist />
           </div>
-         
         </div>
       </div>
 
@@ -50,12 +54,8 @@ const MainPage = () => {
           <BasicCommunity />
         </div>
       </div>
-
-   
-
     </div>
   );
 };
 
 export default MainPage;
-

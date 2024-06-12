@@ -23,3 +23,5 @@ const HeaderAndSide: React.FC<HeaderAndSideProps> = ({
 };
 
 export default HeaderAndSide;
+
+// 추가

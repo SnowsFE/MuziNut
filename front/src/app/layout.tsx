@@ -37,3 +37,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+// 추가

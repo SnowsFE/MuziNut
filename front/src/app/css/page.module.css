@@ -1,44 +1,51 @@
+/* 공통 */
 .container {
-  width: 100%;
   background-color: #f7f7f7;
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
   /* border: 3px solid blue; */
 }
-
-.container h2 {
-  font-weight: 700;
-}
-
 .divided__section {
-  margin-top: 50px;
-  /* border: 5px solid pink; */
+  margin-bottom: 40px;
+  border: 1px solid red;
+}
+.divided__section:last-child {
+  margin-bottom: 0;
+}
+.section__title{
+  border: 1px solid green;
 }
 
 
-.music__section__left {
-  width: 50%;
-}
-.music__section__right {
-  width: 40%;
+/* 최신 음악 */
+.new__section{
+  display: flex;
+  align-items: center;
+  gap: 50px;
 }
 
-/* 차트 부분 */
-.music__section__title {
+/* 인기차트 + 인기 아티스트 */
+.music__section {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* .music__section .section__title {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   padding: 0 40px;
-  /* background-color: blue; */
+} */
+
+.music__section__left {
+  width: 40%;
 }
-.music__section {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  /* gap: 150px; */
-  justify-content: space-between;
-  margin-bottom: 60px;
-  /* border: 1px solid red; */
+.music__section__right {
+  width: 30%;
+
 }
+
+
 
 /* 커뮤니티 부분 */
 .community__section {
@@ -49,3 +56,57 @@
   justify-content: space-between;
   /* border: 1px solid red; */
 }
+
+
+/* 
+.new__section,
+.music__section__title,
+.music__section,
+.community__section {
+  margin-bottom: 20px;
+}
+
+.music__section {
+  display: flex;
+  justify-content: space-between;
+}
+
+.music__section__left,
+.music__section__right {
+  flex: 1;
+  margin: 0 10px;
+}
+
+.community__section {
+  display: flex;
+  justify-content: space-between;
+}
+
+@media (max-width: 768px) {
+  .music__section,
+  .community__section {
+    flex-direction: column;
+  }
+
+  .music__section__left,
+  .music__section__right {
+    margin: 10px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+
+  .music__section__title h2,
+  .music__section__title h6 {
+    text-align: center;
+  }
+
+  .new__section,
+  .music__section__title,
+  .community__section {
+    margin-bottom: 10px;
+  }
+} */
