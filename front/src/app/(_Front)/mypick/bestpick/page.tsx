@@ -8,13 +8,22 @@ import {
   SilverMedal,
   BronzeMedal,
 } from "../../../../app/components/icon";
-import { bestArtists, Comment } from "../bestartist";
+import { bestArtists, commentData, commentNumber } from "../bestartist";
+import { LikeIcon } from "../../../../app/components/icon";
 
-interface CommentProps {
-  comment: number;
+interface ArtistProps {
+  artist: {
+    id: number;
+    name: string;
+    profileImage: string;
+    music: string;
+    votes: number;
+    voterate: number;
+  };
+  medalIndex: number;
 }
 
-const BestPick: React.FC<CommentProps> = ({ comment }) => {
+const BestPick: React.FC = () => {
   const [inputValue, setInputValue] = useState("");
 
   // const [artists, setArtists] = useState<ArtistProps['artist'][]>([]);
@@ -67,46 +76,35 @@ const BestPick: React.FC<CommentProps> = ({ comment }) => {
       </BestPickArtist>
       <BestCommentContainerList>
         <BestCommentContainerBox>
-          <BestComment>댓글 {Comment.comment}</BestComment>
+          <BestComment>댓글 {commentNumber.comment}</BestComment>
           <BestCommentContainer>
             <input type="text" placeholder="댓글을 입력하세요"></input>
             <BestCommentBox onClick={handleCommentClick}>등록</BestCommentBox>
           </BestCommentContainer>
         </BestCommentContainerBox>
-        <BestCommentList>
-          <BestCommentHeader>
-            <BestCommentProfile>IMG</BestCommentProfile>
-            <BestCommentNickname>Coding</BestCommentNickname>
-            <BestCommentTime>3시간 전</BestCommentTime>
-          </BestCommentHeader>
-          <BestCommentBody>
-            <BestCommentText>본문</BestCommentText>
-            <BestCommentActions>
-              <BestCommentLike>좋아요</BestCommentLike>
-              <BestCommentReply>
-                답글
-                <BestCommentReport>신고</BestCommentReport>
-              </BestCommentReply>
-            </BestCommentActions>
-          </BestCommentBody>
-          <BestCommentPagination>페이지네이션</BestCommentPagination>
-        </BestCommentList>
+        {commentData.map((comment, index) => (
+          <BestCommentList key={index}>
+            <BestCommentHeader>
+              <BestCommentProfile src={comment.profile} />
+              <BestCommentNickname>{comment.name}</BestCommentNickname>
+              <BestCommentTime>{comment.time}</BestCommentTime>
+            </BestCommentHeader>
+            <BestCommentBody>
+              <BestCommentText>{comment.bodytext}</BestCommentText>
+              <BestCommentActions>
+                <BestCommentLike>
+                  <LikeIcon /> {comment.like}
+                </BestCommentLike>
+                <BestCommentReply>답글</BestCommentReply>
+              </BestCommentActions>
+            </BestCommentBody>
+          </BestCommentList>
+        ))}
+        <BestCommentPagination>페이지네이션</BestCommentPagination>
       </BestCommentContainerList>
     </BestPickContainer>
   );
 };
-
-interface ArtistProps {
-  artist: {
-    id: number;
-    name: string;
-    profileImage: string;
-    music: string;
-    votes: number;
-    voterate: number;
-  };
-  medalIndex: number;
-}
 
 const Artist: React.FC<ArtistProps> = ({ artist, medalIndex }) => {
   const renderMedal = () => {
@@ -232,18 +230,30 @@ const BestCommentList = styled.div`
   display: flex;
   flex-direction: column;
   width: 95%;
-  padding: 50px;
+  padding: 50px 50px 0 50px;
 `;
 
 // 베스트 픽 댓글 목록 헤더 [ 프로필, 닉네임, 시간 ]
 const BestCommentHeader = styled.div`
   display: flex;
+  align-items: center;
   gap: 5px;
 `;
 
-const BestCommentProfile = styled.div``;
-const BestCommentNickname = styled.div``;
-const BestCommentTime = styled.div``;
+const BestCommentProfile = styled.img<{ src: string }>`
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+`;
+
+const BestCommentNickname = styled.div`
+  margin-left: 3px;
+`;
+
+const BestCommentTime = styled.div`
+  margin-left: 3px;
+`;
 
 // 베스트 픽 댓글 본문
 const BestCommentBody = styled.div`
@@ -264,13 +274,14 @@ const BestCommentActions = styled.div`
   padding: 10px 0;
 `;
 
-const BestCommentLike = styled.div``;
+const BestCommentLike = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
 
-const BestCommentReport = styled.div`
-  margin-top: 5px;
-  font-size: 12px;
-  color: red;
-  cursor: pointer;
+  :first-child {
+    margin-top: 1px;
+  }
 `;
 
 const BestCommentReply = styled.div`
