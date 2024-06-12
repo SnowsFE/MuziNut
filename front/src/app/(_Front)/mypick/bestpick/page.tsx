@@ -9,6 +9,11 @@ import {
   BronzeMedal,
 } from "../../../../app/components/icon";
 import { bestArtists, Comment } from "../bestartist";
+
+interface CommentProps {
+  comment: number;
+}
+
 const BestPick: React.FC<CommentProps> = ({ comment }) => {
   const [inputValue, setInputValue] = useState("");
 
@@ -60,13 +65,33 @@ const BestPick: React.FC<CommentProps> = ({ comment }) => {
           <Artist key={artist.id} artist={artist} medalIndex={index} />
         ))}
       </BestPickArtist>
-      <BestCommentContainerBox>
-        <BestComment>댓글 {Comment.comment}</BestComment>
-        <BestCommentContainer>
-          <input type="text" placeholder="댓글을 입력하세요"></input>
-          <BestCommentBox onClick={handleCommentClick}>등록</BestCommentBox>
-        </BestCommentContainer>
-      </BestCommentContainerBox>
+      <BestCommentContainerList>
+        <BestCommentContainerBox>
+          <BestComment>댓글 {Comment.comment}</BestComment>
+          <BestCommentContainer>
+            <input type="text" placeholder="댓글을 입력하세요"></input>
+            <BestCommentBox onClick={handleCommentClick}>등록</BestCommentBox>
+          </BestCommentContainer>
+        </BestCommentContainerBox>
+        <BestCommentList>
+          <BestCommentHeader>
+            <BestCommentProfile>IMG</BestCommentProfile>
+            <BestCommentNickname>Coding</BestCommentNickname>
+            <BestCommentTime>3시간 전</BestCommentTime>
+          </BestCommentHeader>
+          <BestCommentBody>
+            <BestCommentText>본문</BestCommentText>
+            <BestCommentActions>
+              <BestCommentLike>좋아요</BestCommentLike>
+              <BestCommentReply>
+                답글
+                <BestCommentReport>신고</BestCommentReport>
+              </BestCommentReply>
+            </BestCommentActions>
+          </BestCommentBody>
+          <BestCommentPagination>페이지네이션</BestCommentPagination>
+        </BestCommentList>
+      </BestCommentContainerList>
     </BestPickContainer>
   );
 };
@@ -81,10 +106,6 @@ interface ArtistProps {
     voterate: number;
   };
   medalIndex: number;
-}
-
-interface CommentProps {
-  comment: number;
 }
 
 const Artist: React.FC<ArtistProps> = ({ artist, medalIndex }) => {
@@ -127,7 +148,7 @@ export default BestPick;
 const BestPickContainer = styled.div`
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
-  padding-top: 100px;
+  padding-top: 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -198,6 +219,70 @@ const BestPickArtist = styled.div`
   gap: 30px;
 `;
 
+// 베스트 픽 댓글 컨테이너를 감싸는 박스와 댓글 목록을 합친 박스
+const BestCommentContainerList = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+// 베스트 픽 댓글 목록
+const BestCommentList = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 95%;
+  padding: 50px;
+`;
+
+// 베스트 픽 댓글 목록 헤더 [ 프로필, 닉네임, 시간 ]
+const BestCommentHeader = styled.div`
+  display: flex;
+  gap: 5px;
+`;
+
+const BestCommentProfile = styled.div``;
+const BestCommentNickname = styled.div``;
+const BestCommentTime = styled.div``;
+
+// 베스트 픽 댓글 본문
+const BestCommentBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+  border-bottom: 1px solid #ccc;
+`;
+
+const BestCommentText = styled.div`
+  padding: 10px 0;
+  font-size: 16px;
+`;
+
+const BestCommentActions = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+`;
+
+const BestCommentLike = styled.div``;
+
+const BestCommentReport = styled.div`
+  margin-top: 5px;
+  font-size: 12px;
+  color: red;
+  cursor: pointer;
+`;
+
+const BestCommentReply = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const BestCommentPagination = styled.div`
+  padding: 10px 0;
+  text-align: center;
+`;
+
 // 베스트 픽 댓글 컨테이너를 감싸는 박스
 const BestCommentContainerBox = styled.div`
   display: flex;
@@ -222,7 +307,6 @@ const BestCommentContainer = styled.div`
   border: 1px solid #ccc;
   border-radius: 12px;
   padding: 15px;
-  margin-bottom: 30px;
   display: flex;
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
 
