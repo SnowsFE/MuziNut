@@ -1,15 +1,22 @@
 .container {
-    display: grid;
-    grid-template-columns: 80px 1fr;
-    grid-template-rows: 60px 1fr;
-    height: 100vh;
-    grid-template-areas:
-      "header header"
-      "sidebar main";
-  }
-  
-  .main__page {
-    grid-area: main;
-    overflow: auto; /* 내용이 많아지면 스크롤바 자동 생성 */
-    padding: 20px;
-  }
+  display: grid;
+
+  height: 100vh;
+  grid-template-areas:
+    "header header"
+    "header main";
+}
+.header__side {
+  grid-area: header;
+}
+.main__page {
+  padding: 12px 42px 0 48px;
+}
+
+.side__open {
+  margin-left: 250px;
+  width: calc(100% - 250px);
+}
+.side__close {
+  margin-left: 100px;
+}
