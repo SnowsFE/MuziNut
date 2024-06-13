@@ -7,7 +7,7 @@ import banner from "../../../../../../public/images/banner.png";
 import threedot from "../../../../../../public/svgs/threedot.svg";
 import Link from "next/link";
 import { LikeIcon, CommentIcon } from "../../../../../app/components/icon";
-import { Userdata } from "../../userdata";
+import { Userdata, CommentData } from "../../userdata";
 
 // UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
@@ -52,72 +52,62 @@ const UseridProfile: React.FC = () => {
       {/* 라운지 큰 컨테이너 */}
       <Lounge>
         {/* 라운지 Border 컨테이너 */}
-        <LoungeContainer>
-          {/* 라운지 프로필 */}
-          <LoungeProfileInfo>
-            {/* 라운지 프로필 이미지 */}
-            <LoungeProfileImage>
-              <Image
-                src={Login}
-                alt="프로필 이미지"
-                width={50}
-                height={50}
-              ></Image>
-            </LoungeProfileImage>
-            {/* 라운지 프로필 닉네임 */}
-            <LoungeProfileName>코딩</LoungeProfileName>
-            {/* 라운지 프로필 업로드 시간 ~ 기간 */}
-            <LoungeProfileUploadTime>3일전</LoungeProfileUploadTime>
-            {/* 라운지 (공유하기, 신고하기 기능) */}
-            <LoungeProfileDetail>
-              {" "}
-              <Image
-                src={threedot}
-                alt="공유하기, 신고하기 기능"
-                width={24}
-                height={24}
-              ></Image>
-            </LoungeProfileDetail>
-          </LoungeProfileInfo>
-          {/* 라운지 글작성 컨테이너 */}
-          <LoungeWriteContainer>
-            {/* 라운지 글작성 */}
-            <LoungeWrite>
-              안녕하세요 여러분..! 유튜브를 개설한지 하루만에 구독자 1000명을
-              달성했습니다!! 앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
-              하겠습니다!! 앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
-              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
-              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
-              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
-              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
-              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
-              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
-              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
-              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
-              하겠습니다!!
-            </LoungeWrite>
-            {/* 라운지 글작성 이미지 */}
-            <LoungeImage>
-              <Image
-                src={banner}
-                alt="프로필 이미지"
-                width={1280}
-                height={256}
-              ></Image>
-            </LoungeImage>
-          </LoungeWriteContainer>
-          {/* 라운지 좋아요 댓글 컨테이너 */}
-          <LoungeLikeCommentContainer>
-            <LoungeLike>
-              <LikeIcon />
-              24
-            </LoungeLike>
-            <LoungeComment>
-              <CommentIcon />
-              35
-            </LoungeComment>
-          </LoungeLikeCommentContainer>
-        </LoungeContainer>
+        {CommentData.map((commentdata, index) => (
+          <React.Fragment key={index}>
+            <LoungeContainer>
+              {/* 라운지 프로필 */}
+              <LoungeProfileInfo>
+                {/* 라운지 프로필 이미지 */}
+                <LoungeProfileImage>
+                  <Image
+                    src={Login}
+                    alt="프로필 이미지"
+                    width={50}
+                    height={50}
+                  ></Image>
+                </LoungeProfileImage>
+                {/* 라운지 프로필 닉네임 */}
+                <LoungeProfileName>코딩</LoungeProfileName>
+                {/* 라운지 프로필 업로드 시간 ~ 기간 */}
+                <LoungeProfileUploadTime>3일전</LoungeProfileUploadTime>
+                {/* 라운지 (공유하기, 신고하기 기능) */}
+                <LoungeProfileDetail>
+                  <Image
+                    src={threedot}
+                    alt="공유하기, 신고하기 기능"
+                    width={24}
+                    height={24}
+                  ></Image>
+                </LoungeProfileDetail>
+              </LoungeProfileInfo>
+              {/* 라운지 글작성 컨테이너 */}
+              <LoungeWriteContainer>
+                {/* 라운지 글작성 */}
+                <LoungeWrite>{commentdata.write}</LoungeWrite>
+                {/* 라운지 글작성 이미지 */}
+                <LoungeImage>
+                  <Image
+                    src={banner}
+                    alt="프로필 이미지"
+                    width={1280}
+                    height={256}
+                  ></Image>
+                </LoungeImage>
+              </LoungeWriteContainer>
+              {/* 라운지 좋아요 댓글 컨테이너 */}
+              <LoungeLikeCommentContainer>
+                <LoungeLike>
+                  <LikeIcon />
+                  {commentdata.like}
+                </LoungeLike>
+                <LoungeComment>
+                  <CommentIcon />
+                  {commentdata.comment}
+                </LoungeComment>
+              </LoungeLikeCommentContainer>
+            </LoungeContainer>
+          </React.Fragment>
+        ))}
       </Lounge>
     </ProfileContainer>
   );
@@ -262,6 +252,7 @@ const Lounge = styled.div`
 const LoungeContainer = styled.div`
   border: 1px solid #ccc;
   border-radius: 12px;
+  margin: 0 0 16px 0;
 `;
 
 // -------------------------------------------------------------------------------------------------------

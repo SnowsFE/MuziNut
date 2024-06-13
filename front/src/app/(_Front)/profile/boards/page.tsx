@@ -2,12 +2,12 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import Login from "../../../../public/images/login.png";
-import banner from "../../../../public/images/banner.png";
-import threedot from "../../../../public/svgs/threedot.svg";
+import Login from "../../../../../public/images/login.png";
+import banner from "../../../../../public/images/banner.png";
+import threedot from "../../../../../public/svgs/threedot.svg";
 import Link from "next/link";
-import { LikeIcon, CommentIcon } from "../../../app/components/icon";
-import { Userdata, CommentData } from "./userdata";
+import { LikeIcon, CommentIcon } from "../../../../app/components/icon";
+import { Userdata, CommentData } from "../userdata";
 
 // UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
@@ -61,7 +61,7 @@ const UseridProfile: React.FC = () => {
             onClick={() => setSelectedTab("nuts")}
           >
             <SelectItem selected={selectedTab === "nuts"}>
-              | &nbsp;넛츠
+              | &nbsp; &nbsp; 넛츠
             </SelectItem>
           </StyledLink>
         </SelectContainer>
@@ -133,10 +133,7 @@ const UseridProfile: React.FC = () => {
 export default UseridProfile;
 
 // 마이페이지 전체를 감싸는 컨테이너
-const ProfileContainer = styled.div`
-  padding-top: 60px;
-  padding-left: 88px;
-`;
+const ProfileContainer = styled.div``;
 
 // 배너
 const Banner = styled.div`
