@@ -95,7 +95,7 @@ const BestPick: React.FC = () => {
                 <BestCommentLike>
                   <LikeIcon /> {comment.like}
                 </BestCommentLike>
-                <BestCommentReply>답글</BestCommentReply>
+                <BestCommentReport>🚨</BestCommentReport>
               </BestCommentActions>
             </BestCommentBody>
           </BestCommentList>
@@ -284,9 +284,10 @@ const BestCommentLike = styled.div`
   }
 `;
 
-const BestCommentReply = styled.div`
+const BestCommentReport = styled.div`
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
 `;
 
 const BestCommentPagination = styled.div`

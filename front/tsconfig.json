@@ -22,17 +22,15 @@
     }
   },
   "include": [
-    
     "next-env.d.ts",
-   
+
     "**/*.ts",
-   
+
     "**/*.tsx",
-   
+
     ".next/types/**/*.ts",
     "src/app/components/usedarkmode",
-    "src/app/(_Front)/mypick/components"
-  ,
+    "src/app/(_Front)/mypick/components",
     "src/app/components/SelectPlayBtn"
   ],
   "exclude": ["node_modules"]
