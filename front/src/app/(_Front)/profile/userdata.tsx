@@ -1,3 +1,5 @@
+// 프로필 데이터 -------------------------------------------------
+
 export interface UseridProps {
   userinfo: {
     name: string;
@@ -32,6 +34,9 @@ export const Userdata: UseridPropsWithoutImages[] = [
   },
 ];
 
+// 프로필 데이터 -------------------------------------------------
+
+// 댓글 데이터 -------------------------------------------------
 interface CommentProps {
   commentdata: {
     write: string;
@@ -61,11 +66,115 @@ export const CommentData: CommentPropsOmit[] = [
   },
 ];
 
-// export const Userdata: UseridProps["userinfo"][] = [
-//     {
-//       name: "John Doe",
-//       follow: 10,
-//       follower: 20,
-//       introduce: "Hello, I am John Doe.",
-//     },
-//   ];
+// 댓글 데이터 -------------------------------------------------
+
+// 게시글 데이터 ------------------------------------------------
+interface BoardsData {
+  board: string | number;
+}
+
+export const BoardData: BoardsData[] = [
+  {
+    board: "안녕",
+  },
+  {
+    board: "항녕",
+  },
+  {
+    board: "왕녕",
+  },
+  {
+    board: "앙녕",
+  },
+  {
+    board: "앙냥",
+  },
+  {
+    board: "안녕",
+  },
+  {
+    board: "항녕",
+  },
+  {
+    board: "왕녕",
+  },
+  {
+    board: "앙녕",
+  },
+  {
+    board: "앙냥",
+  },
+  {
+    board: "안녕",
+  },
+  {
+    board: "항녕",
+  },
+  {
+    board: "왕녕",
+  },
+  {
+    board: "앙녕",
+  },
+  {
+    board: "앙냥",
+  },
+  {
+    board: "안녕",
+  },
+  {
+    board: "항녕",
+  },
+  {
+    board: "왕녕",
+  },
+  {
+    board: "앙녕",
+  },
+  {
+    board: "앙냥",
+  },
+];
+// 게시글 데이터 ------------------------------------------------
+
+// 북마크 게시글 데이터 ------------------------------------------------
+interface BookMark {
+  bookmarkboard: string | number;
+}
+
+export const BookMarkBoardData: BookMark[] = [
+  {
+    bookmarkboard: "안녕",
+  },
+  {
+    bookmarkboard: "안녕2",
+  },
+  {
+    bookmarkboard: "안녕3",
+  },
+  {
+    bookmarkboard: "안녕4",
+  },
+  {
+    bookmarkboard: "안녕5",
+  },
+  {
+    bookmarkboard: "안녕6",
+  },
+  {
+    bookmarkboard: "안녕7",
+  },
+  {
+    bookmarkboard: "안녕8",
+  },
+  {
+    bookmarkboard: "안녕9",
+  },
+  {
+    bookmarkboard: "안녕7",
+  },
+  {
+    bookmarkboard: "안녕7",
+  },
+];
+// 북마크 게시글 데이터 ------------------------------------------------

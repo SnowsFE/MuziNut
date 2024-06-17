@@ -4,15 +4,66 @@ import styled from "styled-components";
 import Image from "next/image";
 import Login from "../../../../../public/images/login.png";
 import banner from "../../../../../public/images/banner.png";
-import threedot from "../../../../../public/svgs/threedot.svg";
 import Link from "next/link";
-import { LikeIcon, CommentIcon } from "../../../../app/components/icon";
-import { Userdata, CommentData } from "../userdata";
+import { Userdata, BoardData, BookMarkBoardData } from "../userdata";
 
 // UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("boards");
   const userinfo = Userdata[0];
+
+  // 5개 이상 더보기 누르면 보이게하는것 -------------------------
+  const [boardVisible, setboardVisible] = useState(5);
+  const [bookmarkVisible, setbookmarkVisible] = useState(5);
+
+  const AddBoard = () => {
+    if (boardVisible + 5 > BoardData.length) {
+      // 현재 보여지는 항목 수(boardVisible)와 전체 항목 수(BoardData.length)를 비교하여
+      // 더 이상 추가적으로 보여줄 데이터가 없을 경우 초기값으로 초기화합니다.
+      setboardVisible(5); // 초기값으로 되돌림
+    } else {
+      setboardVisible(boardVisible + 5); // 5개씩 추가적으로 보여줍니다.
+    }
+  };
+
+  const AddBookMark = () => {
+    if (bookmarkVisible + 5 > BookMarkBoardData.length) {
+      setbookmarkVisible(5);
+    } else {
+      setbookmarkVisible(bookmarkVisible + 5);
+    }
+  };
+  // 5개 이상 더보기 누르면 보이게하는것 -------------------------
+
+  // 백엔드 get data ------------------------------------------------------
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await axios.get("/profile/boards");
+  //       setBoardsData(response.data.boards);
+  //       console.log(response.data.boards); // 받아온 데이터 확인
+  //     } catch (error) {
+  //       console.error("데이터를 불러오지 못했습니다");
+  //     }
+  //   };
+
+  //   fetchData(); // 데이터를 받아오는 함수 호출
+  // }, []);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await axios.get("/profile/boards");
+  //       setBookMarkBoardsData(response.data.bookmarkboards);
+  //       console.log(response.data.bookmarkboards); // 받아온 데이터 확인
+  //     } catch (error) {
+  //       console.error("데이터를 불러오지 못했습니다");
+  //     }
+  //   };
+
+  //   fetchData(); // 데이터를 받아오는 함수 호출
+  // }, []);
+  // 백엔드 get data ------------------------------------------------------
 
   return (
     <ProfileContainer>
@@ -67,63 +118,31 @@ const UseridProfile: React.FC = () => {
       </SelectBar>
       {/* 라운지 큰 컨테이너 */}
       <Boards>
-        {/* 라운지 Border 컨테이너 */}
-        {CommentData.map((commentdata, index) => (
-          <React.Fragment key={index}>
-            <BoardsContainer>
-              {/* 라운지 프로필 */}
-              <BoardsProfileInfo>
-                {/* 라운지 프로필 이미지 */}
-                <BoardsProfileImage>
-                  <Image
-                    src={Login}
-                    alt="프로필 이미지"
-                    width={50}
-                    height={50}
-                  ></Image>
-                </BoardsProfileImage>
-                {/* 라운지 프로필 닉네임 */}
-                <BoardsProfileName>코딩</BoardsProfileName>
-                {/* 라운지 프로필 업로드 시간 ~ 기간 */}
-                <BoardsProfileUploadTime>3일전</BoardsProfileUploadTime>
-                {/* 라운지 (공유하기, 신고하기 기능) */}
-                <BoardsProfileDetail>
-                  <Image
-                    src={threedot}
-                    alt="공유하기, 신고하기 기능"
-                    width={24}
-                    height={24}
-                  ></Image>
-                </BoardsProfileDetail>
-              </BoardsProfileInfo>
-              {/* 라운지 글작성 컨테이너 */}
-              <BoardsWriteContainer>
-                {/* 라운지 글작성 */}
-                <BoardsWrite>{commentdata.write}</BoardsWrite>
-                {/* 라운지 글작성 이미지 */}
-                <BoardsImage>
-                  <Image
-                    src={banner}
-                    alt="프로필 이미지"
-                    width={1280}
-                    height={256}
-                  ></Image>
-                </BoardsImage>
-              </BoardsWriteContainer>
-              {/* 라운지 좋아요 댓글 컨테이너 */}
-              <BoardsLikeCommentContainer>
-                <BoardsLike>
-                  <LikeIcon />
-                  {commentdata.like}
-                </BoardsLike>
-                <BoardsComment>
-                  <CommentIcon />
-                  {commentdata.comment}
-                </BoardsComment>
-              </BoardsLikeCommentContainer>
-            </BoardsContainer>
-          </React.Fragment>
-        ))}
+        <BoardsBoards>
+          <BoardsTitle>게시글</BoardsTitle>
+          <BoardsContainer>
+            {BoardData.slice(0, boardVisible).map((boards, index) => (
+              <Box key={index}>{boards.board}</Box>
+            ))}
+          </BoardsContainer>
+          <BoardsAdd>
+            <p onClick={AddBoard}>더보기</p>
+          </BoardsAdd>
+        </BoardsBoards>
+
+        <BoardsBoards style={{ marginTop: "50px" }}>
+          <BoardsTitle>북마크한 게시글</BoardsTitle>
+          <BoardsContainer>
+            {BookMarkBoardData.slice(0, bookmarkVisible).map(
+              (bookmarkboards, index) => (
+                <Box key={index}>{bookmarkboards.bookmarkboard}</Box>
+              )
+            )}
+          </BoardsContainer>
+          <BoardsAdd>
+            <p onClick={AddBookMark}>더보기</p>
+          </BoardsAdd>
+        </BoardsBoards>
       </Boards>
     </ProfileContainer>
   );
@@ -254,100 +273,54 @@ const StyledLink = styled(Link)`
 // -------------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------------
-// 라운지를 감싸는 큰 컨테이너
+// 게시글을 감싸는 큰 컨테이너
 const Boards = styled.div`
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
   padding-top: 16px;
 `;
 
-// 라운지 Border 컨테이너
+// 박스 섹션을 감싸는 컨테이너
+const BoardsBoards = styled.div`
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ccc;
+`;
+
+// 박스 더보기
+const BoardsAdd = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  font-family: "esamanru Light";
+  font-size: 14px;
+
+  p {
+    cursor: pointer;
+    &:hover {
+      color: #1bb373;
+    }
+  }
+`;
+
+// 섹션 타이틀
+const BoardsTitle = styled.h2`
+  font-size: 24px;
+`;
+
+// 박스를 감싸는 컨테이너
 const BoardsContainer = styled.div`
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  margin: 0 0 16px 0;
-`;
-
-// -------------------------------------------------------------------------------------------------------
-// 라운지 프로필 정보를 감싸는 컨테이너
-const BoardsProfileInfo = styled.div`
-  display: flex;
-  padding: 15px 15px 15px 15px;
-  gap: 10px;
-  align-items: center;
-  :first-child {
-    margin-right: 1px;
-  }
-`;
-
-// 라운지 게시글 프로필 정보
-const BoardsProfileImage = styled.div`
-  img {
-    border-radius: 32px;
-  }
-`;
-
-// 라운지 프로필 닉네임
-const BoardsProfileName = styled.div``;
-
-// 라운지 프로필 업로드 시간 ~ 기간
-const BoardsProfileUploadTime = styled.div``;
-
-// 라운지 프로필 삼각점바 (공유하기, 신고하기 기능)
-const BoardsProfileDetail = styled.div`
-  display: flex;
-  align-items: center;
-  margin-left: auto; /* 오른쪽 끝으로 이동 */
-  cursor: pointer;
-
-  &:hover {
-    border: 1px;
-    border-radius: 7px;
-    background-color: #e7e7e7;
-  }
-`;
-// -------------------------------------------------------------------------------------------------------
-
-// -------------------------------------------------------------------------------------------------------
-// 라운지 글쓰기 컨테이너
-const BoardsWriteContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 0px 15px 25px 15px;
-`;
-
-// 라운지 글쓰기
-const BoardsWrite = styled.div`
-  padding: 0 0 10px 0;
-`;
-
-// 라운지 글쓰기 이미지
-const BoardsImage = styled.div`
-  img {
-    max-width: 100%;
-    max-height: none;
-    border-radius: 12px;
-  }
-`;
-// -------------------------------------------------------------------------------------------------------
-// 라운지 좋아요, 댓글 컨테이너
-const BoardsLikeCommentContainer = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 0px 15px 25px 15px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
   gap: 20px;
+  overflow: hidden;
 `;
 
-// 라운지 좋아요
-const BoardsLike = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-`;
-
-// 라운지 댓글
-const BoardsComment = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
+// 박스 스타일
+const Box = styled.div`
+  background-color: transparent;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  flex: 1 1 calc(50%); /* 5개의 박스가 한 줄에 들어가도록 설정 */
+  box-sizing: border-box;
 `;
