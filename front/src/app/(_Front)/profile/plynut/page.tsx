@@ -4,10 +4,8 @@ import styled from "styled-components";
 import Image from "next/image";
 import Login from "../../../../../public/images/login.png";
 import banner from "../../../../../public/images/banner.png";
-import threedot from "../../../../../public/svgs/threedot.svg";
 import Link from "next/link";
-import { LikeIcon, CommentIcon } from "../../../../app/components/icon";
-import { Userdata, CommentData } from "../userdata";
+import { Userdata } from "../userdata";
 
 // UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
@@ -65,66 +63,30 @@ const UseridProfile: React.FC = () => {
           </StyledLink>
         </SelectContainer>
       </SelectBar>
-      {/* 라운지 큰 컨테이너 */}
-      <Lounge>
-        {/* 라운지 Border 컨테이너 */}
-        {CommentData.map((commentdata, index) => (
-          <React.Fragment key={index}>
-            <LoungeContainer>
-              {/* 라운지 프로필 */}
-              <LoungeProfileInfo>
-                {/* 라운지 프로필 이미지 */}
-                <LoungeProfileImage>
-                  <Image
-                    src={Login}
-                    alt="프로필 이미지"
-                    width={50}
-                    height={50}
-                  ></Image>
-                </LoungeProfileImage>
-                {/* 라운지 프로필 닉네임 */}
-                <LoungeProfileName>코딩</LoungeProfileName>
-                {/* 라운지 프로필 업로드 시간 ~ 기간 */}
-                <LoungeProfileUploadTime>3일전</LoungeProfileUploadTime>
-                {/* 라운지 (공유하기, 신고하기 기능) */}
-                <LoungeProfileDetail>
-                  <Image
-                    src={threedot}
-                    alt="공유하기, 신고하기 기능"
-                    width={24}
-                    height={24}
-                  ></Image>
-                </LoungeProfileDetail>
-              </LoungeProfileInfo>
-              {/* 라운지 글작성 컨테이너 */}
-              <LoungeWriteContainer>
-                {/* 라운지 글작성 */}
-                <LoungeWrite>{commentdata.write}</LoungeWrite>
-                {/* 라운지 글작성 이미지 */}
-                <LoungeImage>
-                  <Image
-                    src={banner}
-                    alt="프로필 이미지"
-                    width={1280}
-                    height={256}
-                  ></Image>
-                </LoungeImage>
-              </LoungeWriteContainer>
-              {/* 라운지 좋아요 댓글 컨테이너 */}
-              <LoungeLikeCommentContainer>
-                <LoungeLike>
-                  <LikeIcon />
-                  {commentdata.like}
-                </LoungeLike>
-                <LoungeComment>
-                  <CommentIcon />
-                  {commentdata.comment}
-                </LoungeComment>
-              </LoungeLikeCommentContainer>
-            </LoungeContainer>
-          </React.Fragment>
-        ))}
-      </Lounge>
+      <PlyNut>
+        <PlyNutHeaderMargin>
+          <PlyNutHeader>
+            <ul>
+              <li>NO</li>
+              <li>닉네임</li>
+              <li>곡명</li>
+              <li>장르</li>
+              <li>좋아요</li>
+              <li>삭제하기</li>
+            </ul>
+          </PlyNutHeader>
+        </PlyNutHeaderMargin>
+        <PlyNutPlayListMargin>
+          <PlyNutPlayList>
+            <NO>1</NO>
+            <AlbumImage>이미지임다</AlbumImage>
+            <NickName>코딩</NickName>
+            <Genre>d</Genre>
+            <Like>dd</Like>
+            <Delete>dz</Delete>
+          </PlyNutPlayList>
+        </PlyNutPlayListMargin>
+      </PlyNut>
     </ProfileContainer>
   );
 };
@@ -255,99 +217,61 @@ const StyledLink = styled(Link)`
 
 // -------------------------------------------------------------------------------------------------------
 // 라운지를 감싸는 큰 컨테이너
-const Lounge = styled.div`
+const PlyNut = styled.div`
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
-  padding-top: 16px;
 `;
 
-// 라운지 Border 컨테이너
-const LoungeContainer = styled.div`
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  margin: 0 0 16px 0;
+// 플리넛 헤더 패딩 적용
+const PlyNutHeaderMargin = styled.div`
+  padding: 10px 0;
 `;
 
-// -------------------------------------------------------------------------------------------------------
-// 라운지 프로필 정보를 감싸는 컨테이너
-const LoungeProfileInfo = styled.div`
-  display: flex;
-  padding: 15px 15px 15px 15px;
-  gap: 10px;
-  align-items: center;
-  :first-child {
-    margin-right: 1px;
-  }
-`;
-
-// 라운지 게시글 프로필 정보
-const LoungeProfileImage = styled.div`
-  img {
-    border-radius: 32px;
-  }
-`;
-
-// 라운지 프로필 닉네임
-const LoungeProfileName = styled.div``;
-
-// 라운지 프로필 업로드 시간 ~ 기간
-const LoungeProfileUploadTime = styled.div``;
-
-// 라운지 프로필 삼각점바 (공유하기, 신고하기 기능)
-const LoungeProfileDetail = styled.div`
-  display: flex;
-  align-items: center;
-  margin-left: auto; /* 오른쪽 끝으로 이동 */
-  cursor: pointer;
-
-  &:hover {
-    border: 1px;
-    border-radius: 7px;
-    background-color: #e7e7e7;
-  }
-`;
-// -------------------------------------------------------------------------------------------------------
-
-// -------------------------------------------------------------------------------------------------------
-// 라운지 글쓰기 컨테이너
-const LoungeWriteContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 0px 15px 25px 15px;
-`;
-
-// 라운지 글쓰기
-const LoungeWrite = styled.div`
-  padding: 0 0 10px 0;
-`;
-
-// 라운지 글쓰기 이미지
-const LoungeImage = styled.div`
-  img {
-    max-width: 100%;
-    max-height: none;
+// 플리넛 헤더
+const PlyNutHeader = styled.div`
+  ul {
+    display: flex;
+    justify-content: space-between;
+    list-style-type: none;
+    padding: 15px;
+    border: 1px solid #1bb373;
     border-radius: 12px;
   }
-`;
-// -------------------------------------------------------------------------------------------------------
-// 라운지 좋아요, 댓글 컨테이너
-const LoungeLikeCommentContainer = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 0px 15px 25px 15px;
-  gap: 20px;
+
+  li {
+    color: #1bb373;
+    margin: 0;
+  }
 `;
 
-// 라운지 좋아요
-const LoungeLike = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
+// 플리넛 재생목록 패딩 적용
+const PlyNutPlayListMargin = styled.div`
+  padding: 0 5px;
 `;
 
-// 라운지 댓글
-const LoungeComment = styled.div`
+// 플리넛 재생목록
+const PlyNutPlayList = styled.div`
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 10px;
+  padding: 15px;
+  letter-spacing: -1px;
 `;
+
+// 플리넛 NO
+const NO = styled.div``;
+
+// 플리넛 앨범 이미지
+const AlbumImage = styled.div``;
+
+// 플리넛 닉네임 [굵은 글씨]
+const NickName = styled.div``;
+
+// 플리넛 장르
+const Genre = styled.div``;
+
+// 플리넛 좋아요
+const Like = styled.div``;
+
+// 플리넛 삭제하기
+const Delete = styled.div``;

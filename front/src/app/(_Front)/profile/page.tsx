@@ -203,7 +203,6 @@ const SelectContainer = styled.div`
   display: flex;
   gap: 15px;
   border-bottom: 1px solid #ccc;
-
   position: relative;
 `;
 

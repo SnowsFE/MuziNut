@@ -323,4 +323,10 @@ const Box = styled.div`
   padding: 20px;
   flex: 1 1 calc(50%); /* 5개의 박스가 한 줄에 들어가도록 설정 */
   box-sizing: border-box;
+  transition: box-shadow 0.3s ease; /* 박스 섀도우의 부드러운 전환 효과 추가 */
+
+  &:hover {
+    transition: 0.3s ease;
+    border-color: #1bb373;
+  }
 `;
