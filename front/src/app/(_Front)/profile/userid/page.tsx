@@ -95,10 +95,7 @@ const UseridProfile: React.FC = () => {
 export default UseridProfile;
 
 // 마이페이지 전체를 감싸는 컨테이너
-const ProfileContainer = styled.div`
-  padding-top: 60px;
-  padding-left: 88px;
-`;
+const ProfileContainer = styled.div``;
 
 // 배너
 const Banner = styled.div`
@@ -324,6 +321,6 @@ const AlbumItem = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 0 0 5% 0;
+  padding: 0 0 2rem 0;
 `;
 // -------------------------------------------------------------------------------------------------------

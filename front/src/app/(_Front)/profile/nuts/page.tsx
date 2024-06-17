@@ -2,16 +2,16 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import Login from "../../../../../../public/images/login.png";
-import banner from "../../../../../../public/images/banner.png";
-import threedot from "../../../../../../public/svgs/threedot.svg";
+import Login from "../../../../../public/images/login.png";
+import banner from "../../../../../public/images/banner.png";
+import threedot from "../../../../../public/svgs/threedot.svg";
 import Link from "next/link";
-import { LikeIcon, CommentIcon } from "../../../../../app/components/icon";
-import { Userdata, CommentData } from "../../userdata";
+import { LikeIcon, CommentIcon } from "../../../../app/components/icon";
+import { Userdata, CommentData } from "../userdata";
 
 // UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
-  const [selectedTab, setSelectedTab] = useState("lounge");
+  const [selectedTab, setSelectedTab] = useState("nuts");
   const userinfo = Userdata[0];
 
   return (
@@ -35,17 +35,33 @@ const UseridProfile: React.FC = () => {
       </Profile>
       <SelectBar>
         <SelectContainer>
-          <StyledLink
-            href={"/profile/userid"}
-            onClick={() => setSelectedTab("main")}
-          >
+          <StyledLink href={"/profile"} onClick={() => setSelectedTab("main")}>
             <SelectItem selected={selectedTab === "main"}>메인</SelectItem>
           </StyledLink>
           <StyledLink
-            href={"/profile/userid/lounge"}
+            href={"/profile/lounge"}
             onClick={() => setSelectedTab("lounge")}
           >
             <SelectItem selected={selectedTab === "lounge"}>라운지</SelectItem>
+          </StyledLink>
+          <StyledLink
+            href={"/profile/boards"}
+            onClick={() => setSelectedTab("boards")}
+          >
+            <SelectItem selected={selectedTab === "boards"}>게시글</SelectItem>
+          </StyledLink>
+          <StyledLink
+            href={"/profile/plynut"}
+            onClick={() => setSelectedTab("plynut")}
+          >
+            <SelectItem selected={selectedTab === "plynut"}>플리넛</SelectItem>
+          </StyledLink>
+          |
+          <StyledLink
+            href={"/profile/nuts"}
+            onClick={() => setSelectedTab("nuts")}
+          >
+            <SelectItem selected={selectedTab === "nuts"}>넛츠</SelectItem>
           </StyledLink>
         </SelectContainer>
       </SelectBar>

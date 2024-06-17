@@ -56,13 +56,12 @@ const UseridProfile: React.FC = () => {
           >
             <SelectItem selected={selectedTab === "plynut"}>플리넛</SelectItem>
           </StyledLink>
+          |
           <StyledLink
             href={"/profile/nuts"}
             onClick={() => setSelectedTab("nuts")}
           >
-            <SelectItem selected={selectedTab === "nuts"}>
-              | &nbsp;넛츠
-            </SelectItem>
+            <SelectItem selected={selectedTab === "nuts"}>넛츠</SelectItem>
           </StyledLink>
         </SelectContainer>
       </SelectBar>
@@ -133,10 +132,7 @@ const UseridProfile: React.FC = () => {
 export default UseridProfile;
 
 // 마이페이지 전체를 감싸는 컨테이너
-const ProfileContainer = styled.div`
-  padding-top: 60px;
-  padding-left: 88px;
-`;
+const ProfileContainer = styled.div``;
 
 // 배너
 const Banner = styled.div`

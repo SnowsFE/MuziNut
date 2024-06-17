@@ -4,15 +4,23 @@ import styled from "styled-components";
 import Image from "next/image";
 import Login from "../../../../public/images/login.png";
 import banner from "../../../../public/images/banner.png";
-import threedot from "../../../../public/svgs/threedot.svg";
 import Link from "next/link";
-import { LikeIcon, CommentIcon } from "../../../app/components/icon";
-import { Userdata, CommentData } from "./userdata";
 
-// UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
-  const [selectedTab, setSelectedTab] = useState("boards");
-  const userinfo = Userdata[0];
+  const [selectedTab, setSelectedTab] = useState("main");
+  const images = [Login, Login, Login, Login, Login];
+  const imagesName = [
+    "앨범 제목 | 발매일",
+    "앨범 제목 | 발매일",
+    "앨범 제목 | 발매일",
+    "앨범 제목 | 발매일",
+    "앨범 제목 | 발매일",
+    "앨범 제목 | 발매일",
+    "앨범 제목 | 발매일",
+    "앨범 제목 | 발매일",
+    "앨범 제목 | 발매일",
+    "앨범 제목 | 발매일",
+  ];
 
   return (
     <ProfileContainer>
@@ -22,14 +30,11 @@ const UseridProfile: React.FC = () => {
       <Profile>
         <Image src={Login} alt="프로필 이미지" width={160} height={160}></Image>
         <ProfileInfo>
-          {/* userinfo를 props로 받아온 데이터를 사용합니다. */}
-          <ProfileName>닉네임 : {userinfo.name}</ProfileName>
+          <ProfileName>닉네임 (? String)</ProfileName>
           <FollowInfo>
-            팔로잉 {userinfo.follow} &nbsp; 팔로워 {userinfo.follower}
+            팔로잉 (데이터 값 : Number) 팔로워 (데이터 값 : Number)
           </FollowInfo>
-          <ProfileDescription>
-            자기소개 : {userinfo.introduce}
-          </ProfileDescription>
+          <ProfileDescription>자기소개</ProfileDescription>
           <FollowButton>팔로우</FollowButton>
         </ProfileInfo>
       </Profile>
@@ -56,76 +61,49 @@ const UseridProfile: React.FC = () => {
           >
             <SelectItem selected={selectedTab === "plynut"}>플리넛</SelectItem>
           </StyledLink>
+          |
           <StyledLink
             href={"/profile/nuts"}
             onClick={() => setSelectedTab("nuts")}
           >
-            <SelectItem selected={selectedTab === "nuts"}>
-              | &nbsp;넛츠
-            </SelectItem>
+            <SelectItem selected={selectedTab === "nuts"}>넛츠</SelectItem>
           </StyledLink>
         </SelectContainer>
       </SelectBar>
-      {/* 라운지 큰 컨테이너 */}
-      <Boards>
-        {/* 라운지 Border 컨테이너 */}
-        {CommentData.map((commentdata, index) => (
-          <React.Fragment key={index}>
-            <BoardsContainer>
-              {/* 라운지 프로필 */}
-              <BoardsProfileInfo>
-                {/* 라운지 프로필 이미지 */}
-                <BoardsProfileImage>
-                  <Image
-                    src={Login}
-                    alt="프로필 이미지"
-                    width={50}
-                    height={50}
-                  ></Image>
-                </BoardsProfileImage>
-                {/* 라운지 프로필 닉네임 */}
-                <BoardsProfileName>코딩</BoardsProfileName>
-                {/* 라운지 프로필 업로드 시간 ~ 기간 */}
-                <BoardsProfileUploadTime>3일전</BoardsProfileUploadTime>
-                {/* 라운지 (공유하기, 신고하기 기능) */}
-                <BoardsProfileDetail>
-                  <Image
-                    src={threedot}
-                    alt="공유하기, 신고하기 기능"
-                    width={24}
-                    height={24}
-                  ></Image>
-                </BoardsProfileDetail>
-              </BoardsProfileInfo>
-              {/* 라운지 글작성 컨테이너 */}
-              <BoardsWriteContainer>
-                {/* 라운지 글작성 */}
-                <BoardsWrite>{commentdata.write}</BoardsWrite>
-                {/* 라운지 글작성 이미지 */}
-                <BoardsImage>
-                  <Image
-                    src={banner}
-                    alt="프로필 이미지"
-                    width={1280}
-                    height={256}
-                  ></Image>
-                </BoardsImage>
-              </BoardsWriteContainer>
-              {/* 라운지 좋아요 댓글 컨테이너 */}
-              <BoardsLikeCommentContainer>
-                <BoardsLike>
-                  <LikeIcon />
-                  {commentdata.like}
-                </BoardsLike>
-                <BoardsComment>
-                  <CommentIcon />
-                  {commentdata.comment}
-                </BoardsComment>
-              </BoardsLikeCommentContainer>
-            </BoardsContainer>
-          </React.Fragment>
-        ))}
-      </Boards>
+      <MainAlbum>
+        <MainAlbumContainer>
+          <Image src={Login} alt="메인 앨범" width={500} height={400}></Image>
+          <Like>💚 130</Like>
+          <AlbumInformation>
+            <Info1>앨범 이름</Info1>
+            <Info2>참여한 아티스트</Info2>
+            <Info3>발매일</Info3>
+            <Info4>장르</Info4>
+            <AlbumIntro>
+              <AlbumIntroTitle>앨범 소개</AlbumIntroTitle>
+              <AlbumIntroBody>
+                오늘은 2024년 6월 7일입니다 랩 신곡 업로드 가겠습니다..!
+              </AlbumIntroBody>
+            </AlbumIntro>
+          </AlbumInformation>
+        </MainAlbumContainer>
+      </MainAlbum>
+      <BodyAlbum>
+        <AlbumName>앨범</AlbumName>
+        <AlbumList>
+          {images.map((img, index) => (
+            <AlbumItem key={index}>
+              <Image
+                src={img}
+                alt={`바디 앨범 ${index + 1}`}
+                width={150}
+                height={150}
+              />
+              <AlbumTitle>{imagesName[index]}</AlbumTitle>
+            </AlbumItem>
+          ))}
+        </AlbumList>
+      </BodyAlbum>
     </ProfileContainer>
   );
 };
@@ -133,10 +111,7 @@ const UseridProfile: React.FC = () => {
 export default UseridProfile;
 
 // 마이페이지 전체를 감싸는 컨테이너
-const ProfileContainer = styled.div`
-  padding-top: 60px;
-  padding-left: 88px;
-`;
+const ProfileContainer = styled.div``;
 
 // 배너
 const Banner = styled.div`
@@ -228,6 +203,7 @@ const SelectContainer = styled.div`
   display: flex;
   gap: 15px;
   border-bottom: 1px solid #ccc;
+
   position: relative;
 `;
 
@@ -258,100 +234,109 @@ const StyledLink = styled(Link)`
 // -------------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------------
-// 라운지를 감싸는 큰 컨테이너
-const Boards = styled.div`
+// 메인 앨범
+const MainAlbum = styled.div`
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
   padding-top: 16px;
 `;
 
-// 라운지 Border 컨테이너
-const BoardsContainer = styled.div`
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  margin: 0 0 16px 0;
-`;
-
-// -------------------------------------------------------------------------------------------------------
-// 라운지 프로필 정보를 감싸는 컨테이너
-const BoardsProfileInfo = styled.div`
+// 앨범 이미지와 설명을 감싸는 컨테이너
+const MainAlbumContainer = styled.div`
   display: flex;
-  padding: 15px 15px 15px 15px;
-  gap: 10px;
+  position: relative;
   align-items: center;
-  :first-child {
-    margin-right: 1px;
-  }
-`;
+  padding: 35px;
+  gap: 5%;
+  border-bottom: 1px solid #ccc;
 
-// 라운지 게시글 프로필 정보
-const BoardsProfileImage = styled.div`
   img {
-    border-radius: 32px;
-  }
-`;
-
-// 라운지 프로필 닉네임
-const BoardsProfileName = styled.div``;
-
-// 라운지 프로필 업로드 시간 ~ 기간
-const BoardsProfileUploadTime = styled.div``;
-
-// 라운지 프로필 삼각점바 (공유하기, 신고하기 기능)
-const BoardsProfileDetail = styled.div`
-  display: flex;
-  align-items: center;
-  margin-left: auto; /* 오른쪽 끝으로 이동 */
-  cursor: pointer;
-
-  &:hover {
-    border: 1px;
-    border-radius: 7px;
-    background-color: #e7e7e7;
-  }
-`;
-// -------------------------------------------------------------------------------------------------------
-
-// -------------------------------------------------------------------------------------------------------
-// 라운지 글쓰기 컨테이너
-const BoardsWriteContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 0px 15px 25px 15px;
-`;
-
-// 라운지 글쓰기
-const BoardsWrite = styled.div`
-  padding: 0 0 10px 0;
-`;
-
-// 라운지 글쓰기 이미지
-const BoardsImage = styled.div`
-  img {
-    max-width: 100%;
-    max-height: none;
+    border: none;
     border-radius: 12px;
   }
 `;
+
+// 좋아요
+const Like = styled.div`
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 33px 40px;
+  font-size: 18px;
+`;
+
+// 앨범 설명 세로 정렬
+const AlbumInformation = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  gap: 10px;
+`;
+
+// 앨범 설명
+const Info1 = styled.div`
+  font-size: 32px;
+`;
+const Info2 = styled.div`
+  font-size: 28px;
+`;
+const Info3 = styled.div`
+  padding-top: 24px;
+  font-size: 23px;
+`;
+const Info4 = styled.div`
+  font-size: 23px;
+`;
+
+// 앨범 소개
+const AlbumIntro = styled.div`
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+// 앨범 소개 제목
+const AlbumIntroTitle = styled.div`
+  font-size: 23px;
+`;
+
+// 앨범 소개 본문
+const AlbumIntroBody = styled.div`
+  font-size: 18px;
+`;
 // -------------------------------------------------------------------------------------------------------
-// 라운지 좋아요, 댓글 컨테이너
-const BoardsLikeCommentContainer = styled.div`
+
+// -------------------------------------------------------------------------------------------------------
+// 바디 앨범
+const BodyAlbum = styled.div`
+  padding-right: calc(50% - 642px);
+  padding-left: calc(50% - 642px);
+  padding-top: 16px;
+`;
+// 바디 앨범 타이틀 [앨범]
+const AlbumName = styled.div`
+  padding: 10px 35px 0px 35px;
+`;
+// 앨범 목록
+const AlbumList = styled.div`
   display: flex;
-  align-items: center;
-  padding: 0px 15px 25px 15px;
-  gap: 20px;
+  justify-content: space-between;
+  padding: 10px 35px 0px 35px;
 `;
 
-// 라운지 좋아요
-const BoardsLike = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
+// 앨범 설명
+const AlbumTitle = styled.div`
+  margin-top: 8px;
+  font-size: 14px;
 `;
 
-// 라운지 댓글
-const BoardsComment = styled.div`
+// 앨범 이미지
+const AlbumItem = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
+  text-align: center;
+  padding: 0 0 2rem 0;
 `;
+// -------------------------------------------------------------------------------------------------------

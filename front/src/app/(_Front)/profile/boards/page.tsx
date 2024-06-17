@@ -56,13 +56,12 @@ const UseridProfile: React.FC = () => {
           >
             <SelectItem selected={selectedTab === "plynut"}>플리넛</SelectItem>
           </StyledLink>
+          |
           <StyledLink
             href={"/profile/nuts"}
             onClick={() => setSelectedTab("nuts")}
           >
-            <SelectItem selected={selectedTab === "nuts"}>
-              | &nbsp; &nbsp; 넛츠
-            </SelectItem>
+            <SelectItem selected={selectedTab === "nuts"}>넛츠</SelectItem>
           </StyledLink>
         </SelectContainer>
       </SelectBar>
