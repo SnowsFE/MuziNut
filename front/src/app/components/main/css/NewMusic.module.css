@@ -5,16 +5,16 @@
     flex-direction: row;
     justify-content: space-around;
     gap: 20px;
-    overflow: none;
-    flex-wrap: nowrap;
+    overflow: hidden;
+    /* flex-wrap: wrap; */
 }
 
 
 .thumbnail {
-    width: 250px;
-    height: 220px;
+    width: 210px;
+    height: 210px;
     border: 1px solid black;
-    border-radius: 20px;
+    border-radius: 10px;
     overflow: none;
     display: flex;
     justify-content: center;
@@ -23,5 +23,6 @@
 .thumbnail img {
     max-width: 100%;
     min-width: 100%
+    
 }
 

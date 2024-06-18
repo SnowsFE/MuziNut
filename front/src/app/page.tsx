@@ -48,7 +48,9 @@ const MainPage = () => {
 
       {/* 커뮤니티 부분 */}
       <div className={styles.divided__section}>
-        커뮤니티 공간~~~
+        <div className={styles.section__title}>
+      <h1>커뮤니티 공간</h1>
+        </div>
         <div className={styles.community__section}>
           <BestCommunity />
           <BasicCommunity />

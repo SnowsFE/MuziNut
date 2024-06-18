@@ -1,53 +1,68 @@
-.container {
-  margin-top: 20px;
-  padding: 30px;
-  width: 100%;
-  border-radius: 40px;
-  background-color: white;
+.tr__wrap {
+}
+.td1__ranking {
+  padding-left: 20px;
+  width: 60px;
+  font-size: 60px;
+  font-weight: bold;
+  /* border: 3px solid red; */
+}
+
+.td2__picture {
+  width: 150px;
+  padding-left: 30px;
+  /* border: 1px solid orange; */
+}
+.td2__picture img {
+  /* border: 1px solid yellow; */
+  border-radius: 50%;
+}
+
+.td3__info__section {
+  padding-left: 20px;
   /* border: 1px solid green; */
 }
-
-.table__container {
-  width: 100%;
-  border-collapse: collapse;
-}
-.artist__list td {
-  padding: 50px 0 50px 20px;
-}
-/* 버튼 오른쪽 정렬 */
-.artist__list td:last-child {
-  text-align: right;
-}
-.ranking{
-  font-size: larger;
-  font-weight: bold;
-}
-.picture {
-  width: 14%;
-}
-
-/* info__section 부분 */
-.name {
-  font-size: xx-large;
+.td3__info__section .name {
+  font-size: 24px;
   font-weight: bold;
   width: 400px;
 }
-.info__section__bottom {
+.td3__info__section .info {
   margin-top: 30px;
-  font-size: 20px;
+  font-size: 18px;
   display: flex;
   gap: 49px;
 }
-.follow__btn button {
+.follow__num {
+  color: rgb(153, 153, 153);
+}
+.go__profile {
+  color: rgb(153, 153, 153);
+  cursor: pointer;
+}
+.go__profile:hover {
+  color: black;
+}
+
+.td4__follow__btn {
+  text-align: right; /*버튼만 오른쪽 정렬*/
+  padding-left: 0;
+
+  /* border: 1px solid blue; */
+}
+.td4__follow__btn button {
+  background-color: rgb(149, 196, 149);
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+
   border: none;
-  width: 130px; 
+  border-radius: 20px;
+  width: 120px;
+  height: 50px;
 }
 
-
-/* 모든 tr 요소에 적용 */
-.a tr {
-  border-bottom: 2px solid rgb(202, 202, 202);
-}
-.a tr:last-child {
-  border-bottom: none;
+.td4__follow__btn button:hover {
+  background-color: rgba(93, 144, 93, 0.62);
+  color: white;
 }
