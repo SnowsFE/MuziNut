@@ -53,6 +53,16 @@ const Cash: React.FC<{ data: CashDataProps["data"] }> = ({ data }) => {
   );
 };
 
+interface CashPurchaseProps {
+  data: {
+    date: string;
+    method: string;
+    amount: number;
+    charge: number;
+  }[];
+  // 충전일시 충전방식 충전수량 결제금액
+}
+
 export { Cash, cashData };
 
 const Labels = styled.div`

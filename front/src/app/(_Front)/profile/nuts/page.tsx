@@ -125,6 +125,9 @@ const UseridProfile: React.FC = () => {
               </StyledLink>
             </ul>
             {subTab === "#cash" && <Cash data={cashData} />}
+            {subTap === "#cash_purchase" && (
+              <CashPurchase data={cashPurchaseData} />
+            )}
           </NutsReceipt>
         </NutsBodyContainer>
       </NutsContainer>

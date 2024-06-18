@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 import Login from "../../../../../../public/images/login.png";
@@ -8,15 +8,41 @@ import threedot from "../../../../../../public/svgs/threedot.svg";
 import Link from "next/link";
 import { LikeIcon, CommentIcon } from "../../../../../app/components/icon";
 import { Userdata, CommentData } from "../../userdata";
+import CommonButton from "@/app/components/button";
 
 // UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("lounge");
+  const [threedotopen, setThreeDotOpen] = useState(
+    Array(CommentData.length).fill(false)
+  ); // 배열로 상태 관리
+
   const userinfo = Userdata[0];
 
-  const followClick = () => {
-    alert("팔로우하였습니다");
+  const threedotRef = useRef<HTMLDivElement | null>(null);
+
+  const handleThreeDotClick = (index: number) => {
+    const newThreeDotOpen = [...threedotopen];
+    newThreeDotOpen[index] = !newThreeDotOpen[index];
+    setThreeDotOpen(newThreeDotOpen);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        threedotRef.current &&
+        !threedotRef.current.contains(event.target as Node)
+      ) {
+        setThreeDotOpen(Array(CommentData.length).fill(false));
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <ProfileContainer>
@@ -32,7 +58,7 @@ const UseridProfile: React.FC = () => {
             팔로잉 {userinfo.follow} &nbsp; 팔로워 {userinfo.follower}
           </FollowInfo>
           <ProfileDescription>{userinfo.introduce}</ProfileDescription>
-          <FollowButton onClick={followClick}>팔로우</FollowButton>
+          <CommonButton />
         </ProfileInfo>
       </Profile>
       <SelectBar>
@@ -73,13 +99,21 @@ const UseridProfile: React.FC = () => {
                 {/* 라운지 프로필 업로드 시간 ~ 기간 */}
                 <LoungeProfileUploadTime>3일전</LoungeProfileUploadTime>
                 {/* 라운지 (공유하기, 신고하기 기능) */}
-                <LoungeProfileDetail>
+                <LoungeProfileDetail
+                  ref={threedotRef}
+                  onClick={() => handleThreeDotClick(index)}
+                >
                   <Image
                     src={threedot}
                     alt="공유하기, 신고하기 기능"
                     width={24}
                     height={24}
-                  ></Image>
+                  />
+                  {threedotopen[index] && (
+                    <ThreeDotOpen>
+                      <label>공유</label>|<label>신고</label>
+                    </ThreeDotOpen>
+                  )}
                 </LoungeProfileDetail>
               </LoungeProfileInfo>
               {/* 라운지 글작성 컨테이너 */}
@@ -284,12 +318,15 @@ const LoungeProfileDetail = styled.div`
   display: flex;
   align-items: center;
   margin-left: auto; /* 오른쪽 끝으로 이동 */
+  position: relative;
   cursor: pointer;
 
-  &:hover {
-    border: 1px;
-    border-radius: 7px;
-    background-color: #e7e7e7;
+  img {
+    &:hover {
+      border: 1px;
+      border-radius: 7px;
+      background-color: #e7e7e7;
+    }
   }
 `;
 // -------------------------------------------------------------------------------------------------------
@@ -336,4 +373,29 @@ const LoungeComment = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+`;
+
+// 쓰리닷 오픈 시
+const ThreeDotOpen = styled.div`
+  position: absolute;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 15px;
+  bottom: -18px;
+  left: 50px;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  width: 100px;
+
+  label {
+    padding: 4px 8px;
+    border-radius: 12px;
+    cursor: pointer;
+    &:hover {
+      background-color: #f0f0f0;
+    }
+  }
 `;
