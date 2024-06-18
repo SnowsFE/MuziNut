@@ -227,11 +227,10 @@ const PlyNutHeaderMargin = styled.div`
   padding: 10px 0;
 `;
 
-// 플리넛 헤더
 const PlyNutHeader = styled.div`
   ul {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around; /* 요소를 좌우로 공간을 나누고 가운데 정렬 */
     list-style-type: none;
     padding: 15px;
     border: 1px solid #1bb373;
@@ -245,17 +244,14 @@ const PlyNutHeader = styled.div`
 `;
 
 // 플리넛 재생목록 패딩 적용
-const PlyNutPlayListMargin = styled.div`
-  padding: 0 5px;
-`;
+const PlyNutPlayListMargin = styled.div``;
 
-// 플리넛 재생목록
+// 플리넛 리스트 스타일링
 const PlyNutPlayList = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: space-around; /* 좌우 정렬 */
+  align-items: center; /* 상하 정렬 */
   padding: 15px;
-  letter-spacing: -1px;
 `;
 
 // 플리넛 NO

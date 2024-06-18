@@ -14,6 +14,10 @@ const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("lounge");
   const userinfo = Userdata[0];
 
+  const followClick = () => {
+    alert("팔로우하였습니다");
+  };
+
   return (
     <ProfileContainer>
       <Banner>
@@ -23,14 +27,12 @@ const UseridProfile: React.FC = () => {
         <Image src={Login} alt="프로필 이미지" width={160} height={160}></Image>
         <ProfileInfo>
           {/* userinfo를 props로 받아온 데이터를 사용합니다. */}
-          <ProfileName>닉네임 : {userinfo.name}</ProfileName>
+          <ProfileName>{userinfo.name}</ProfileName>
           <FollowInfo>
             팔로잉 {userinfo.follow} &nbsp; 팔로워 {userinfo.follower}
           </FollowInfo>
-          <ProfileDescription>
-            자기소개 : {userinfo.introduce}
-          </ProfileDescription>
-          <FollowButton>팔로우</FollowButton>
+          <ProfileDescription>{userinfo.introduce}</ProfileDescription>
+          <FollowButton onClick={followClick}>팔로우</FollowButton>
         </ProfileInfo>
       </Profile>
       <SelectBar>
@@ -242,7 +244,7 @@ const StyledLink = styled(Link)`
 const Lounge = styled.div`
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
-  padding-top: 16px;
+  padding-top: 32px;
 `;
 
 // 라운지 Border 컨테이너

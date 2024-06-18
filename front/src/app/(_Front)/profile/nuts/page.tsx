@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 import Login from "../../../../../public/images/login.png";
@@ -8,11 +8,18 @@ import nut from "../../../../../public/images/Nuts.png";
 import Link from "next/link";
 import { Userdata } from "../userdata";
 import { VoteBox } from "@/app/components/icon";
+import { Cash, cashData } from "./cash";
 
 // UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("nuts");
+  const [subTab, setSubTab] = useState<string | null>(null);
   const userinfo = Userdata[0];
+
+  useEffect(() => {
+    // 페이지가 로드될 때 초기 하위 탭 설정
+    setSubTab("#cash");
+  }, []); // 빈 배열을 전달하여 한 번만 실행되도록 설정
 
   return (
     <ProfileContainer>
@@ -59,7 +66,10 @@ const UseridProfile: React.FC = () => {
           |
           <StyledLink
             href={"/profile/nuts"}
-            onClick={() => setSelectedTab("nuts")}
+            onClick={() => {
+              setSelectedTab("nuts");
+              setSubTab(null);
+            }}
           >
             <SelectItem selected={selectedTab === "nuts"}>넛츠</SelectItem>
           </StyledLink>
@@ -73,7 +83,9 @@ const UseridProfile: React.FC = () => {
               <NutsImage>
                 <Image src={nut} alt="Nuts"></Image>
               </NutsImage>
-              <MyNuts>보유중인 넛츠 n개</MyNuts>
+              <MyNuts>
+                보유중인 넛츠 &nbsp;<p>n개</p>
+              </MyNuts>
               <NutsCharge>
                 <p>충전하기</p>
               </NutsCharge>
@@ -83,17 +95,36 @@ const UseridProfile: React.FC = () => {
                 <VoteBox />
               </VotesImage>
 
-              <MyVotes>보유중인 투표권 n개</MyVotes>
+              <MyVotes>
+                {" "}
+                보유중인 투표권 &nbsp;<p>n개</p>
+              </MyVotes>
               <VotesCharge>
                 <p>충전하기</p>
               </VotesCharge>
             </Votes>
           </NutsVotes>
+
           <NutsReceipt>
             <ul>
-              <li>사용 내역</li>
-              <li>구매 내역</li>
+              <StyledLink
+                href={"/profile/nuts"}
+                onClick={() => setSubTab("#cash")}
+              >
+                <SelectItem selected={subTab === "#cash"}>
+                  <li>사용 내역</li>
+                </SelectItem>
+              </StyledLink>
+              <StyledLink
+                href={"/profile/nuts/#cash_purchase"}
+                onClick={() => setSubTab("#cash_purchase")}
+              >
+                <SelectItem selected={subTab === "#cash_purchase"}>
+                  <li>구매 내역</li>
+                </SelectItem>
+              </StyledLink>
             </ul>
+            {subTab === "#cash" && <Cash data={cashData} />}
           </NutsReceipt>
         </NutsBodyContainer>
       </NutsContainer>
@@ -235,6 +266,7 @@ const NutsContainer = styled.div`
 
 // 넛츠 페이지 제목
 const NutsTitle = styled.div`
+  font-size: 18px;
   padding: 10px 0;
 `;
 
@@ -294,7 +326,17 @@ const NutsCharge = styled.div`
   }
 `;
 
-const MyNuts = styled.div``;
+// 넛츠 박스 텍스트
+const MyNuts = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+
+  p {
+    font-size: 18px;
+    color: rgb(0, 206, 130);
+  }
+`;
 
 // 넛츠 컨테이너 --------------------
 
@@ -333,7 +375,17 @@ const VotesCharge = styled.div`
   }
 `;
 
-const MyVotes = styled.div``;
+// 투표박스 텍스트
+const MyVotes = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+
+  p {
+    font-size: 18px;
+    color: rgb(0, 206, 130);
+  }
+`;
 
 // 투표권 컨테이너 --------------------
 
@@ -341,7 +393,6 @@ const MyVotes = styled.div``;
 const NutsReceipt = styled.div`
   padding: 4px 4px;
   font-size: 18px;
-  border-bottom: 1px solid #ccc;
 
   ul {
     list-style-type: none;
