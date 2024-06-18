@@ -1,18 +1,25 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 import Login from "../../../../../public/images/login.png";
 import banner from "../../../../../public/images/banner.png";
-import threedot from "../../../../../public/svgs/threedot.svg";
+import nut from "../../../../../public/images/Nuts.png";
 import Link from "next/link";
-import { LikeIcon, CommentIcon } from "../../../../app/components/icon";
-import { Userdata, CommentData } from "../userdata";
+import { Userdata } from "../userdata";
+import { VoteBox } from "@/app/components/icon";
+import { Cash, cashData } from "./cash";
 
 // UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
-  const [selectedTab, setSelectedTab] = useState("lounge");
+  const [selectedTab, setSelectedTab] = useState("nuts");
+  const [subTab, setSubTab] = useState<string | null>(null);
   const userinfo = Userdata[0];
+
+  useEffect(() => {
+    // 페이지가 로드될 때 초기 하위 탭 설정
+    setSubTab("#cash");
+  }, []); // 빈 배열을 전달하여 한 번만 실행되도록 설정
 
   return (
     <ProfileContainer>
@@ -59,72 +66,71 @@ const UseridProfile: React.FC = () => {
           |
           <StyledLink
             href={"/profile/nuts"}
-            onClick={() => setSelectedTab("nuts")}
+            onClick={() => {
+              setSelectedTab("nuts");
+              setSubTab(null);
+            }}
           >
             <SelectItem selected={selectedTab === "nuts"}>넛츠</SelectItem>
           </StyledLink>
         </SelectContainer>
       </SelectBar>
-      {/* 라운지 큰 컨테이너 */}
-      <Lounge>
-        {/* 라운지 Border 컨테이너 */}
-        {CommentData.map((commentdata, index) => (
-          <React.Fragment key={index}>
-            <LoungeContainer>
-              {/* 라운지 프로필 */}
-              <LoungeProfileInfo>
-                {/* 라운지 프로필 이미지 */}
-                <LoungeProfileImage>
-                  <Image
-                    src={Login}
-                    alt="프로필 이미지"
-                    width={50}
-                    height={50}
-                  ></Image>
-                </LoungeProfileImage>
-                {/* 라운지 프로필 닉네임 */}
-                <LoungeProfileName>코딩</LoungeProfileName>
-                {/* 라운지 프로필 업로드 시간 ~ 기간 */}
-                <LoungeProfileUploadTime>3일전</LoungeProfileUploadTime>
-                {/* 라운지 (공유하기, 신고하기 기능) */}
-                <LoungeProfileDetail>
-                  <Image
-                    src={threedot}
-                    alt="공유하기, 신고하기 기능"
-                    width={24}
-                    height={24}
-                  ></Image>
-                </LoungeProfileDetail>
-              </LoungeProfileInfo>
-              {/* 라운지 글작성 컨테이너 */}
-              <LoungeWriteContainer>
-                {/* 라운지 글작성 */}
-                <LoungeWrite>{commentdata.write}</LoungeWrite>
-                {/* 라운지 글작성 이미지 */}
-                <LoungeImage>
-                  <Image
-                    src={banner}
-                    alt="프로필 이미지"
-                    width={1280}
-                    height={256}
-                  ></Image>
-                </LoungeImage>
-              </LoungeWriteContainer>
-              {/* 라운지 좋아요 댓글 컨테이너 */}
-              <LoungeLikeCommentContainer>
-                <LoungeLike>
-                  <LikeIcon />
-                  {commentdata.like}
-                </LoungeLike>
-                <LoungeComment>
-                  <CommentIcon />
-                  {commentdata.comment}
-                </LoungeComment>
-              </LoungeLikeCommentContainer>
-            </LoungeContainer>
-          </React.Fragment>
-        ))}
-      </Lounge>
+      <NutsContainer>
+        <NutsTitle>내 넛츠</NutsTitle>
+        <NutsBodyContainer>
+          <NutsVotes>
+            <Nuts>
+              <NutsImage>
+                <Image src={nut} alt="Nuts"></Image>
+              </NutsImage>
+              <MyNuts>
+                보유중인 넛츠 &nbsp;<p>n개</p>
+              </MyNuts>
+              <NutsCharge>
+                <p>충전하기</p>
+              </NutsCharge>
+            </Nuts>
+            <Votes>
+              <VotesImage>
+                <VoteBox />
+              </VotesImage>
+
+              <MyVotes>
+                {" "}
+                보유중인 투표권 &nbsp;<p>n개</p>
+              </MyVotes>
+              <VotesCharge>
+                <p>충전하기</p>
+              </VotesCharge>
+            </Votes>
+          </NutsVotes>
+
+          <NutsReceipt>
+            <ul>
+              <StyledLink
+                href={"/profile/nuts"}
+                onClick={() => setSubTab("#cash")}
+              >
+                <SelectItem selected={subTab === "#cash"}>
+                  <li>사용 내역</li>
+                </SelectItem>
+              </StyledLink>
+              <StyledLink
+                href={"/profile/nuts/#cash_purchase"}
+                onClick={() => setSubTab("#cash_purchase")}
+              >
+                <SelectItem selected={subTab === "#cash_purchase"}>
+                  <li>구매 내역</li>
+                </SelectItem>
+              </StyledLink>
+            </ul>
+            {subTab === "#cash" && <Cash data={cashData} />}
+            {subTap === "#cash_purchase" && (
+              <CashPurchase data={cashPurchaseData} />
+            )}
+          </NutsReceipt>
+        </NutsBodyContainer>
+      </NutsContainer>
     </ProfileContainer>
   );
 };
@@ -254,100 +260,147 @@ const StyledLink = styled(Link)`
 // -------------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------------
-// 라운지를 감싸는 큰 컨테이너
-const Lounge = styled.div`
+// 넛츠를 감싸는 큰 컨테이너
+const NutsContainer = styled.div`
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
-  padding-top: 32px;
+  padding-top: 16px;
 `;
 
-// 라운지 Border 컨테이너
-const LoungeContainer = styled.div`
+// 넛츠 페이지 제목
+const NutsTitle = styled.div`
+  font-size: 18px;
+  padding: 10px 0;
+`;
+
+// 넛츠 바디 컨테이너
+const NutsBodyContainer = styled.div`
   border: 1px solid #ccc;
   border-radius: 12px;
-  margin: 0 0 16px 0;
+  padding: 30px;
 `;
 
-// -------------------------------------------------------------------------------------------------------
-// 라운지 프로필 정보를 감싸는 컨테이너
-const LoungeProfileInfo = styled.div`
+// 넛츠, 투표권 컨테이너
+const NutsVotes = styled.div`
   display: flex;
-  padding: 15px 15px 15px 15px;
-  gap: 10px;
+  justify-content: space-between;
   align-items: center;
-  :first-child {
-    margin-right: 1px;
-  }
-`;
-
-// 라운지 게시글 프로필 정보
-const LoungeProfileImage = styled.div`
-  img {
-    border-radius: 32px;
-  }
-`;
-
-// 라운지 프로필 닉네임
-const LoungeProfileName = styled.div``;
-
-// 라운지 프로필 업로드 시간 ~ 기간
-const LoungeProfileUploadTime = styled.div``;
-
-// 라운지 프로필 삼각점바 (공유하기, 신고하기 기능)
-const LoungeProfileDetail = styled.div`
-  display: flex;
-  align-items: center;
-  margin-left: auto; /* 오른쪽 끝으로 이동 */
-  cursor: pointer;
-
-  &:hover {
-    border: 1px;
-    border-radius: 7px;
-    background-color: #e7e7e7;
-  }
-`;
-// -------------------------------------------------------------------------------------------------------
-
-// -------------------------------------------------------------------------------------------------------
-// 라운지 글쓰기 컨테이너
-const LoungeWriteContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 0px 15px 25px 15px;
-`;
-
-// 라운지 글쓰기
-const LoungeWrite = styled.div`
-  padding: 0 0 10px 0;
-`;
-
-// 라운지 글쓰기 이미지
-const LoungeImage = styled.div`
-  img {
-    max-width: 100%;
-    max-height: none;
-    border-radius: 12px;
-  }
-`;
-// -------------------------------------------------------------------------------------------------------
-// 라운지 좋아요, 댓글 컨테이너
-const LoungeLikeCommentContainer = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 0px 15px 25px 15px;
+  margin-bottom: 30px;
   gap: 20px;
 `;
 
-// 라운지 좋아요
-const LoungeLike = styled.div`
+// 넛츠 컨테이너 --------------------
+
+// 내 넛츠
+const Nuts = styled.div`
+  width: 50%;
   display: flex;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 15px 20px;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
+  box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.06);
 `;
 
-// 라운지 댓글
-const LoungeComment = styled.div`
+// 넛츠 이미지
+const NutsImage = styled.div`
+  img {
+    width: 36px;
+    height: 36px;
+    margin-top: 1px;
+  }
+`;
+
+// 넛츠 충전하기
+const NutsCharge = styled.div`
+  display: flex;
+  margin-left: auto;
+  border: 1px;
+  border-radius: 5px;
+  padding: 0 30px;
+  background-color: #16be78;
+  cursor: pointer;
+  p {
+    color: white;
+  }
+  &:hover {
+    background-color: #1bb373;
+  }
+`;
+
+// 넛츠 박스 텍스트
+const MyNuts = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  font-size: 14px;
+
+  p {
+    font-size: 18px;
+    color: rgb(0, 206, 130);
+  }
+`;
+
+// 넛츠 컨테이너 --------------------
+
+// 투표권 컨테이너 --------------------
+
+// 내 투표권
+const Votes = styled.div`
+  width: 50%;
+  display: flex;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 15px 20px;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.06);
+`;
+
+// 투표권 이미지
+const VotesImage = styled.div`
+  margin-bottom: 7px;
+`;
+
+// 투표권 충전하기
+const VotesCharge = styled.div`
+  margin-left: auto;
+  border: 1px;
+  border-radius: 5px;
+  padding: 0 30px;
+  background-color: #16be78;
+  cursor: pointer;
+  p {
+    color: white;
+  }
+  &:hover {
+    background-color: #1bb373;
+  }
+`;
+
+// 투표박스 텍스트
+const MyVotes = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+
+  p {
+    font-size: 18px;
+    color: rgb(0, 206, 130);
+  }
+`;
+
+// 투표권 컨테이너 --------------------
+
+// 넛츠 영수증 [사용내역, 구매내역 + 세부사항]
+const NutsReceipt = styled.div`
+  padding: 4px 4px;
+  font-size: 18px;
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    gap: 1.75rem;
+  }
 `;

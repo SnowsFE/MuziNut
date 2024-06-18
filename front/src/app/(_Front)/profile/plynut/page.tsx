@@ -5,22 +5,12 @@ import Image from "next/image";
 import Login from "../../../../../public/images/login.png";
 import banner from "../../../../../public/images/banner.png";
 import Link from "next/link";
+import { Userdata } from "../userdata";
 
+// UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
-  const [selectedTab, setSelectedTab] = useState("main");
-  const images = [Login, Login, Login, Login, Login];
-  const imagesName = [
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-  ];
+  const [selectedTab, setSelectedTab] = useState("plynut");
+  const userinfo = Userdata[0];
 
   return (
     <ProfileContainer>
@@ -30,64 +20,73 @@ const UseridProfile: React.FC = () => {
       <Profile>
         <Image src={Login} alt="프로필 이미지" width={160} height={160}></Image>
         <ProfileInfo>
-          <ProfileName>닉네임 (? String)</ProfileName>
+          {/* userinfo를 props로 받아온 데이터를 사용합니다. */}
+          <ProfileName>닉네임 : {userinfo.name}</ProfileName>
           <FollowInfo>
-            팔로잉 (데이터 값 : Number) 팔로워 (데이터 값 : Number)
+            팔로잉 {userinfo.follow} &nbsp; 팔로워 {userinfo.follower}
           </FollowInfo>
-          <ProfileDescription>자기소개</ProfileDescription>
+          <ProfileDescription>
+            자기소개 : {userinfo.introduce}
+          </ProfileDescription>
           <FollowButton>팔로우</FollowButton>
         </ProfileInfo>
       </Profile>
       <SelectBar>
         <SelectContainer>
-          <StyledLink
-            href={"/profile/userid"}
-            onClick={() => setSelectedTab("main")}
-          >
+          <StyledLink href={"/profile"} onClick={() => setSelectedTab("main")}>
             <SelectItem selected={selectedTab === "main"}>메인</SelectItem>
           </StyledLink>
           <StyledLink
-            href={"/profile/userid/lounge"}
+            href={"/profile/lounge"}
             onClick={() => setSelectedTab("lounge")}
           >
             <SelectItem selected={selectedTab === "lounge"}>라운지</SelectItem>
           </StyledLink>
+          <StyledLink
+            href={"/profile/boards"}
+            onClick={() => setSelectedTab("boards")}
+          >
+            <SelectItem selected={selectedTab === "boards"}>게시글</SelectItem>
+          </StyledLink>
+          <StyledLink
+            href={"/profile/plynut"}
+            onClick={() => setSelectedTab("plynut")}
+          >
+            <SelectItem selected={selectedTab === "plynut"}>플리넛</SelectItem>
+          </StyledLink>
+          |
+          <StyledLink
+            href={"/profile/nuts"}
+            onClick={() => setSelectedTab("nuts")}
+          >
+            <SelectItem selected={selectedTab === "nuts"}>넛츠</SelectItem>
+          </StyledLink>
         </SelectContainer>
       </SelectBar>
-      <MainAlbum>
-        <MainAlbumContainer>
-          <Image src={Login} alt="메인 앨범" width={500} height={400}></Image>
-          <Like>💚 130</Like>
-          <AlbumInformation>
-            <Info1>앨범 이름</Info1>
-            <Info2>참여한 아티스트</Info2>
-            <Info3>발매일</Info3>
-            <Info4>장르</Info4>
-            <AlbumIntro>
-              <AlbumIntroTitle>앨범 소개</AlbumIntroTitle>
-              <AlbumIntroBody>
-                오늘은 2024년 6월 7일입니다 랩 신곡 업로드 가겠습니다..!
-              </AlbumIntroBody>
-            </AlbumIntro>
-          </AlbumInformation>
-        </MainAlbumContainer>
-      </MainAlbum>
-      <BodyAlbum>
-        <AlbumName>앨범</AlbumName>
-        <AlbumList>
-          {images.map((img, index) => (
-            <AlbumItem key={index}>
-              <Image
-                src={img}
-                alt={`바디 앨범 ${index + 1}`}
-                width={150}
-                height={150}
-              />
-              <AlbumTitle>{imagesName[index]}</AlbumTitle>
-            </AlbumItem>
-          ))}
-        </AlbumList>
-      </BodyAlbum>
+      <PlyNut>
+        <PlyNutHeaderMargin>
+          <PlyNutHeader>
+            <ul>
+              <li>NO</li>
+              <li>닉네임</li>
+              <li>곡명</li>
+              <li>장르</li>
+              <li>좋아요</li>
+              <li>삭제하기</li>
+            </ul>
+          </PlyNutHeader>
+        </PlyNutHeaderMargin>
+        <PlyNutPlayListMargin>
+          <PlyNutPlayList>
+            <NO>1</NO>
+            <AlbumImage>이미지임다</AlbumImage>
+            <NickName>코딩</NickName>
+            <Genre>d</Genre>
+            <Like>dd</Like>
+            <Delete>dz</Delete>
+          </PlyNutPlayList>
+        </PlyNutPlayListMargin>
+      </PlyNut>
     </ProfileContainer>
   );
 };
@@ -187,7 +186,6 @@ const SelectContainer = styled.div`
   display: flex;
   gap: 15px;
   border-bottom: 1px solid #ccc;
-
   position: relative;
 `;
 
@@ -218,109 +216,58 @@ const StyledLink = styled(Link)`
 // -------------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------------
-// 메인 앨범
-const MainAlbum = styled.div`
+// 라운지를 감싸는 큰 컨테이너
+const PlyNut = styled.div`
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
-  padding-top: 16px;
 `;
 
-// 앨범 이미지와 설명을 감싸는 컨테이너
-const MainAlbumContainer = styled.div`
-  display: flex;
-  position: relative;
-  align-items: center;
-  padding: 35px;
-  gap: 5%;
-  border-bottom: 1px solid #ccc;
+// 플리넛 헤더 패딩 적용
+const PlyNutHeaderMargin = styled.div`
+  padding: 10px 0;
+`;
 
-  img {
-    border: none;
+const PlyNutHeader = styled.div`
+  ul {
+    display: flex;
+    justify-content: space-around; /* 요소를 좌우로 공간을 나누고 가운데 정렬 */
+    list-style-type: none;
+    padding: 15px;
+    border: 1px solid #1bb373;
     border-radius: 12px;
+  }
+
+  li {
+    color: #1bb373;
+    margin: 0;
   }
 `;
 
-// 좋아요
-const Like = styled.div`
-  position: absolute;
-  right: 0;
-  top: 0;
-  padding: 33px 40px;
-  font-size: 18px;
-`;
+// 플리넛 재생목록 패딩 적용
+const PlyNutPlayListMargin = styled.div``;
 
-// 앨범 설명 세로 정렬
-const AlbumInformation = styled.div`
+// 플리넛 리스트 스타일링
+const PlyNutPlayList = styled.div`
   display: flex;
-  flex-direction: column;
-  position: relative;
-  gap: 10px;
+  justify-content: space-around; /* 좌우 정렬 */
+  align-items: center; /* 상하 정렬 */
+  padding: 15px;
 `;
 
-// 앨범 설명
-const Info1 = styled.div`
-  font-size: 32px;
-`;
-const Info2 = styled.div`
-  font-size: 28px;
-`;
-const Info3 = styled.div`
-  padding-top: 24px;
-  font-size: 23px;
-`;
-const Info4 = styled.div`
-  font-size: 23px;
-`;
+// 플리넛 NO
+const NO = styled.div``;
 
-// 앨범 소개
-const AlbumIntro = styled.div`
-  padding-top: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-`;
+// 플리넛 앨범 이미지
+const AlbumImage = styled.div``;
 
-// 앨범 소개 제목
-const AlbumIntroTitle = styled.div`
-  font-size: 23px;
-`;
+// 플리넛 닉네임 [굵은 글씨]
+const NickName = styled.div``;
 
-// 앨범 소개 본문
-const AlbumIntroBody = styled.div`
-  font-size: 18px;
-`;
-// -------------------------------------------------------------------------------------------------------
+// 플리넛 장르
+const Genre = styled.div``;
 
-// -------------------------------------------------------------------------------------------------------
-// 바디 앨범
-const BodyAlbum = styled.div`
-  padding-right: calc(50% - 642px);
-  padding-left: calc(50% - 642px);
-  padding-top: 16px;
-`;
-// 바디 앨범 타이틀 [앨범]
-const AlbumName = styled.div`
-  padding: 10px 35px 0px 35px;
-`;
-// 앨범 목록
-const AlbumList = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 35px 0px 35px;
-`;
+// 플리넛 좋아요
+const Like = styled.div``;
 
-// 앨범 설명
-const AlbumTitle = styled.div`
-  margin-top: 8px;
-  font-size: 14px;
-`;
-
-// 앨범 이미지
-const AlbumItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 0 0 2rem 0;
-`;
-// -------------------------------------------------------------------------------------------------------
+// 플리넛 삭제하기
+const Delete = styled.div``;

@@ -2,25 +2,68 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import Login from "../../../../public/images/login.png";
-import banner from "../../../../public/images/banner.png";
+import Login from "../../../../../public/images/login.png";
+import banner from "../../../../../public/images/banner.png";
 import Link from "next/link";
+import { Userdata, BoardData, BookMarkBoardData } from "../userdata";
 
+// UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
-  const [selectedTab, setSelectedTab] = useState("main");
-  const images = [Login, Login, Login, Login, Login];
-  const imagesName = [
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-  ];
+  const [selectedTab, setSelectedTab] = useState("boards");
+  const userinfo = Userdata[0];
+
+  // 5개 이상 더보기 누르면 보이게하는것 -------------------------
+  const [boardVisible, setboardVisible] = useState(5);
+  const [bookmarkVisible, setbookmarkVisible] = useState(5);
+
+  const AddBoard = () => {
+    if (boardVisible + 5 > BoardData.length) {
+      // 현재 보여지는 항목 수(boardVisible)와 전체 항목 수(BoardData.length)를 비교하여
+      // 더 이상 추가적으로 보여줄 데이터가 없을 경우 초기값으로 초기화합니다.
+      setboardVisible(5); // 초기값으로 되돌림
+    } else {
+      setboardVisible(boardVisible + 5); // 5개씩 추가적으로 보여줍니다.
+    }
+  };
+
+  const AddBookMark = () => {
+    if (bookmarkVisible + 5 > BookMarkBoardData.length) {
+      setbookmarkVisible(5);
+    } else {
+      setbookmarkVisible(bookmarkVisible + 5);
+    }
+  };
+  // 5개 이상 더보기 누르면 보이게하는것 -------------------------
+
+  // 백엔드 get data ------------------------------------------------------
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await axios.get("/profile/boards");
+  //       setBoardsData(response.data.boards);
+  //       console.log(response.data.boards); // 받아온 데이터 확인
+  //     } catch (error) {
+  //       console.error("데이터를 불러오지 못했습니다");
+  //     }
+  //   };
+
+  //   fetchData(); // 데이터를 받아오는 함수 호출
+  // }, []);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await axios.get("/profile/boards");
+  //       setBookMarkBoardsData(response.data.bookmarkboards);
+  //       console.log(response.data.bookmarkboards); // 받아온 데이터 확인
+  //     } catch (error) {
+  //       console.error("데이터를 불러오지 못했습니다");
+  //     }
+  //   };
+
+  //   fetchData(); // 데이터를 받아오는 함수 호출
+  // }, []);
+  // 백엔드 get data ------------------------------------------------------
 
   return (
     <ProfileContainer>
@@ -30,11 +73,14 @@ const UseridProfile: React.FC = () => {
       <Profile>
         <Image src={Login} alt="프로필 이미지" width={160} height={160}></Image>
         <ProfileInfo>
-          <ProfileName>닉네임 (? String)</ProfileName>
+          {/* userinfo를 props로 받아온 데이터를 사용합니다. */}
+          <ProfileName>닉네임 : {userinfo.name}</ProfileName>
           <FollowInfo>
-            팔로잉 (데이터 값 : Number) 팔로워 (데이터 값 : Number)
+            팔로잉 {userinfo.follow} &nbsp; 팔로워 {userinfo.follower}
           </FollowInfo>
-          <ProfileDescription>자기소개</ProfileDescription>
+          <ProfileDescription>
+            자기소개 : {userinfo.introduce}
+          </ProfileDescription>
           <FollowButton>팔로우</FollowButton>
         </ProfileInfo>
       </Profile>
@@ -70,40 +116,34 @@ const UseridProfile: React.FC = () => {
           </StyledLink>
         </SelectContainer>
       </SelectBar>
-      <MainAlbum>
-        <MainAlbumContainer>
-          <Image src={Login} alt="메인 앨범" width={500} height={400}></Image>
-          <Like>💚 130</Like>
-          <AlbumInformation>
-            <Info1>앨범 이름</Info1>
-            <Info2>참여한 아티스트</Info2>
-            <Info3>발매일</Info3>
-            <Info4>장르</Info4>
-            <AlbumIntro>
-              <AlbumIntroTitle>앨범 소개</AlbumIntroTitle>
-              <AlbumIntroBody>
-                오늘은 2024년 6월 7일입니다 랩 신곡 업로드 가겠습니다..!
-              </AlbumIntroBody>
-            </AlbumIntro>
-          </AlbumInformation>
-        </MainAlbumContainer>
-      </MainAlbum>
-      <BodyAlbum>
-        <AlbumName>앨범</AlbumName>
-        <AlbumList>
-          {images.map((img, index) => (
-            <AlbumItem key={index}>
-              <Image
-                src={img}
-                alt={`바디 앨범 ${index + 1}`}
-                width={150}
-                height={150}
-              />
-              <AlbumTitle>{imagesName[index]}</AlbumTitle>
-            </AlbumItem>
-          ))}
-        </AlbumList>
-      </BodyAlbum>
+      {/* 라운지 큰 컨테이너 */}
+      <Boards>
+        <BoardsBoards>
+          <BoardsTitle>게시글</BoardsTitle>
+          <BoardsContainer>
+            {BoardData.slice(0, boardVisible).map((boards, index) => (
+              <Box key={index}>{boards.board}</Box>
+            ))}
+          </BoardsContainer>
+          <BoardsAdd>
+            <p onClick={AddBoard}>더보기</p>
+          </BoardsAdd>
+        </BoardsBoards>
+
+        <BoardsBoards style={{ marginTop: "50px" }}>
+          <BoardsTitle>북마크한 게시글</BoardsTitle>
+          <BoardsContainer>
+            {BookMarkBoardData.slice(0, bookmarkVisible).map(
+              (bookmarkboards, index) => (
+                <Box key={index}>{bookmarkboards.bookmarkboard}</Box>
+              )
+            )}
+          </BoardsContainer>
+          <BoardsAdd>
+            <p onClick={AddBookMark}>더보기</p>
+          </BoardsAdd>
+        </BoardsBoards>
+      </Boards>
     </ProfileContainer>
   );
 };
@@ -233,109 +273,60 @@ const StyledLink = styled(Link)`
 // -------------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------------
-// 메인 앨범
-const MainAlbum = styled.div`
+// 게시글을 감싸는 큰 컨테이너
+const Boards = styled.div`
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
   padding-top: 16px;
 `;
 
-// 앨범 이미지와 설명을 감싸는 컨테이너
-const MainAlbumContainer = styled.div`
-  display: flex;
-  position: relative;
-  align-items: center;
-  padding: 35px;
-  gap: 5%;
+// 박스 섹션을 감싸는 컨테이너
+const BoardsBoards = styled.div`
+  padding-bottom: 20px;
   border-bottom: 1px solid #ccc;
+`;
 
-  img {
-    border: none;
-    border-radius: 12px;
+// 박스 더보기
+const BoardsAdd = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  font-family: "esamanru Light";
+  font-size: 14px;
+
+  p {
+    cursor: pointer;
+    &:hover {
+      color: #1bb373;
+    }
   }
 `;
 
-// 좋아요
-const Like = styled.div`
-  position: absolute;
-  right: 0;
-  top: 0;
-  padding: 33px 40px;
-  font-size: 18px;
+// 섹션 타이틀
+const BoardsTitle = styled.h2`
+  font-size: 24px;
 `;
 
-// 앨범 설명 세로 정렬
-const AlbumInformation = styled.div`
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  gap: 10px;
+// 박스를 감싸는 컨테이너
+const BoardsContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  overflow: hidden;
 `;
 
-// 앨범 설명
-const Info1 = styled.div`
-  font-size: 32px;
-`;
-const Info2 = styled.div`
-  font-size: 28px;
-`;
-const Info3 = styled.div`
-  padding-top: 24px;
-  font-size: 23px;
-`;
-const Info4 = styled.div`
-  font-size: 23px;
-`;
+// 박스 스타일
+const Box = styled.div`
+  background-color: transparent;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  flex: 1 1 calc(50%); /* 5개의 박스가 한 줄에 들어가도록 설정 */
+  box-sizing: border-box;
+  transition: box-shadow 0.3s ease; /* 박스 섀도우의 부드러운 전환 효과 추가 */
 
-// 앨범 소개
-const AlbumIntro = styled.div`
-  padding-top: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  &:hover {
+    transition: 0.3s ease;
+    border-color: #1bb373;
+  }
 `;
-
-// 앨범 소개 제목
-const AlbumIntroTitle = styled.div`
-  font-size: 23px;
-`;
-
-// 앨범 소개 본문
-const AlbumIntroBody = styled.div`
-  font-size: 18px;
-`;
-// -------------------------------------------------------------------------------------------------------
-
-// -------------------------------------------------------------------------------------------------------
-// 바디 앨범
-const BodyAlbum = styled.div`
-  padding-right: calc(50% - 642px);
-  padding-left: calc(50% - 642px);
-  padding-top: 16px;
-`;
-// 바디 앨범 타이틀 [앨범]
-const AlbumName = styled.div`
-  padding: 10px 35px 0px 35px;
-`;
-// 앨범 목록
-const AlbumList = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 35px 0px 35px;
-`;
-
-// 앨범 설명
-const AlbumTitle = styled.div`
-  margin-top: 8px;
-  font-size: 14px;
-`;
-
-// 앨범 이미지
-const AlbumItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 0 0 2rem 0;
-`;
-// -------------------------------------------------------------------------------------------------------

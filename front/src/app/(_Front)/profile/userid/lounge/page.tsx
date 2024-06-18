@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 import Login from "../../../../../../public/images/login.png";
@@ -7,12 +7,42 @@ import banner from "../../../../../../public/images/banner.png";
 import threedot from "../../../../../../public/svgs/threedot.svg";
 import Link from "next/link";
 import { LikeIcon, CommentIcon } from "../../../../../app/components/icon";
-import { Userdata } from "../../userdata";
+import { Userdata, CommentData } from "../../userdata";
+import CommonButton from "@/app/components/button";
 
 // UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("lounge");
+  const [threedotopen, setThreeDotOpen] = useState(
+    Array(CommentData.length).fill(false)
+  ); // 배열로 상태 관리
+
   const userinfo = Userdata[0];
+
+  const threedotRef = useRef<HTMLDivElement | null>(null);
+
+  const handleThreeDotClick = (index: number) => {
+    const newThreeDotOpen = [...threedotopen];
+    newThreeDotOpen[index] = !newThreeDotOpen[index];
+    setThreeDotOpen(newThreeDotOpen);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        threedotRef.current &&
+        !threedotRef.current.contains(event.target as Node)
+      ) {
+        setThreeDotOpen(Array(CommentData.length).fill(false));
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <ProfileContainer>
@@ -23,14 +53,12 @@ const UseridProfile: React.FC = () => {
         <Image src={Login} alt="프로필 이미지" width={160} height={160}></Image>
         <ProfileInfo>
           {/* userinfo를 props로 받아온 데이터를 사용합니다. */}
-          <ProfileName>닉네임 : {userinfo.name}</ProfileName>
+          <ProfileName>{userinfo.name}</ProfileName>
           <FollowInfo>
             팔로잉 {userinfo.follow} &nbsp; 팔로워 {userinfo.follower}
           </FollowInfo>
-          <ProfileDescription>
-            자기소개 : {userinfo.introduce}
-          </ProfileDescription>
-          <FollowButton>팔로우</FollowButton>
+          <ProfileDescription>{userinfo.introduce}</ProfileDescription>
+          <CommonButton />
         </ProfileInfo>
       </Profile>
       <SelectBar>
@@ -52,72 +80,70 @@ const UseridProfile: React.FC = () => {
       {/* 라운지 큰 컨테이너 */}
       <Lounge>
         {/* 라운지 Border 컨테이너 */}
-        <LoungeContainer>
-          {/* 라운지 프로필 */}
-          <LoungeProfileInfo>
-            {/* 라운지 프로필 이미지 */}
-            <LoungeProfileImage>
-              <Image
-                src={Login}
-                alt="프로필 이미지"
-                width={50}
-                height={50}
-              ></Image>
-            </LoungeProfileImage>
-            {/* 라운지 프로필 닉네임 */}
-            <LoungeProfileName>코딩</LoungeProfileName>
-            {/* 라운지 프로필 업로드 시간 ~ 기간 */}
-            <LoungeProfileUploadTime>3일전</LoungeProfileUploadTime>
-            {/* 라운지 (공유하기, 신고하기 기능) */}
-            <LoungeProfileDetail>
-              {" "}
-              <Image
-                src={threedot}
-                alt="공유하기, 신고하기 기능"
-                width={24}
-                height={24}
-              ></Image>
-            </LoungeProfileDetail>
-          </LoungeProfileInfo>
-          {/* 라운지 글작성 컨테이너 */}
-          <LoungeWriteContainer>
-            {/* 라운지 글작성 */}
-            <LoungeWrite>
-              안녕하세요 여러분..! 유튜브를 개설한지 하루만에 구독자 1000명을
-              달성했습니다!! 앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
-              하겠습니다!! 앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
-              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
-              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
-              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
-              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
-              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
-              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
-              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
-              하겠습니다!!앞으로 더 좋은 모습으로 여러분들께 찾아뵙도록
-              하겠습니다!!
-            </LoungeWrite>
-            {/* 라운지 글작성 이미지 */}
-            <LoungeImage>
-              <Image
-                src={banner}
-                alt="프로필 이미지"
-                width={1280}
-                height={256}
-              ></Image>
-            </LoungeImage>
-          </LoungeWriteContainer>
-          {/* 라운지 좋아요 댓글 컨테이너 */}
-          <LoungeLikeCommentContainer>
-            <LoungeLike>
-              <LikeIcon />
-              24
-            </LoungeLike>
-            <LoungeComment>
-              <CommentIcon />
-              35
-            </LoungeComment>
-          </LoungeLikeCommentContainer>
-        </LoungeContainer>
+        {CommentData.map((commentdata, index) => (
+          <React.Fragment key={index}>
+            <LoungeContainer>
+              {/* 라운지 프로필 */}
+              <LoungeProfileInfo>
+                {/* 라운지 프로필 이미지 */}
+                <LoungeProfileImage>
+                  <Image
+                    src={Login}
+                    alt="프로필 이미지"
+                    width={50}
+                    height={50}
+                  ></Image>
+                </LoungeProfileImage>
+                {/* 라운지 프로필 닉네임 */}
+                <LoungeProfileName>코딩</LoungeProfileName>
+                {/* 라운지 프로필 업로드 시간 ~ 기간 */}
+                <LoungeProfileUploadTime>3일전</LoungeProfileUploadTime>
+                {/* 라운지 (공유하기, 신고하기 기능) */}
+                <LoungeProfileDetail
+                  ref={threedotRef}
+                  onClick={() => handleThreeDotClick(index)}
+                >
+                  <Image
+                    src={threedot}
+                    alt="공유하기, 신고하기 기능"
+                    width={24}
+                    height={24}
+                  />
+                  {threedotopen[index] && (
+                    <ThreeDotOpen>
+                      <label>공유</label>|<label>신고</label>
+                    </ThreeDotOpen>
+                  )}
+                </LoungeProfileDetail>
+              </LoungeProfileInfo>
+              {/* 라운지 글작성 컨테이너 */}
+              <LoungeWriteContainer>
+                {/* 라운지 글작성 */}
+                <LoungeWrite>{commentdata.write}</LoungeWrite>
+                {/* 라운지 글작성 이미지 */}
+                <LoungeImage>
+                  <Image
+                    src={banner}
+                    alt="프로필 이미지"
+                    width={1280}
+                    height={256}
+                  ></Image>
+                </LoungeImage>
+              </LoungeWriteContainer>
+              {/* 라운지 좋아요 댓글 컨테이너 */}
+              <LoungeLikeCommentContainer>
+                <LoungeLike>
+                  <LikeIcon />
+                  {commentdata.like}
+                </LoungeLike>
+                <LoungeComment>
+                  <CommentIcon />
+                  {commentdata.comment}
+                </LoungeComment>
+              </LoungeLikeCommentContainer>
+            </LoungeContainer>
+          </React.Fragment>
+        ))}
       </Lounge>
     </ProfileContainer>
   );
@@ -126,10 +152,7 @@ const UseridProfile: React.FC = () => {
 export default UseridProfile;
 
 // 마이페이지 전체를 감싸는 컨테이너
-const ProfileContainer = styled.div`
-  padding-top: 60px;
-  padding-left: 88px;
-`;
+const ProfileContainer = styled.div``;
 
 // 배너
 const Banner = styled.div`
@@ -255,13 +278,14 @@ const StyledLink = styled(Link)`
 const Lounge = styled.div`
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
-  padding-top: 16px;
+  padding-top: 32px;
 `;
 
 // 라운지 Border 컨테이너
 const LoungeContainer = styled.div`
   border: 1px solid #ccc;
   border-radius: 12px;
+  margin: 0 0 16px 0;
 `;
 
 // -------------------------------------------------------------------------------------------------------
@@ -294,12 +318,15 @@ const LoungeProfileDetail = styled.div`
   display: flex;
   align-items: center;
   margin-left: auto; /* 오른쪽 끝으로 이동 */
+  position: relative;
   cursor: pointer;
 
-  &:hover {
-    border: 1px;
-    border-radius: 7px;
-    background-color: #e7e7e7;
+  img {
+    &:hover {
+      border: 1px;
+      border-radius: 7px;
+      background-color: #e7e7e7;
+    }
   }
 `;
 // -------------------------------------------------------------------------------------------------------
@@ -346,4 +373,29 @@ const LoungeComment = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+`;
+
+// 쓰리닷 오픈 시
+const ThreeDotOpen = styled.div`
+  position: absolute;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 15px;
+  bottom: -18px;
+  left: 50px;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  width: 100px;
+
+  label {
+    padding: 4px 8px;
+    border-radius: 12px;
+    cursor: pointer;
+    &:hover {
+      background-color: #f0f0f0;
+    }
+  }
 `;
