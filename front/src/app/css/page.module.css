@@ -1,24 +1,23 @@
 /* 공통 */
 .container {
+  width: 100%;
   background-color: #f7f7f7;
-  display: flex;
-  flex-direction: column;
   /* border: 3px solid blue; */
 }
 .divided__section {
   margin-bottom: 40px;
-  border: 1px solid red;
+  box-sizing: border-box;
+  /* border: 1px solid red; */
 }
 .divided__section:last-child {
   margin-bottom: 0;
 }
-.section__title{
-  border: 1px solid green;
+.section__title {
+  /* border: 1px solid green; */
 }
 
-
 /* 최신 음악 */
-.new__section{
+.new__section {
   display: flex;
   align-items: center;
   gap: 50px;
@@ -38,14 +37,11 @@
 } */
 
 .music__section__left {
-  width: 40%;
+  width: 50%;
 }
 .music__section__right {
-  width: 30%;
-
+  width: 40%;
 }
-
-
 
 /* 커뮤니티 부분 */
 .community__section {
@@ -56,57 +52,3 @@
   justify-content: space-between;
   /* border: 1px solid red; */
 }
-
-
-/* 
-.new__section,
-.music__section__title,
-.music__section,
-.community__section {
-  margin-bottom: 20px;
-}
-
-.music__section {
-  display: flex;
-  justify-content: space-between;
-}
-
-.music__section__left,
-.music__section__right {
-  flex: 1;
-  margin: 0 10px;
-}
-
-.community__section {
-  display: flex;
-  justify-content: space-between;
-}
-
-@media (max-width: 768px) {
-  .music__section,
-  .community__section {
-    flex-direction: column;
-  }
-
-  .music__section__left,
-  .music__section__right {
-    margin: 10px 0;
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: 10px;
-  }
-
-  .music__section__title h2,
-  .music__section__title h6 {
-    text-align: center;
-  }
-
-  .new__section,
-  .music__section__title,
-  .community__section {
-    margin-bottom: 10px;
-  }
-} */

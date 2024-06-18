@@ -1,4 +1,5 @@
 .header__container {
+  background-color: var(--text-color); /*다크모드*/
   background-color: white;
   height: 60px;
   left: 0;
@@ -10,7 +11,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 2px solid rgb(194, 190, 190);
+
+  color: black;
 }
 
 /* 왼쪽 */
@@ -29,23 +32,18 @@
 .menu__bar:hover {
 }
 .menu__bar:focus {
-  outline: none;
 }
 .logo {
   margin-left: 15px;
-}
-.logo span {
-  color: black;
-  text-decoration: none;
+  font-size: 24px;
 }
 
 /* 가운데(검색창) */
 .search__bar {
   display: flex;
   align-items: center;
-  border: 1px solid black;
-  border-radius: 24px;
-  background-color: rgb(239, 243, 244);
+  border: 3px solid rgb(171, 171, 171);
+  border-radius: 18px;
   margin: 3px 0px;
   padding: 4px;
 }
@@ -58,12 +56,43 @@
   outline: none;
   border: none;
 }
+.search__btn {
+  background-color: transparent;
+  border-radius: 20px;
+  border: none;
+}
+.search__btn:hover {
+  background-color: rgb(221, 221, 221);
+}
 
 /* 오른쪽 부분 */
-.right__menu {
+.right__section {
   display: flex;
   flex-direction: row;
   gap: 20px;
-  /* border: 1px solid red; */
+  margin-right: 30px;
   align-items: center;
+  /* border: 1px solid red; */
+}
+
+/* 음원 업로드 */
+.album__upload {
+  font-size: 13px;
+  line-height: 17px;
+  padding: 7px 14px;
+
+  border: 2px solid rgb(194, 190, 190);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.album__upload:hover {
+  background-color: rgb(226, 226, 226);
+}
+
+.divided__line {
+  border-right: 2px solid rgb(194, 190, 190);
+  width: 10px;
+  height: 26px;
 }
