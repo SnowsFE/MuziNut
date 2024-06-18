@@ -1,9 +1,6 @@
 "use client";
 import styled, { ThemeProvider, createGlobalStyle } from "styled-components";
 import { useState, useEffect } from "react";
-import Image from "next/image";
-import light_Mode from "@/../public/svgs/light_mode.svg";
-import dark_Mode from "@/../public/svgs/dark_mode.svg";
 
 const DarkMode: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -46,12 +43,7 @@ const DarkMode: React.FC = () => {
       <GlobalStyle />
       {isMounted && (
         <DarkModeButton onClick={toggleDarkMode}>
-          <Image
-            src={darkMode ? dark_Mode : light_Mode}
-            alt="Dark Mode Toggle"
-            width={30}
-            height={30}
-          />
+          {darkMode ? "🌙" : "☀️"}
         </DarkModeButton>
       )}
     </ThemeProvider>
@@ -62,6 +54,9 @@ export default DarkMode;
 
 // 다크 모드 버튼
 const DarkModeButton = styled.div`
+  width: 24px;
+  height: 24px;
+  padding: 16px;
   cursor: pointer;
 `;
 

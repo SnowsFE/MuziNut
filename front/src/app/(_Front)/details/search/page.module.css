@@ -1,18 +1,8 @@
 .container {
-  border: 1px solid orange;
-  width: 80%;
   display: flex;
   flex-direction: column;
   gap: 60px;
-
-  margin: 0 auto; /*가운데 정렬*/
   /* padding: 50px; */
-}
-
-/* artist 컨테이너 */
-.artist__conatiner {
-  width: 100%;
-  border: 1px solid black;
 }
 
 /* 음악 정보 */
@@ -27,12 +17,12 @@
 }
 
 .info__text a {
-  color: green;
-  text-decoration: none;
+    color: green;
+    text-decoration: none;
 }
 .info__text a:hover {
-  text-decoration: double;
-  color: black;
+    text-decoration:double;
+    color: black;
 }
 
 .artist__list,
@@ -43,24 +33,5 @@
 }
 
 .album__list {
-  justify-content: space-around;
-  align-items: center;
-}
-
-/* 앨범 선택재생/선택재생 부분 */
-.play__option__wrapper {
-  margin-top: 25px;
-}
-
-.play__option {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-}
-
-.play__option button {
-  border: none;
-  background-color: aliceblue;
-  border-radius: 18px;
-  padding: 0 10px 0;
+    justify-content: space-around;
 }

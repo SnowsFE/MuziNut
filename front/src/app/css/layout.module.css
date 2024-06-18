@@ -12,7 +12,7 @@
 .main__page {
   padding: 12px 42px 0 48px;
   margin-top: 70px;
-  /* border: 1px solid black; */
+  border: 1px solid black;
 }
 
 .side__open {
