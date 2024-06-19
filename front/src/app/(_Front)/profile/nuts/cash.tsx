@@ -23,6 +23,30 @@ const cashData: CashDataProps["data"] = [
     description: "후원",
     message: "감사합니다!",
   },
+  {
+    date: "2024-06-18 12:34",
+    amount: 100,
+    description: "후원",
+    message: "감사합니다!",
+  },
+  {
+    date: "2024-06-18 12:34",
+    amount: 100,
+    description: "후원",
+    message: "감사합니다!",
+  },
+  {
+    date: "2024-06-18 12:34",
+    amount: 100,
+    description: "후원",
+    message: "감사합니다!",
+  },
+  {
+    date: "2024-06-18 12:34",
+    amount: 100,
+    description: "후원",
+    message: "감사합니다!",
+  },
 ];
 
 // 사용 내역 컴포넌트
@@ -30,7 +54,7 @@ const Cash: React.FC<{ data: CashDataProps["data"] }> = ({ data }) => {
   return (
     <div>
       {data.length === 0 ? (
-        <EmptyMessage>사용내역이 없습니다.</EmptyMessage>
+        <EmptyMessage>사용내역이 없습니다</EmptyMessage>
       ) : (
         <div>
           <Labels>
@@ -42,7 +66,7 @@ const Cash: React.FC<{ data: CashDataProps["data"] }> = ({ data }) => {
           {data.map((item, index) => (
             <Values key={index}>
               <Value>{item.date}</Value>
-              <Value>{item.amount}</Value>
+              <Value>{item.amount}넛츠</Value>
               <Value>{item.description}</Value>
               <Value>{item.message}</Value>
             </Values>
@@ -54,7 +78,7 @@ const Cash: React.FC<{ data: CashDataProps["data"] }> = ({ data }) => {
 };
 
 interface CashPurchaseProps {
-  data: {
+  purchasedata: {
     date: string;
     method: string;
     amount: number;
@@ -63,7 +87,51 @@ interface CashPurchaseProps {
   // 충전일시 충전방식 충전수량 결제금액
 }
 
-export { Cash, cashData };
+const purchaseData: CashPurchaseProps["purchasedata"] = [
+  {
+    date: "2024-06-18 12:34",
+    method: "카카오페이 충전",
+    amount: 100,
+    charge: 10000,
+  },
+  {
+    date: "2024-06-18 12:34",
+    method: "카카오페이 충전",
+    amount: 100,
+    charge: 10000,
+  },
+];
+
+const PurChaseCash: React.FC<{
+  purchasedata: CashPurchaseProps["purchasedata"];
+}> = ({ purchasedata }) => {
+  return (
+    <div>
+      {purchasedata.length === 0 ? (
+        <EmptyMessage>구매내역이 없습니다</EmptyMessage>
+      ) : (
+        <div>
+          <Labels>
+            <Label>충전일시</Label>
+            <Label>충전방식</Label>
+            <Label>충전수량</Label>
+            <Label>결제금액</Label>
+          </Labels>
+          {purchasedata.map((item, index) => (
+            <Values key={index}>
+              <Value>{item.date}</Value>
+              <Value>{item.method}</Value>
+              <Value>{item.amount}넛츠</Value>
+              <Value>{item.charge}원</Value>
+            </Values>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export { Cash, cashData, PurChaseCash, purchaseData };
 
 const Labels = styled.div`
   display: flex;
@@ -73,6 +141,7 @@ const Labels = styled.div`
   border-top: 1px solid #ccc;
   border-left: 1px solid #ccc;
   border-right: 1px solid #ccc;
+  color: black;
 `;
 
 const Values = styled.div`

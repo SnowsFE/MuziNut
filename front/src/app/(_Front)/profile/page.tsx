@@ -35,7 +35,6 @@ const UseridProfile: React.FC = () => {
             팔로잉 (데이터 값 : Number) 팔로워 (데이터 값 : Number)
           </FollowInfo>
           <ProfileDescription>자기소개</ProfileDescription>
-          <FollowButton>팔로우</FollowButton>
         </ProfileInfo>
       </Profile>
       <SelectBar>
@@ -166,24 +165,6 @@ const ProfileDescription = styled.span`
   font-size: 14px;
   margin-top: 8px;
 `;
-
-// 프로필 정보 [팔로우 버튼]
-const FollowButton = styled.button`
-  background-color: white;
-  border: 1px solid #1bb373;
-  border-radius: 50px;
-  padding: 10px;
-  margin-top: 16px;
-
-  &:hover {
-    transform: scale(1.05);
-    color: black;
-    cursor: pointer;
-  }
-
-  transition: transform 0.3s ease; /* 스케일 변화에 대한 부드러운 전환 효과 추가 */
-`;
-
 // -------------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------------

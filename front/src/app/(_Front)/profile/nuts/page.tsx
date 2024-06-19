@@ -8,7 +8,7 @@ import nut from "../../../../../public/images/Nuts.png";
 import Link from "next/link";
 import { Userdata } from "../userdata";
 import { VoteBox } from "@/app/components/icon";
-import { Cash, cashData } from "./cash";
+import { Cash, cashData, PurChaseCash, purchaseData } from "./cash";
 
 // UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
@@ -37,7 +37,6 @@ const UseridProfile: React.FC = () => {
           <ProfileDescription>
             자기소개 : {userinfo.introduce}
           </ProfileDescription>
-          <FollowButton>팔로우</FollowButton>
         </ProfileInfo>
       </Profile>
       <SelectBar>
@@ -125,8 +124,8 @@ const UseridProfile: React.FC = () => {
               </StyledLink>
             </ul>
             {subTab === "#cash" && <Cash data={cashData} />}
-            {subTap === "#cash_purchase" && (
-              <CashPurchase data={cashPurchaseData} />
+            {subTab === "#cash_purchase" && (
+              <PurChaseCash purchasedata={purchaseData} />
             )}
           </NutsReceipt>
         </NutsBodyContainer>
@@ -144,7 +143,6 @@ const ProfileContainer = styled.div``;
 const Banner = styled.div`
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
-  height: 100%;
 
   img {
     border-radius: 20px;
@@ -192,23 +190,6 @@ const FollowInfo = styled.span`
 const ProfileDescription = styled.span`
   font-size: 14px;
   margin-top: 8px;
-`;
-
-// 프로필 정보 [팔로우 버튼]
-const FollowButton = styled.button`
-  background-color: white;
-  border: 1px solid #1bb373;
-  border-radius: 50px;
-  padding: 10px;
-  margin-top: 16px;
-
-  &:hover {
-    transform: scale(1.05);
-    color: black;
-    cursor: pointer;
-  }
-
-  transition: transform 0.3s ease; /* 스케일 변화에 대한 부드러운 전환 효과 추가 */
 `;
 
 // -------------------------------------------------------------------------------------------------------
@@ -265,6 +246,7 @@ const NutsContainer = styled.div`
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
   padding-top: 16px;
+  padding-bottom: 24px;
 `;
 
 // 넛츠 페이지 제목
@@ -300,7 +282,8 @@ const Nuts = styled.div`
   padding: 15px 20px;
   align-items: center;
   gap: 15px;
-  box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.06),
+    rgba(0, 0, 0, 0.05) 0px 2px 5px 0px, rgba(0, 0, 0, 0.05) 0px 0px 2px 0px;
 `;
 
 // 넛츠 이미지
@@ -354,12 +337,13 @@ const Votes = styled.div`
   padding: 15px 20px;
   align-items: center;
   gap: 15px;
-  box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.06),
+    rgba(0, 0, 0, 0.05) 0px 2px 5px 0px, rgba(0, 0, 0, 0.05) 0px 0px 2px 0px;
 `;
 
 // 투표권 이미지
 const VotesImage = styled.div`
-  margin-bottom: 7px;
+  margin-bottom: 3px;
 `;
 
 // 투표권 충전하기
@@ -394,7 +378,7 @@ const MyVotes = styled.div`
 
 // 넛츠 영수증 [사용내역, 구매내역 + 세부사항]
 const NutsReceipt = styled.div`
-  padding: 4px 4px;
+  padding: 4px 4px 0 4px;
   font-size: 18px;
 
   ul {
