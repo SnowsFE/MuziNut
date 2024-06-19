@@ -8,7 +8,7 @@ import threedot from "../../../../../../public/svgs/threedot.svg";
 import Link from "next/link";
 import { LikeIcon, CommentIcon } from "../../../../../app/components/icon";
 import { Userdata, CommentData } from "../../userdata";
-import CommonButton from "@/app/components/button";
+import FollowButton from "@/app/components/button";
 
 // UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
@@ -58,7 +58,7 @@ const UseridProfile: React.FC = () => {
             팔로잉 {userinfo.follow} &nbsp; 팔로워 {userinfo.follower}
           </FollowInfo>
           <ProfileDescription>{userinfo.introduce}</ProfileDescription>
-          <CommonButton />
+          <FollowButton />
         </ProfileInfo>
       </Profile>
       <SelectBar>
@@ -208,25 +208,6 @@ const ProfileDescription = styled.span`
   margin-top: 8px;
 `;
 
-// 프로필 정보 [팔로우 버튼]
-const FollowButton = styled.button`
-  background-color: white;
-  border: 1px solid #1bb373;
-  border-radius: 50px;
-  padding: 10px;
-  margin-top: 16px;
-
-  &:hover {
-    transform: scale(1.05);
-    color: black;
-    cursor: pointer;
-  }
-
-  transition: transform 0.3s ease; /* 스케일 변화에 대한 부드러운 전환 효과 추가 */
-`;
-
-// -------------------------------------------------------------------------------------------------------
-
 // -------------------------------------------------------------------------------------------------------
 // 메인, 라운지 선택바
 const SelectBar = styled.div`
@@ -278,7 +259,7 @@ const StyledLink = styled(Link)`
 const Lounge = styled.div`
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
-  padding-top: 32px;
+  padding-top: 24px;
 `;
 
 // 라운지 Border 컨테이너

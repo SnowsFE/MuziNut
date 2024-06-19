@@ -74,13 +74,11 @@ const UseridProfile: React.FC = () => {
         <Image src={Login} alt="프로필 이미지" width={160} height={160}></Image>
         <ProfileInfo>
           {/* userinfo를 props로 받아온 데이터를 사용합니다. */}
-          <ProfileName>닉네임 : {userinfo.name}</ProfileName>
+          <ProfileName>{userinfo.name}</ProfileName>
           <FollowInfo>
             팔로잉 {userinfo.follow} &nbsp; 팔로워 {userinfo.follower}
           </FollowInfo>
-          <ProfileDescription>
-            자기소개 : {userinfo.introduce}
-          </ProfileDescription>
+          <ProfileDescription>{userinfo.introduce}</ProfileDescription>
         </ProfileInfo>
       </Profile>
       <SelectBar>

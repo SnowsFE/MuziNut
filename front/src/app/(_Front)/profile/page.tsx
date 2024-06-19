@@ -5,9 +5,11 @@ import Image from "next/image";
 import Login from "../../../../public/images/login.png";
 import banner from "../../../../public/images/banner.png";
 import Link from "next/link";
+import { Userdata } from "./userdata";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("main");
+  const userinfo = Userdata[0];
   const images = [Login, Login, Login, Login, Login];
   const imagesName = [
     "앨범 제목 | 발매일",
@@ -30,11 +32,11 @@ const UseridProfile: React.FC = () => {
       <Profile>
         <Image src={Login} alt="프로필 이미지" width={160} height={160}></Image>
         <ProfileInfo>
-          <ProfileName>닉네임 (? String)</ProfileName>
+          <ProfileName>{userinfo.name}</ProfileName>
           <FollowInfo>
-            팔로잉 (데이터 값 : Number) 팔로워 (데이터 값 : Number)
+            팔로잉 {userinfo.follow} &nbsp; 팔로워 {userinfo.follower}
           </FollowInfo>
-          <ProfileDescription>자기소개</ProfileDescription>
+          <ProfileDescription>{userinfo.introduce}</ProfileDescription>
         </ProfileInfo>
       </Profile>
       <SelectBar>

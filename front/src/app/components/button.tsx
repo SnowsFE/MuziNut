@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-const CommonButton: React.FC = () => {
+const FollowButton: React.FC = () => {
   const [button, setButton] = useState(true);
 
   const handleClick = () => {
@@ -19,7 +19,7 @@ const CommonButton: React.FC = () => {
   );
 };
 
-export default CommonButton;
+export default FollowButton;
 
 const FollowBefore = styled.button`
   background-color: white;

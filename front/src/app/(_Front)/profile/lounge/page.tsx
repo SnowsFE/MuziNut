@@ -8,7 +8,6 @@ import threedot from "../../../../../public/svgs/threedot.svg";
 import Link from "next/link";
 import { LikeIcon, CommentIcon } from "../../../../app/components/icon";
 import { Userdata, CommentData } from "../userdata";
-import CommonButton from "@/app/components/button";
 
 // UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
@@ -58,7 +57,6 @@ const UseridProfile: React.FC = () => {
             팔로잉 {userinfo.follow} &nbsp; 팔로워 {userinfo.follower}
           </FollowInfo>
           <ProfileDescription>{userinfo.introduce}</ProfileDescription>
-          <CommonButton />
         </ProfileInfo>
       </Profile>
       <SelectBar>
@@ -277,7 +275,7 @@ const StyledLink = styled(Link)`
 const Lounge = styled.div`
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
-  padding-top: 32px;
+  padding-top: 24px;
 `;
 
 // 라운지 Border 컨테이너
