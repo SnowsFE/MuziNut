@@ -54,9 +54,7 @@ export default function Sidebar({ isSidebarOpen }: SidebarProps) {
                 {isSidebarOpen && (
                   <ul>
                     <li>
-                      <a href="/chart/music">
                         <span>차트</span>
-                      </a>
                     </li>
                     <li>
                       <a href="/chart/music">
@@ -76,7 +74,7 @@ export default function Sidebar({ isSidebarOpen }: SidebarProps) {
             {/* 커뮤니티 부분 */}
             <li>
               <div className={styles.service__btn}>
-                <a href="#" className={styles.wrap__icon}>
+                <a href="/community" className={styles.wrap__icon}>
                   <Image
                     src="/svgs/community.svg"
                     alt="Services"
@@ -88,9 +86,7 @@ export default function Sidebar({ isSidebarOpen }: SidebarProps) {
                 {isSidebarOpen && (
                   <ul>
                     <li>
-                      <a href="#">
                         <span>커뮤니티</span>
-                      </a>
                     </li>
                     <li>
                       <a href="#">
@@ -120,7 +116,7 @@ export default function Sidebar({ isSidebarOpen }: SidebarProps) {
             {/* 마이픽 부분 */}
             <li>
               <div className={styles.service__btn}>
-                <a href="#" className={styles.wrap__icon}>
+                <a href="/mypick/bestpick" className={styles.wrap__icon}>
                   <Image
                     src="/svgs/mypick.svg"
                     alt="Services"
@@ -132,17 +128,15 @@ export default function Sidebar({ isSidebarOpen }: SidebarProps) {
                 {isSidebarOpen && (
                   <ul>
                     <li>
-                      <a href="#">
                         <span>마이픽</span>
-                      </a>
                     </li>
                     <li>
-                      <a href="#">
+                      <a href="/mypick/bestpick">
                         <span>응원하기</span>
                       </a>
                     </li>
                     <li>
-                      <a href="#">
+                      <a href="/mypick/vote">
                         <span>후원하기</span>
                       </a>
                     </li>
@@ -210,7 +204,7 @@ export default function Sidebar({ isSidebarOpen }: SidebarProps) {
             {/* 이벤트 */}
             <li>
               <div className={styles.service__btn}>
-                <a href="#" className={styles.wrap__icon}>
+                <a href="/event" className={styles.wrap__icon}>
                   <Image
                     src="/svgs/event.svg"
                     alt="Services"
@@ -222,17 +216,15 @@ export default function Sidebar({ isSidebarOpen }: SidebarProps) {
                 {isSidebarOpen && (
                   <ul>
                     <li>
-                      <a href="#">
                         <span>이벤트</span>
-                      </a>
                     </li>
                     <li>
-                      <a href="#">
+                      <a href="/event-notice">
                         <span>공지사항</span>
                       </a>
                     </li>
                     <li>
-                      <a href="#">
+                      <a href="/event">
                         <span>이벤트</span>
                       </a>
                     </li>

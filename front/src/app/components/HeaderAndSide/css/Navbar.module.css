@@ -78,9 +78,9 @@
 /* 음원 업로드 */
 .album__upload {
   font-size: 13px;
-  line-height: 17px;
+  line-height: 3px;
   padding: 7px 14px;
-
+  
   border: 2px solid rgb(194, 190, 190);
   border-radius: 18px;
   display: flex;

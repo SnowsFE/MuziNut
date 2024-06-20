@@ -4,13 +4,12 @@ import styles from "../HeaderAndSide/css/Navbar.module.css";
 import Image from "next/image";
 import search from "@/../public/svgs/search.svg";
 import downarrow from "@/../public/svgs/downarrow.svg";
-import addalbum from "@/../public/images/addMusic.png";
+import addalbum from "@/../public/svgs/addalbum.svg";
 import chat from "@/../public/svgs/chat.svg";
 import alarm from "@/../public/svgs/alarm.svg";
 import menuBar from "@/../public/svgs/menu.svg";
 import profile from "@/../public/svgs/profile.svg";
 import DarkMode from "../darkmode/globalstyle";
-import light_mode from "@/../public/svgs/light_mode.svg";
 
 interface NavbarProps {
   toggleSidebar: () => void;
@@ -55,7 +54,7 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
       <div className={styles.right__section}>
         <div className={styles.album__upload}>
           <a href="/submit/album">
-            <Image src={addalbum} alt="addalbum" width={24} height={24} />
+            <Image src={addalbum} alt="addalbum" width={40} height={40} />
           </a>
           <span>업로드</span>
         </div>
