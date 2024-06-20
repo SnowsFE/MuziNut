@@ -74,14 +74,11 @@ const UseridProfile: React.FC = () => {
         <Image src={Login} alt="프로필 이미지" width={160} height={160}></Image>
         <ProfileInfo>
           {/* userinfo를 props로 받아온 데이터를 사용합니다. */}
-          <ProfileName>닉네임 : {userinfo.name}</ProfileName>
+          <ProfileName>{userinfo.name}</ProfileName>
           <FollowInfo>
             팔로잉 {userinfo.follow} &nbsp; 팔로워 {userinfo.follower}
           </FollowInfo>
-          <ProfileDescription>
-            자기소개 : {userinfo.introduce}
-          </ProfileDescription>
-          <FollowButton>팔로우</FollowButton>
+          <ProfileDescription>{userinfo.introduce}</ProfileDescription>
         </ProfileInfo>
       </Profile>
       <SelectBar>
@@ -207,23 +204,6 @@ const ProfileDescription = styled.span`
   margin-top: 8px;
 `;
 
-// 프로필 정보 [팔로우 버튼]
-const FollowButton = styled.button`
-  background-color: white;
-  border: 1px solid #1bb373;
-  border-radius: 50px;
-  padding: 10px;
-  margin-top: 16px;
-
-  &:hover {
-    transform: scale(1.05);
-    color: black;
-    cursor: pointer;
-  }
-
-  transition: transform 0.3s ease; /* 스케일 변화에 대한 부드러운 전환 효과 추가 */
-`;
-
 // -------------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------------
@@ -312,7 +292,6 @@ const BoardsContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 20px;
-  overflow: hidden;
 `;
 
 // 박스 스타일
@@ -321,9 +300,13 @@ const Box = styled.div`
   border: 1px solid #ccc;
   border-radius: 10px;
   padding: 20px;
-  flex: 1 1 calc(50%); /* 5개의 박스가 한 줄에 들어가도록 설정 */
   box-sizing: border-box;
-  transition: box-shadow 0.3s ease; /* 박스 섀도우의 부드러운 전환 효과 추가 */
+  transition: box-shadow 0.3s ease;
+  width: 100%; /* Ensure the box takes up the full width of its grid cell */
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   &:hover {
     transition: 0.3s ease;

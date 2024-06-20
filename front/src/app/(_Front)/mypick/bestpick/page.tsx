@@ -7,9 +7,9 @@ import {
   GoldMedal,
   SilverMedal,
   BronzeMedal,
-} from "../../../../app/components/icon";
+} from "../../../components/icon/icon";
 import { bestArtists, commentData, commentNumber } from "../bestartist";
-import { LikeIcon } from "../../../../app/components/icon";
+import { LikeIcon } from "../../../components/icon/icon";
 
 interface ArtistProps {
   artist: {
