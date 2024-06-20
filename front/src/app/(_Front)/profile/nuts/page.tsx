@@ -7,8 +7,9 @@ import banner from "../../../../../public/images/banner.png";
 import nut from "../../../../../public/images/Nuts.png";
 import Link from "next/link";
 import { Userdata } from "../userdata";
-import { VoteBox } from "@/app/components/icon";
+import { VoteBox } from "../../../components/icon/icon";
 import { Cash, cashData, PurChaseCash, purchaseData } from "./cash";
+import Charge from "./charge";
 
 // UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
@@ -20,6 +21,20 @@ const UseridProfile: React.FC = () => {
     // 페이지가 로드될 때 초기 하위 탭 설정
     setSubTab("#cash");
   }, []); // 빈 배열을 전달하여 한 번만 실행되도록 설정
+
+  // 팝업 처리 ------------------------------------------
+  const [chargeOpen, setChargeOpen] = useState(false);
+
+  // 팝업 열기 함수
+  const handleOpenCharge = () => {
+    setChargeOpen(true);
+  };
+
+  // 팝업 닫기 함수
+  const handleCloseCharge = () => {
+    setChargeOpen(false);
+  };
+  // 팝업 처리 ------------------------------------------
 
   return (
     <ProfileContainer>
@@ -82,9 +97,11 @@ const UseridProfile: React.FC = () => {
               <MyNuts>
                 보유중인 넛츠 &nbsp;<p>n개</p>
               </MyNuts>
-              <NutsCharge>
+              <NutsCharge onClick={handleOpenCharge}>
                 <p>충전하기</p>
               </NutsCharge>
+              {/* 충전 팝업 */}
+              {chargeOpen && <Charge onClose={handleCloseCharge} />}
             </Nuts>
             <Votes>
               <VotesImage>
@@ -96,7 +113,7 @@ const UseridProfile: React.FC = () => {
                 보유중인 투표권 &nbsp;<p>n개</p>
               </MyVotes>
               <VotesCharge>
-                <p>충전하기</p>
+                <p>구매하기</p>
               </VotesCharge>
             </Votes>
           </NutsVotes>
@@ -111,6 +128,7 @@ const UseridProfile: React.FC = () => {
                   <li>사용 내역</li>
                 </SelectItem>
               </StyledLink>
+
               <StyledLink
                 href={"/profile/nuts/#cash_purchase"}
                 onClick={() => setSubTab("#cash_purchase")}

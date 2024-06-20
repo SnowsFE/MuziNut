@@ -6,9 +6,9 @@ import Login from "../../../../../../public/images/login.png";
 import banner from "../../../../../../public/images/banner.png";
 import threedot from "../../../../../../public/svgs/threedot.svg";
 import Link from "next/link";
-import { LikeIcon, CommentIcon } from "../../../../../app/components/icon";
+import { LikeIcon, CommentIcon } from "../../../../components/icon/icon";
 import { Userdata, CommentData } from "../../userdata";
-import FollowButton from "@/app/components/button";
+import FollowButton from "../../../../components/button/button";
 
 // UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {

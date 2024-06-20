@@ -75,7 +75,7 @@ interface BoardsData {
 
 export const BoardData: BoardsData[] = [
   {
-    board: "안녕",
+    board: "다리 짧은 민서에 대해서 신고합니다",
   },
   {
     board: "항녕",
@@ -144,7 +144,7 @@ interface BookMark {
 
 export const BookMarkBoardData: BookMark[] = [
   {
-    bookmarkboard: "안녕",
+    bookmarkboard: "배터리 1% 남았잖아 보일러 고장났잖아",
   },
   {
     bookmarkboard: "안녕2",

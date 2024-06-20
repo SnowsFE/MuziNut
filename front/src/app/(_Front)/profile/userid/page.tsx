@@ -5,9 +5,12 @@ import Image from "next/image";
 import Login from "../../../../../public/images/login.png";
 import banner from "../../../../../public/images/banner.png";
 import Link from "next/link";
+import { Userdata } from "../userdata";
+import FollowButton from "@/app/components/button/button";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("main");
+  const userinfo = Userdata[0];
   const images = [Login, Login, Login, Login, Login];
   const imagesName = [
     "앨범 제목 | 발매일",
@@ -30,12 +33,13 @@ const UseridProfile: React.FC = () => {
       <Profile>
         <Image src={Login} alt="프로필 이미지" width={160} height={160}></Image>
         <ProfileInfo>
-          <ProfileName>닉네임 (? String)</ProfileName>
+          {/* userinfo를 props로 받아온 데이터를 사용합니다. */}
+          <ProfileName>{userinfo.name}</ProfileName>
           <FollowInfo>
-            팔로잉 (데이터 값 : Number) 팔로워 (데이터 값 : Number)
+            팔로잉 {userinfo.follow} &nbsp; 팔로워 {userinfo.follower}
           </FollowInfo>
-          <ProfileDescription>자기소개</ProfileDescription>
-          <FollowButton>팔로우</FollowButton>
+          <ProfileDescription>{userinfo.introduce}</ProfileDescription>
+          <FollowButton />
         </ProfileInfo>
       </Profile>
       <SelectBar>
@@ -151,23 +155,6 @@ const ProfileDescription = styled.span`
   margin-top: 8px;
 `;
 
-// 프로필 정보 [팔로우 버튼]
-const FollowButton = styled.button`
-  background-color: white;
-  border: 1px solid #1bb373;
-  border-radius: 50px;
-  padding: 10px;
-  margin-top: 16px;
-
-  &:hover {
-    transform: scale(1.05);
-    color: black;
-    cursor: pointer;
-  }
-
-  transition: transform 0.3s ease; /* 스케일 변화에 대한 부드러운 전환 효과 추가 */
-`;
-
 // -------------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------------
@@ -230,7 +217,7 @@ const MainAlbumContainer = styled.div`
   display: flex;
   position: relative;
   align-items: center;
-  padding: 35px;
+  padding: 20px 35px 35px 35px;
   gap: 5%;
   border-bottom: 1px solid #ccc;
 

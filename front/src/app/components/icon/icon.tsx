@@ -237,6 +237,38 @@ export const VoteBox = () => {
   );
 };
 
+export const DownArrow = () => {
+  return (
+    <Arrow>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        height="24px"
+        viewBox="0 -960 960 960"
+        width="24px"
+        fill="#000000"
+      >
+        <path d="M480-336.35 232.35-584 296-647.65l184 184 184-184L727.65-584 480-336.35Z" />
+      </svg>
+    </Arrow>
+  );
+};
+
+export const UpArrow = () => {
+  return (
+    <Arrow2>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        height="24px"
+        viewBox="0 -960 960 960"
+        width="24px"
+        fill="#000000"
+      >
+        <path d="M480-336.35 232.35-584 296-647.65l184 184 184-184L727.65-584 480-336.35Z" />
+      </svg>
+    </Arrow2>
+  );
+};
+
 const Like = styled.div``;
 
 const Comment = styled.div`
@@ -280,4 +312,14 @@ const Vote = styled.div`
   background-color: white;
   border: 1px solid green;
   border-radius: 100px;
+`;
+
+const Arrow = styled.div`
+  cursor: pointer;
+`;
+
+const Arrow2 = styled.div`
+  margin-bottom: 10px;
+  cursor: pointer;
+  transform: rotate(180deg);
 `;

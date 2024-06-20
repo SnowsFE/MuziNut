@@ -228,7 +228,7 @@ const MainAlbumContainer = styled.div`
   display: flex;
   position: relative;
   align-items: center;
-  padding: 35px;
+  padding: 20px 35px 35px 35px;
   gap: 5%;
   border-bottom: 1px solid #ccc;
 
