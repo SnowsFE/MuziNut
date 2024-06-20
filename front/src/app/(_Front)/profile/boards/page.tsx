@@ -6,6 +6,7 @@ import Login from "../../../../../public/images/login.png";
 import banner from "../../../../../public/images/banner.png";
 import Link from "next/link";
 import { Userdata, BoardData, BookMarkBoardData } from "../userdata";
+import FileUpload from "../../../components/multi-part-form-data/multi-part-form-data";
 
 // UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
@@ -65,13 +66,31 @@ const UseridProfile: React.FC = () => {
   // }, []);
   // 백엔드 get data ------------------------------------------------------
 
+  // 이미지 업로드 후 상태 업데이트
+  const [bannerUrl, setBannerUrl] = useState<string>(banner.src);
+  const [profileUrl, setProfileUrl] = useState<string>(Login.src);
+
+  const handleUpload = (data: { bannerUrl?: string; profileUrl?: string }) => {
+    if (data.bannerUrl) {
+      setBannerUrl(data.bannerUrl);
+    }
+    if (data.profileUrl) {
+      setProfileUrl(data.profileUrl);
+    }
+  };
+
   return (
     <ProfileContainer>
       <Banner>
-        <Image src={banner} alt="배너 이미지" />
+        <Image src={bannerUrl} alt="banner-image" width={1284} height={206} />
       </Banner>
       <Profile>
-        <Image src={Login} alt="프로필 이미지" width={160} height={160}></Image>
+        <Image
+          src={profileUrl}
+          alt="profile-image"
+          width={160}
+          height={160}
+        ></Image>
         <ProfileInfo>
           {/* userinfo를 props로 받아온 데이터를 사용합니다. */}
           <ProfileName>{userinfo.name}</ProfileName>
@@ -81,6 +100,7 @@ const UseridProfile: React.FC = () => {
           <ProfileDescription>{userinfo.introduce}</ProfileDescription>
         </ProfileInfo>
       </Profile>
+      <FileUpload onUpload={handleUpload} />
       <SelectBar>
         <SelectContainer>
           <StyledLink href={"/profile"} onClick={() => setSelectedTab("main")}>

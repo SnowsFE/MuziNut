@@ -12,16 +12,16 @@ const UseridProfile: React.FC = () => {
   const userinfo = Userdata[0];
   const images = [Login, Login, Login, Login, Login];
   const imagesName = [
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
-    "앨범 제목 | 발매일",
+    "앨범 제목",
+    "앨범 제목",
+    "앨범 제목",
+    "앨범 제목",
+    "앨범 제목",
+    "앨범 제목",
+    "앨범 제목",
+    "앨범 제목",
+    "앨범 제목",
+    "앨범 제목",
   ];
 
   return (
@@ -78,8 +78,7 @@ const UseridProfile: React.FC = () => {
           <AlbumInformation>
             <Info1>앨범 이름</Info1>
             <Info2>참여한 아티스트</Info2>
-            <Info3>발매일</Info3>
-            <Info4>장르</Info4>
+            <Info3>장르</Info3>
             <AlbumIntro>
               <AlbumIntroTitle>앨범 소개</AlbumIntroTitle>
               <AlbumIntroBody>
@@ -263,10 +262,6 @@ const Info2 = styled.div`
   font-size: 28px;
 `;
 const Info3 = styled.div`
-  padding-top: 24px;
-  font-size: 23px;
-`;
-const Info4 = styled.div`
   font-size: 23px;
 `;
 
