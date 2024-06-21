@@ -6,7 +6,10 @@ import Login from "../../../../../public/images/login.png";
 import banner from "../../../../../public/images/banner.png";
 import Link from "next/link";
 import { Userdata, BoardData, BookMarkBoardData } from "../userdata";
-import FileUpload from "../../../components/multi-part-form-data/multi-part-form-data";
+import {
+  BannerData,
+  ProfileData,
+} from "../../../components/multi-part-form-data/multi-part-form-data";
 
 // UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
@@ -72,9 +75,11 @@ const UseridProfile: React.FC = () => {
 
   const handleUpload = (data: { bannerUrl?: string; profileUrl?: string }) => {
     if (data.bannerUrl) {
+      console.log("배너 이미지가 변경되었습니다:", data.bannerUrl);
       setBannerUrl(data.bannerUrl);
     }
     if (data.profileUrl) {
+      console.log("프로필 이미지가 변경되었습니다:", data.profileUrl);
       setProfileUrl(data.profileUrl);
     }
   };
@@ -82,17 +87,13 @@ const UseridProfile: React.FC = () => {
   return (
     <ProfileContainer>
       <Banner>
-        <Image src={bannerUrl} alt="banner-image" width={1284} height={206} />
+        <Image src={bannerUrl} alt="banner-image" width={1280} height={210} />
+        <BannerData onUpload={handleUpload} />
       </Banner>
       <Profile>
-        <Image
-          src={profileUrl}
-          alt="profile-image"
-          width={160}
-          height={160}
-        ></Image>
+        <Image src={profileUrl} alt="profile-image" width={160} height={160} />
+        <ProfileData onUpload={handleUpload} />
         <ProfileInfo>
-          {/* userinfo를 props로 받아온 데이터를 사용합니다. */}
           <ProfileName>{userinfo.name}</ProfileName>
           <FollowInfo>
             팔로잉 {userinfo.follow} &nbsp; 팔로워 {userinfo.follower}
@@ -100,7 +101,7 @@ const UseridProfile: React.FC = () => {
           <ProfileDescription>{userinfo.introduce}</ProfileDescription>
         </ProfileInfo>
       </Profile>
-      <FileUpload onUpload={handleUpload} />
+
       <SelectBar>
         <SelectContainer>
           <StyledLink href={"/profile"} onClick={() => setSelectedTab("main")}>
@@ -174,11 +175,17 @@ const ProfileContainer = styled.div``;
 const Banner = styled.div`
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
-  height: 100%;
+  position: relative;
 
   img {
+    background-color: var(--text-color);
     border-radius: 20px;
     overflow: hidden;
+  }
+
+  :nth-child(2) {
+    display: flex;
+    justify-content: flex-end;
   }
 `;
 
@@ -190,9 +197,11 @@ const Profile = styled.div`
   padding-top: 16px;
   display: flex;
   align-items: center;
+  position: relative;
 
   // 프로필 이미지
   img {
+    background-color: var(--text-color);
     border-radius: 100px;
     overflow: hidden;
   }

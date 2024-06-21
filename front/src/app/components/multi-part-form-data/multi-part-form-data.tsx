@@ -1,87 +1,160 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent } from "react";
 import styled from "styled-components";
 
-// FileUploadProps 인터페이스 정의
-interface FileUploadProps {
-  onUpload: (data: any) => void; // 이미지 파일 유형에 따라 any값이 바뀔 수 있음
-}
+const useFileState = (onUpload: (data: any) => void) => {
+  const [files, setFiles] = useState<{ [key: string]: File | null }>({
+    banner: null,
+    profile: null,
+  });
 
-// FileUpload 컴포넌트 선언
-const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
-  // bannerFile과 profileFile 상태 관리를 위한 useState 훅 사용
-  const [bannerFile, setBannerFile] = useState<File | null>(null);
-  const [profileFile, setProfileFile] = useState<File | null>(null);
+  const checkImageDimensions = (
+    file: File,
+    minWidth: number,
+    minHeight: number
+  ): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        resolve(img.width >= minWidth && img.height >= minHeight);
+      };
+      img.src = URL.createObjectURL(file);
+    });
+  };
 
-  // 파일 입력 변경 시 호출되는 함수
-  const handleFileChange = (
-    e: ChangeEvent<HTMLInputElement>, // 파일 입력 필드의 변경 이벤트 타입
-    setFile: React.Dispatch<React.SetStateAction<File | null>> // 파일 상태를 설정하는 setState 함수 타입
+  const handleFileChange = async (
+    e: ChangeEvent<HTMLInputElement>,
+    key: string
   ) => {
     if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0]); // 선택된 파일을 해당 파일 상태에 설정
+      const file = e.target.files[0];
+
+      let isValid = true;
+      if (key === "banner") {
+        isValid = await checkImageDimensions(file, 600, 210);
+        if (!isValid) {
+          alert("배너 이미지는 최소 600x210 크기여야 합니다.");
+          return;
+        }
+      } else if (key === "profile") {
+        isValid = await checkImageDimensions(file, 160, 160);
+        if (!isValid) {
+          alert("프로필 이미지는 최소 160x160 크기여야 합니다.");
+          return;
+        }
+      }
+
+      setFiles((prevFiles) => ({ ...prevFiles, [key]: file }));
+
+      const imageUrl = URL.createObjectURL(file);
+      onUpload({ [`${key}Url`]: imageUrl });
+
+      const formData = new FormData();
+      formData.append(key, file);
+
+      try {
+        const response = await fetch("/profile/boards", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await response.json();
+        onUpload(data);
+      } catch (error) {
+        console.error("파일이 올라가지 않았습니다", error);
+      }
     }
   };
 
-  // 폼 제출 시 호출되는 비동기 함수
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // 기본 제출 동작 방지
+  return { files, handleFileChange };
+};
 
-    const formData = new FormData(); // FormData 객체 생성
-    if (bannerFile) {
-      formData.append("banner", bannerFile); // formData에 banner 파일 추가
-    }
-    if (profileFile) {
-      formData.append("profile", profileFile); // formData에 profile 파일 추가
-    }
+const BannerData: React.FC<{ onUpload: (data: any) => void }> = ({
+  onUpload,
+}) => {
+  const { handleFileChange } = useFileState(onUpload);
 
-    try {
-      const response = await fetch("/upload", {
-        method: "POST", // POST 메서드로 서버에 요청
-        body: formData, // formData를 요청 본문으로 설정
-      });
-
-      const data = await response.json(); // 서버 응답을 JSON 형태로 변환
-      onUpload(data); // onUpload 콜백 함수 호출하여 서버 응답 데이터 전달
-    } catch (error) {
-      console.error("Error uploading files:", error); // 파일 업로드 중 오류 발생 시 콘솔에 에러 로그 출력
-    }
-  };
-
-  // JSX 반환
   return (
-    <UploadForm onSubmit={handleSubmit}>
-      <UploadInput
-        type="file"
-        onChange={(e) => handleFileChange(e, setBannerFile)}
-      />{" "}
-      {/* banner 파일 선택 입력 필드 */}
-      <UploadInput
-        type="file"
-        onChange={(e) => handleFileChange(e, setProfileFile)}
-      />{" "}
-      {/* profile 파일 선택 입력 필드 */}
-      <UploadButton type="submit">Upload</UploadButton>{" "}
-      {/* 파일 업로드 제출 버튼 */}
+    <UploadForm>
+      <Label>
+        <HiddenInput
+          type="file"
+          onChange={(e) => handleFileChange(e, "banner")}
+          id="banner-file"
+        />
+        <CustomButton htmlFor="banner-file">⚙️</CustomButton>
+      </Label>
+    </UploadForm>
+  );
+};
+
+const ProfileData: React.FC<{ onUpload: (data: any) => void }> = ({
+  onUpload,
+}) => {
+  const { handleFileChange } = useFileState(onUpload);
+
+  return (
+    <UploadForm>
+      <Label>
+        <HiddenInput
+          type="file"
+          onChange={(e) => handleFileChange(e, "profile")}
+          id="profile-file"
+        />
+        <CustomButton2 htmlFor="profile-file">⚙️</CustomButton2>
+      </Label>
     </UploadForm>
   );
 };
 
 const UploadForm = styled.form`
-  margin-top: 20px;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity: 1;
+  }
 `;
 
-const UploadInput = styled.input`
-  margin-right: 10px;
+const Label = styled.label`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 `;
 
-const UploadButton = styled.button`
-  margin-top: 10px;
-  background-color: #1bb373;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+const HiddenInput = styled.input`
+  display: none;
+`;
+
+const CustomButton = styled.label`
   cursor: pointer;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 98%;
+  height: 90%;
+  opacity: 0;
+  padding: 10px;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity: 1;
+  }
+  font-size: 18px; /* 아이콘 크기 조정 */
 `;
 
-export default FileUpload; // FileUpload 컴포넌트 내보내기
+const CustomButton2 = styled.label`
+  cursor: pointer;
+  position: absolute;
+  top: 13.5%;
+  left: 0.8%;
+  opacity: 0;
+  padding: 60px;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity: 1;
+  }
+  font-size: 18px; /* 아이콘 크기 조정 */
+`;
+
+export { BannerData, ProfileData };

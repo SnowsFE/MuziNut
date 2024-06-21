@@ -6,8 +6,6 @@ export interface UseridProps {
     follow: number;
     follower: number;
     introduce: string;
-    profileImage: string;
-    bannerImage: string;
     endDate: number;
     loungeWrite: string | number;
     like: number;
@@ -17,12 +15,7 @@ export interface UseridProps {
 
 export type UseridPropsWithoutImages = Omit<
   UseridProps["userinfo"],
-  | "profileImage"
-  | "bannerImage"
-  | "endDate"
-  | "loungeWrite"
-  | "like"
-  | "comment"
+  "endDate" | "loungeWrite" | "like" | "comment"
 >;
 
 export const Userdata: UseridPropsWithoutImages[] = [
