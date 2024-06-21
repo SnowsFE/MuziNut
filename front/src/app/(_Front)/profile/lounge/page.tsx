@@ -135,14 +135,7 @@ const UseridProfile: React.FC = () => {
                 {/* 라운지 글작성 */}
                 <LoungeWrite>{commentdata.write}</LoungeWrite>
                 {/* 라운지 글작성 이미지 */}
-                <LoungeImage>
-                  <Image
-                    src={banner}
-                    alt="프로필 이미지"
-                    width={1280}
-                    height={256}
-                  ></Image>
-                </LoungeImage>
+                <LoungeImage></LoungeImage>
               </LoungeWriteContainer>
               {/* 라운지 좋아요 댓글 컨테이너 */}
               <LoungeLikeCommentContainer>
@@ -333,7 +326,7 @@ const LoungeProfileDetail = styled.div`
 const LoungeWriteContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0px 15px 25px 15px;
+  padding: 0px 15px 20px 15px;
 `;
 
 // 라운지 글쓰기
@@ -354,7 +347,7 @@ const LoungeImage = styled.div`
 const LoungeLikeCommentContainer = styled.div`
   display: flex;
   align-items: center;
-  padding: 0px 15px 25px 15px;
+  padding: 0px 15px 15px 15px;
   gap: 20px;
 `;
 

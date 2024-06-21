@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Image from "next/image";
 import nut from "../../../../../public/images/Nuts.png";
 import { DownArrow, UpArrow } from "@/app/components/icon/icon";
+import NaverPayButton from "./naverpay";
 
 interface ChargeProps {
   onClose: () => void;
@@ -45,11 +46,28 @@ const Charge: React.FC<ChargeProps> = ({ onClose }) => {
       alert("약관에 동의해야 충전할 수 있습니다.");
     } else {
       if (totalPrice < 1099) {
-        alert("넛츠는 10개이상 충전할 수 있습니다.");
+        alert("넛츠는 10개 이상 충전할 수 있습니다.");
       } else {
-        // 카카오톡 결제 링크로 넘어가는 코드 추가
-        // 예시: window.location.href = "카카오톡 결제 링크";
-        onClose();
+        // 네이버페이 결제 로직 추가
+        if (window.Naver && window.Naver.Pay) {
+          const oPay = window.Naver.Pay.create({
+            mode: "development", // 개발용 설정
+            clientId: "HN3GGCMDdTgGUfl0kFCo",
+            chainId: "RXpIMWIzTnJIZVd",
+          });
+
+          oPay.open({
+            merchantUserKey: "user_123456",
+            merchantPayKey: "pay_123456",
+            productName: "테스트 상품",
+            totalPayAmount: totalPrice, // 최종 결제 금액을 넣어줘야 함
+            taxScopeAmount: totalPrice * 0.9, // 세금 포함 금액
+            taxExScopeAmount: totalPrice * 0.1, // 비과세 금액
+            returnUrl: "https://example.com/return",
+          });
+        } else {
+          console.error("Naver Pay SDK 로드 실패");
+        }
       }
     }
   };
@@ -173,6 +191,7 @@ const Charge: React.FC<ChargeProps> = ({ onClose }) => {
             <li onClick={onClose}>취소</li>
             <li onClick={handleChargeClick}>충전하기</li>
           </ul>
+          <NaverPayButton />
         </FinallyAgree>
       </ChargeContainer>
     </ChargeBackground>
