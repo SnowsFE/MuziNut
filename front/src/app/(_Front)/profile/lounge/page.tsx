@@ -8,6 +8,7 @@ import threedot from "../../../../../public/svgs/threedot.svg";
 import Link from "next/link";
 import { LikeIcon, CommentIcon } from "../../../components/icon/icon";
 import { Userdata, CommentData } from "../userdata";
+import { OpenComment } from "./comment";
 
 // UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
@@ -42,6 +43,16 @@ const UseridProfile: React.FC = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const [openComments, setOpenComments] = useState(
+    Array(CommentData.length).fill(false)
+  ); // 댓글 열기 상태 관리
+
+  const handleCommentToggle = (index: number) => {
+    const newOpenComments = [...openComments];
+    newOpenComments[index] = !newOpenComments[index];
+    setOpenComments(newOpenComments);
+  };
 
   return (
     <ProfileContainer>
@@ -135,7 +146,15 @@ const UseridProfile: React.FC = () => {
                 {/* 라운지 글작성 */}
                 <LoungeWrite>{commentdata.write}</LoungeWrite>
                 {/* 라운지 글작성 이미지 */}
-                <LoungeImage></LoungeImage>
+                <LoungeImage>
+                  {" "}
+                  <Image
+                    src={banner}
+                    alt="프로필 이미지"
+                    width={1280}
+                    height={256}
+                  ></Image>
+                </LoungeImage>
               </LoungeWriteContainer>
               {/* 라운지 좋아요 댓글 컨테이너 */}
               <LoungeLikeCommentContainer>
@@ -143,11 +162,12 @@ const UseridProfile: React.FC = () => {
                   <LikeIcon />
                   {commentdata.like}
                 </LoungeLike>
-                <LoungeComment>
+                <LoungeComment onClick={() => handleCommentToggle(index)}>
                   <CommentIcon />
                   {commentdata.comment}
                 </LoungeComment>
               </LoungeLikeCommentContainer>
+              {openComments[index] && <OpenComment />}
             </LoungeContainer>
           </React.Fragment>
         ))}
@@ -326,7 +346,7 @@ const LoungeProfileDetail = styled.div`
 const LoungeWriteContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0px 15px 20px 15px;
+  padding: 0px 15px 10px 15px;
 `;
 
 // 라운지 글쓰기
@@ -347,7 +367,7 @@ const LoungeImage = styled.div`
 const LoungeLikeCommentContainer = styled.div`
   display: flex;
   align-items: center;
-  padding: 0px 15px 15px 15px;
+  padding: 0px 15px 10px 15px;
   gap: 20px;
 `;
 
@@ -363,6 +383,7 @@ const LoungeComment = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+  cursor: pointer;
 `;
 
 // 쓰리닷 오픈 시

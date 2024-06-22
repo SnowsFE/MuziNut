@@ -269,9 +269,13 @@ export const UpArrow = () => {
   );
 };
 
-const Like = styled.div``;
+const Like = styled.div`
+  cursor: pointer;
+`;
 
 const Comment = styled.div`
+  margin-top: 5px;
+  cursor: pointer;
   transform: scaleX(-1);
 `;
 
