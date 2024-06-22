@@ -100,6 +100,7 @@ const UseridProfile: React.FC = () => {
           >
             <SelectItem selected={selectedTab === "nuts"}>넛츠</SelectItem>
           </StyledLink>
+          <Write>글쓰기</Write>
         </SelectContainer>
       </SelectBar>
       {/* 라운지 큰 컨테이너 */}
@@ -181,6 +182,11 @@ export default UseridProfile;
 // 마이페이지 전체를 감싸는 컨테이너
 const ProfileContainer = styled.div``;
 
+// 글쓰기
+const Write = styled.div`
+  margin-left: auto;
+  cursor: pointer;
+`;
 // 배너
 const Banner = styled.div`
   padding-right: calc(50% - 642px);
