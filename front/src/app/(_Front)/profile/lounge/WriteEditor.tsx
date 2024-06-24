@@ -87,6 +87,14 @@ const WriteEditor: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const quill = quillRef.current?.getEditor();
+    if (quill) {
+      quill.format("font", "esamanruLight");
+      quill.format("size", "13px");
+    }
+  }, []);
+
   if (!render) return null;
 
   return (
