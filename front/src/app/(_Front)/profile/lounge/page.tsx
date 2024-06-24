@@ -9,6 +9,7 @@ import Link from "next/link";
 import { LikeIcon, CommentIcon } from "../../../components/icon/icon";
 import { Userdata, CommentData } from "../userdata";
 import { OpenComment } from "./comment";
+import WriteEditor from "./WriteEditor";
 
 // UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
@@ -52,6 +53,12 @@ const UseridProfile: React.FC = () => {
     const newOpenComments = [...openComments];
     newOpenComments[index] = !newOpenComments[index];
     setOpenComments(newOpenComments);
+  };
+
+  const [writeVisible, setWriteVisible] = useState(false);
+
+  const handleWriteClick = () => {
+    setWriteVisible(!writeVisible);
   };
 
   return (
@@ -100,7 +107,7 @@ const UseridProfile: React.FC = () => {
           >
             <SelectItem selected={selectedTab === "nuts"}>넛츠</SelectItem>
           </StyledLink>
-          <Write>글쓰기</Write>
+          <Write onClick={handleWriteClick}>Talk</Write>
         </SelectContainer>
       </SelectBar>
       {/* 라운지 큰 컨테이너 */}
@@ -173,6 +180,7 @@ const UseridProfile: React.FC = () => {
           </React.Fragment>
         ))}
       </Lounge>
+      {writeVisible && <WriteEditor />}
     </ProfileContainer>
   );
 };
@@ -184,8 +192,13 @@ const ProfileContainer = styled.div``;
 
 // 글쓰기
 const Write = styled.div`
+  font-size: 18px;
   margin-left: auto;
   cursor: pointer;
+
+  &:hover {
+    color: #16be78;
+  }
 `;
 // 배너
 const Banner = styled.div`
