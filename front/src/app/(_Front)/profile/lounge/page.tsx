@@ -350,6 +350,10 @@ const LoungeProfileDetail = styled.div`
   position: relative;
   cursor: pointer;
 
+  border: 1px solid none;
+  background-color: white;
+  border-radius: 7px;
+
   img {
     &:hover {
       border: 1px;
@@ -424,8 +428,9 @@ const ThreeDotOpen = styled.div`
     padding: 4px 8px;
     border-radius: 12px;
     cursor: pointer;
+
     &:hover {
-      background-color: #f0f0f0;
+      transform: scale(1.05);
     }
   }
 `;

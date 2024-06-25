@@ -30,54 +30,53 @@ const WriteEditor: React.FC = () => {
     }
   }, [visible]);
 
+  // Quill 모듈 설정
   const modules = useMemo(() => {
+    if (typeof window === "undefined") {
+      return {};
+    }
+
     return {
       toolbar: {
-        container: "#toolbar", // QuillToolbar 컴포넌트를 툴바로 사용
+        container: "#toolbar",
         handlers: {
+          // 이미지 삽입 핸들러
           image: function () {
+            // 브라우저 환경에서만 실행
+            if (typeof window === "undefined") {
+              return;
+            }
+
             const input = document.createElement("input");
             input.setAttribute("type", "file");
             input.setAttribute("accept", "image/*");
             input.onchange = async () => {
               const file = input.files?.[0];
               if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                  const base64Image = e.target?.result as string;
-                  const image = new Image();
-                  image.src = base64Image;
-                  image.onload = () => {
-                    const canvas = document.createElement("canvas");
-                    const ctx = canvas.getContext("2d");
-                    const maxSize = 300;
-                    let width = image.width;
-                    let height = image.height;
+                const formData = new FormData();
+                formData.append("file", file);
 
-                    if (width > height) {
-                      if (width > maxSize) {
-                        height = (height * maxSize) / width;
-                        width = maxSize;
-                      }
-                    } else {
-                      if (height > maxSize) {
-                        width = (width * maxSize) / height;
-                        height = maxSize;
-                      }
-                    }
+                try {
+                  // 서버에 파일 업로드 요청
+                  const response = await fetch("/upload", {
+                    method: "POST",
+                    body: formData,
+                  });
 
-                    canvas.width = width;
-                    canvas.height = height;
-                    ctx?.drawImage(image, 0, 0, width, height);
-                    const resizedImage = canvas.toDataURL("image/jpeg");
+                  if (response.ok) {
+                    const data = await response.json();
                     const quill = quillRef.current?.getEditor();
                     const range = quill?.getSelection();
-                    if (range) {
-                      quill?.insertEmbed(range.index, "image", resizedImage);
+                    if (quill && range) {
+                      quill.insertEmbed(range.index, "image", data.url);
+                      console.log("이미지가 삽입되었습니다: ", data.url); // 이미지 삽입 로그
                     }
-                  };
-                };
-                reader.readAsDataURL(file);
+                  } else {
+                    console.error("이미지 업로드 실패.");
+                  }
+                } catch (error) {
+                  console.error("이미지 업로드 중 오류 발생:", error);
+                }
               }
             };
             input.click();
@@ -87,13 +86,49 @@ const WriteEditor: React.FC = () => {
     };
   }, []);
 
+  // Quill 에디터 초기 설정
   useEffect(() => {
-    const quill = quillRef.current?.getEditor();
-    if (quill) {
-      quill.format("font", "esamanruLight");
-      quill.format("size", "13px");
+    if (typeof window !== "undefined") {
+      const quill = quillRef.current?.getEditor();
+      if (quill) {
+        quill.format("font", "esamanruLight");
+        quill.format("size", "13px");
+      }
     }
   }, []);
+
+  // 에디터 내용 변경 핸들러
+  const handleChange = (
+    content: string,
+    delta: any,
+    source: string,
+    editor: any
+  ) => {
+    setContent(content);
+    console.log("Content changed: ", content); // 텍스트 변경 로그
+  };
+
+  // 글 등록 버튼 클릭 핸들러
+  const handlePublishClick = async () => {
+    try {
+      const response = await fetch("/publish", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ content }),
+      });
+
+      if (response.ok) {
+        console.log("글이 성공적으로 등록되었습니다.");
+        // 추가적인 UI 업데이트나 리다이렉션 등을 수행할 수 있습니다.
+      } else {
+        console.error("글 등록에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("글 등록 중 오류 발생:", error);
+    }
+  };
 
   if (!render) return null;
 
@@ -104,18 +139,16 @@ const WriteEditor: React.FC = () => {
         <Title>라운지 Talk</Title>
         <QuillToolbar />
         <CustomReactQuill
-          placeholder="자유롭게 이야기를 나눠보세요."
+          placeholder="라운지Talk에서 소중한 일상을 공유해보세요."
           theme="snow"
           ref={quillRef}
           value={content}
-          onChange={setContent}
+          onChange={handleChange}
           modules={modules}
         />
         <ButtonContainer>
           <CancelButton onClick={() => setVisible(false)}>취소</CancelButton>
-          <StyledButton onClick={() => console.log(content)}>
-            글 등록
-          </StyledButton>
+          <StyledButton onClick={handlePublishClick}>글 등록</StyledButton>
         </ButtonContainer>
       </EditorContainer>
     </>
