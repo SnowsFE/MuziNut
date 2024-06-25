@@ -3,11 +3,11 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 
-const FreeBoards: React.FC = () => {
+const MusicBoards: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("music-boards");
 
   return (
-    <FreeBoardsContainer>
+    <MusicBoardsContainer>
       <SelectBar>
         <SelectContainer>
           <StyledLink
@@ -50,14 +50,14 @@ const FreeBoards: React.FC = () => {
           </StyledLink>
         </SelectContainer>
       </SelectBar>
-    </FreeBoardsContainer>
+    </MusicBoardsContainer>
   );
 };
 
-export default FreeBoards;
+export default MusicBoards;
 
 // 마이페이지 전체를 감싸는 컨테이너
-const FreeBoardsContainer = styled.div``;
+const MusicBoardsContainer = styled.div``;
 
 // -------------------------------------------------------------------------------------------------------
 // 메인, 라운지 선택바
