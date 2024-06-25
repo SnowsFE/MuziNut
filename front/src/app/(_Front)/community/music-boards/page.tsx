@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Link from "next/link";
 
 const FreeBoards: React.FC = () => {
-  const [selectedTab, setSelectedTab] = useState("community");
+  const [selectedTab, setSelectedTab] = useState("music-boards");
 
   return (
     <FreeBoardsContainer>

@@ -30,6 +30,12 @@ const WriteEditor: React.FC = () => {
     }
   }, [visible]);
 
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      setVisible(false);
+    }
+  };
+
   // Quill 모듈 설정
   const modules = useMemo(() => {
     if (typeof window === "undefined") {
@@ -134,7 +140,7 @@ const WriteEditor: React.FC = () => {
 
   return (
     <>
-      <Overlay visible={visible} />
+      <Overlay visible={visible} onClick={handleOverlayClick} />
       <EditorContainer visible={visible}>
         <Title>라운지 Talk</Title>
         <QuillToolbar />
