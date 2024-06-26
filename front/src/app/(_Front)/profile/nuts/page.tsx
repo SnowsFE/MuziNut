@@ -6,16 +6,20 @@ import Login from "../../../../../public/images/login.png";
 import banner from "../../../../../public/images/banner.png";
 import nut from "../../../../../public/images/Nuts.png";
 import Link from "next/link";
-import { Userdata } from "../userdata";
 import { VoteBox } from "../../../components/icon/icon";
 import { Cash, cashData, PurChaseCash, purchaseData } from "./cash";
 import Charge from "./charge";
+import {
+  BannerData,
+  ProfileData,
+  useFileState,
+  ProfileEditForm,
+} from "../../../components/multi-part-form-data/multi-part-form-data";
 
 // UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("nuts");
   const [subTab, setSubTab] = useState<string | null>(null);
-  const userinfo = Userdata[0];
 
   useEffect(() => {
     // 페이지가 로드될 때 초기 하위 탭 설정
@@ -36,19 +40,52 @@ const UseridProfile: React.FC = () => {
   };
   // 팝업 처리 ------------------------------------------
 
+  const [bannerUrl, setBannerUrl] = useState<string>(banner.src);
+  const [profileUrl, setProfileUrl] = useState<string>(Login.src);
+  const [editFormVisible, setEditFormVisible] = useState(false);
+
+  // onUpload 함수 정의
+  const onUpload = (data: { bannerUrl?: string; profileUrl?: string }) => {
+    if (data.bannerUrl) {
+      console.log("배너 이미지가 변경되었습니다:", data.bannerUrl);
+      setBannerUrl(data.bannerUrl);
+    }
+    if (data.profileUrl) {
+      console.log("프로필 이미지가 변경되었습니다:", data.profileUrl);
+      setProfileUrl(data.profileUrl);
+    }
+  };
+
+  // useFileState 훅을 이용하여 상태와 함수들을 가져옵니다.
+  const { profileInfo, handleProfileInfoChange, handleSubmit } =
+    useFileState(onUpload);
+
+  // 프로필 정보 수정 폼 열기
+  const openEditForm = () => {
+    setEditFormVisible(true);
+  };
+
+  // 프로필 정보 수정 폼 닫기
+  const closeEditForm = () => {
+    setEditFormVisible(false);
+  };
+
   return (
     <ProfileContainer>
       <Banner>
-        <Image src={banner} alt="배너 이미지" />
+        <Image src={bannerUrl} alt="banner-image" width={1280} height={210} />
+        <BannerData onUpload={onUpload} />
       </Banner>
       <Profile>
-        <Image src={Login} alt="프로필 이미지" width={160} height={160}></Image>
+        <EditForm onClick={openEditForm}>⚙️</EditForm>
+        <Image src={profileUrl} alt="profile-image" width={160} height={160} />
+        <ProfileData onUpload={onUpload} />
         <ProfileInfo>
-          <ProfileName>{userinfo.name}</ProfileName>
+          <ProfileName>{profileInfo.name}</ProfileName>
           <FollowInfo>
-            팔로잉 {userinfo.follow} &nbsp; 팔로워 {userinfo.follower}
+            팔로잉 {profileInfo.follow} &nbsp; 팔로워 {profileInfo.follower}
           </FollowInfo>
-          <ProfileDescription>{userinfo.introduce}</ProfileDescription>
+          <ProfileDescription>{profileInfo.introduce}</ProfileDescription>
         </ProfileInfo>
       </Profile>
       <SelectBar>
@@ -145,6 +182,13 @@ const UseridProfile: React.FC = () => {
           </NutsReceipt>
         </NutsBodyContainer>
       </NutsContainer>
+      <ProfileEditForm
+        profileInfo={profileInfo}
+        onChange={handleProfileInfoChange}
+        onSubmit={handleSubmit}
+        onCancel={closeEditForm}
+        visible={editFormVisible}
+      />
     </ProfileContainer>
   );
 };
@@ -158,10 +202,17 @@ const ProfileContainer = styled.div``;
 const Banner = styled.div`
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
+  position: relative;
 
   img {
+    background-color: var(--text-color);
     border-radius: 20px;
     overflow: hidden;
+  }
+
+  :nth-child(2) {
+    display: flex;
+    justify-content: flex-end;
   }
 `;
 
@@ -173,6 +224,7 @@ const Profile = styled.div`
   padding-top: 16px;
   display: flex;
   align-items: center;
+  position: relative;
 
   // 프로필 이미지
   img {
@@ -402,4 +454,12 @@ const NutsReceipt = styled.div`
     display: flex;
     gap: 1.75rem;
   }
+`;
+
+// 프로필 에디터
+const EditForm = styled.div`
+  position: absolute;
+  right: 0;
+  top: 52px;
+  cursor: pointer;
 `;

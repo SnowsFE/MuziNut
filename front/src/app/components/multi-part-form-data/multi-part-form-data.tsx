@@ -293,23 +293,17 @@ const OutContainer = styled.div<{ visible: boolean }>`
     visible
       ? ""
       : css`
-          ${fadeOut} 0.5s forwards
+          ${fadeOutAnimation} 0.5s forwards
         `};
 `;
 
-const fadeOut = keyframes`
+const fadeOutAnimation = keyframes`
   from {
     opacity: 1;
   }
   to {
     opacity: 0;
   }
-`;
-
-const Title = styled.div`
-  text-align: center;
-  font-size: 24px;
-  margin-bottom: 20px;
 `;
 
 const ProfileEditContainer = styled.div<{ visible: boolean }>`
@@ -328,8 +322,15 @@ const ProfileEditContainer = styled.div<{ visible: boolean }>`
     visible
       ? ""
       : css`
-          ${fadeOut} 0.5s forwards
+          ${fadeOutAnimation} 0.5s forwards
         `};
+`;
+
+const Title = styled.div`
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: black;
 `;
 
 const InputLabel = styled.label`
@@ -337,6 +338,7 @@ const InputLabel = styled.label`
   flex-direction: column;
   margin-bottom: 20px;
   font-family: "esamanru Medium";
+  color: black;
 `;
 
 const InputField1 = styled.input`

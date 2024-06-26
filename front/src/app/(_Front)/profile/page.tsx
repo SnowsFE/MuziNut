@@ -5,11 +5,15 @@ import Image from "next/image";
 import Login from "../../../../public/images/login.png";
 import banner from "../../../../public/images/banner.png";
 import Link from "next/link";
-import { Userdata } from "./userdata";
+import {
+  BannerData,
+  ProfileData,
+  useFileState,
+  ProfileEditForm,
+} from "../../components/multi-part-form-data/multi-part-form-data";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("main");
-  const userinfo = Userdata[0];
   const images = [Login, Login, Login, Login, Login];
   const imagesName = [
     "앨범 제목",
@@ -24,19 +28,52 @@ const UseridProfile: React.FC = () => {
     "앨범 제목",
   ];
 
+  const [bannerUrl, setBannerUrl] = useState<string>(banner.src);
+  const [profileUrl, setProfileUrl] = useState<string>(Login.src);
+  const [editFormVisible, setEditFormVisible] = useState(false);
+
+  // onUpload 함수 정의
+  const onUpload = (data: { bannerUrl?: string; profileUrl?: string }) => {
+    if (data.bannerUrl) {
+      console.log("배너 이미지가 변경되었습니다:", data.bannerUrl);
+      setBannerUrl(data.bannerUrl);
+    }
+    if (data.profileUrl) {
+      console.log("프로필 이미지가 변경되었습니다:", data.profileUrl);
+      setProfileUrl(data.profileUrl);
+    }
+  };
+
+  // useFileState 훅을 이용하여 상태와 함수들을 가져옵니다.
+  const { profileInfo, handleProfileInfoChange, handleSubmit } =
+    useFileState(onUpload);
+
+  // 프로필 정보 수정 폼 열기
+  const openEditForm = () => {
+    setEditFormVisible(true);
+  };
+
+  // 프로필 정보 수정 폼 닫기
+  const closeEditForm = () => {
+    setEditFormVisible(false);
+  };
+
   return (
     <ProfileContainer>
       <Banner>
-        <Image src={banner} alt="배너 이미지" />
+        <Image src={bannerUrl} alt="banner-image" width={1280} height={210} />
+        <BannerData onUpload={onUpload} />
       </Banner>
       <Profile>
-        <Image src={Login} alt="프로필 이미지" width={160} height={160}></Image>
+        <EditForm onClick={openEditForm}>⚙️</EditForm>
+        <Image src={profileUrl} alt="profile-image" width={160} height={160} />
+        <ProfileData onUpload={onUpload} />
         <ProfileInfo>
-          <ProfileName>{userinfo.name}</ProfileName>
+          <ProfileName>{profileInfo.name}</ProfileName>
           <FollowInfo>
-            팔로잉 {userinfo.follow} &nbsp; 팔로워 {userinfo.follower}
+            팔로잉 {profileInfo.follow} &nbsp; 팔로워 {profileInfo.follower}
           </FollowInfo>
-          <ProfileDescription>{userinfo.introduce}</ProfileDescription>
+          <ProfileDescription>{profileInfo.introduce}</ProfileDescription>
         </ProfileInfo>
       </Profile>
       <SelectBar>
@@ -104,6 +141,20 @@ const UseridProfile: React.FC = () => {
           ))}
         </AlbumList>
       </BodyAlbum>
+      <ProfileEditForm
+        profileInfo={profileInfo}
+        onChange={handleProfileInfoChange}
+        onSubmit={handleSubmit}
+        onCancel={closeEditForm}
+        visible={editFormVisible}
+      />
+      <ProfileEditForm
+        profileInfo={profileInfo}
+        onChange={handleProfileInfoChange}
+        onSubmit={handleSubmit}
+        onCancel={closeEditForm}
+        visible={editFormVisible}
+      />
     </ProfileContainer>
   );
 };
@@ -117,11 +168,17 @@ const ProfileContainer = styled.div``;
 const Banner = styled.div`
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
-  height: 100%;
+  position: relative;
 
   img {
+    background-color: var(--text-color);
     border-radius: 20px;
     overflow: hidden;
+  }
+
+  :nth-child(2) {
+    display: flex;
+    justify-content: flex-end;
   }
 `;
 
@@ -133,6 +190,7 @@ const Profile = styled.div`
   padding-top: 16px;
   display: flex;
   align-items: center;
+  position: relative;
 
   // 프로필 이미지
   img {
@@ -316,4 +374,13 @@ const AlbumItem = styled.div`
   text-align: center;
   padding: 0 0 2rem 0;
 `;
+
+// 프로필 에디터
+const EditForm = styled.div`
+  position: absolute;
+  right: 0;
+  top: 52px;
+  cursor: pointer;
+`;
+
 // -------------------------------------------------------------------------------------------------------
