@@ -5,75 +5,24 @@ import Image from "next/image";
 import Login from "../../../../../public/images/login.png";
 import banner from "../../../../../public/images/banner.png";
 import Link from "next/link";
-import { Userdata, BoardData, BookMarkBoardData } from "../userdata";
+import { BoardData, BookMarkBoardData } from "../userdata";
 import {
   BannerData,
   ProfileData,
+  useFileState,
+  ProfileEditForm,
 } from "../../../components/multi-part-form-data/multi-part-form-data";
 
-// UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("boards");
-  const userinfo = Userdata[0];
-
-  // 5개 이상 더보기 누르면 보이게하는것 -------------------------
-  const [boardVisible, setboardVisible] = useState(5);
-  const [bookmarkVisible, setbookmarkVisible] = useState(5);
-
-  const AddBoard = () => {
-    if (boardVisible + 5 > BoardData.length) {
-      // 현재 보여지는 항목 수(boardVisible)와 전체 항목 수(BoardData.length)를 비교하여
-      // 더 이상 추가적으로 보여줄 데이터가 없을 경우 초기값으로 초기화합니다.
-      setboardVisible(5); // 초기값으로 되돌림
-    } else {
-      setboardVisible(boardVisible + 5); // 5개씩 추가적으로 보여줍니다.
-    }
-  };
-
-  const AddBookMark = () => {
-    if (bookmarkVisible + 5 > BookMarkBoardData.length) {
-      setbookmarkVisible(5);
-    } else {
-      setbookmarkVisible(bookmarkVisible + 5);
-    }
-  };
-  // 5개 이상 더보기 누르면 보이게하는것 -------------------------
-
-  // 백엔드 get data ------------------------------------------------------
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await axios.get("/profile/boards");
-  //       setBoardsData(response.data.boards);
-  //       console.log(response.data.boards); // 받아온 데이터 확인
-  //     } catch (error) {
-  //       console.error("데이터를 불러오지 못했습니다");
-  //     }
-  //   };
-
-  //   fetchData(); // 데이터를 받아오는 함수 호출
-  // }, []);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await axios.get("/profile/boards");
-  //       setBookMarkBoardsData(response.data.bookmarkboards);
-  //       console.log(response.data.bookmarkboards); // 받아온 데이터 확인
-  //     } catch (error) {
-  //       console.error("데이터를 불러오지 못했습니다");
-  //     }
-  //   };
-
-  //   fetchData(); // 데이터를 받아오는 함수 호출
-  // }, []);
-  // 백엔드 get data ------------------------------------------------------
-
-  // 이미지 업로드 후 상태 업데이트
+  const [boardVisible, setBoardVisible] = useState(5);
+  const [bookmarkVisible, setBookmarkVisible] = useState(5);
   const [bannerUrl, setBannerUrl] = useState<string>(banner.src);
   const [profileUrl, setProfileUrl] = useState<string>(Login.src);
+  const [editFormVisible, setEditFormVisible] = useState(false);
 
-  const handleUpload = (data: { bannerUrl?: string; profileUrl?: string }) => {
+  // onUpload 함수 정의
+  const onUpload = (data: { bannerUrl?: string; profileUrl?: string }) => {
     if (data.bannerUrl) {
       console.log("배너 이미지가 변경되었습니다:", data.bannerUrl);
       setBannerUrl(data.bannerUrl);
@@ -84,24 +33,56 @@ const UseridProfile: React.FC = () => {
     }
   };
 
+  // useFileState 훅을 이용하여 상태와 함수들을 가져옵니다.
+  const { profileInfo, handleProfileInfoChange, handleSubmit } =
+    useFileState(onUpload);
+
+  // 프로필 정보 수정 폼 열기
+  const openEditForm = () => {
+    setEditFormVisible(true);
+  };
+
+  // 프로필 정보 수정 폼 닫기
+  const closeEditForm = () => {
+    setEditFormVisible(false);
+  };
+
+  // 게시글 더보기 함수
+  const AddBoard = () => {
+    if (boardVisible + 5 > BoardData.length) {
+      setBoardVisible(5);
+    } else {
+      setBoardVisible(boardVisible + 5);
+    }
+  };
+
+  // 북마크한 게시글 더보기 함수
+  const AddBookMark = () => {
+    if (bookmarkVisible + 5 > BookMarkBoardData.length) {
+      setBookmarkVisible(5);
+    } else {
+      setBookmarkVisible(bookmarkVisible + 5);
+    }
+  };
+
   return (
     <ProfileContainer>
       <Banner>
         <Image src={bannerUrl} alt="banner-image" width={1280} height={210} />
-        <BannerData onUpload={handleUpload} />
+        <BannerData onUpload={onUpload} />
       </Banner>
       <Profile>
+        <EditForm onClick={openEditForm}>⚙️</EditForm>
         <Image src={profileUrl} alt="profile-image" width={160} height={160} />
-        <ProfileData onUpload={handleUpload} />
+        <ProfileData onUpload={onUpload} />
         <ProfileInfo>
-          <ProfileName>{userinfo.name}</ProfileName>
+          <ProfileName>{profileInfo.name}</ProfileName>
           <FollowInfo>
-            팔로잉 {userinfo.follow} &nbsp; 팔로워 {userinfo.follower}
+            팔로잉 {profileInfo.follow} &nbsp; 팔로워 {profileInfo.follower}
           </FollowInfo>
-          <ProfileDescription>{userinfo.introduce}</ProfileDescription>
+          <ProfileDescription>{profileInfo.introduce}</ProfileDescription>
         </ProfileInfo>
       </Profile>
-
       <SelectBar>
         <SelectContainer>
           <StyledLink href={"/profile"} onClick={() => setSelectedTab("main")}>
@@ -134,7 +115,7 @@ const UseridProfile: React.FC = () => {
           </StyledLink>
         </SelectContainer>
       </SelectBar>
-      {/* 라운지 큰 컨테이너 */}
+
       <Boards>
         <BoardsBoards>
           <BoardsTitle>게시글</BoardsTitle>
@@ -162,6 +143,13 @@ const UseridProfile: React.FC = () => {
           </BoardsAdd>
         </BoardsBoards>
       </Boards>
+      <ProfileEditForm
+        profileInfo={profileInfo}
+        onChange={handleProfileInfoChange}
+        onSubmit={handleSubmit}
+        onCancel={closeEditForm}
+        visible={editFormVisible}
+      />
     </ProfileContainer>
   );
 };
@@ -212,6 +200,7 @@ const ProfileInfo = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  position: relative;
   margin-left: 24px;
 `;
 
@@ -341,4 +330,12 @@ const Box = styled.div`
     transition: 0.3s ease;
     border-color: #1bb373;
   }
+`;
+
+// 프로필 에디터
+const EditForm = styled.div`
+  position: absolute;
+  right: 0;
+  top: 52px;
+  cursor: pointer;
 `;

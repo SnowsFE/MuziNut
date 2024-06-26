@@ -1,34 +1,3 @@
-// 프로필 데이터 -------------------------------------------------
-
-export interface UseridProps {
-  userinfo: {
-    name: string;
-    follow: number;
-    follower: number;
-    introduce: string;
-    endDate: number;
-    loungeWrite: string | number;
-    like: number;
-    comment: number;
-  };
-}
-
-export type UseridPropsWithoutImages = Omit<
-  UseridProps["userinfo"],
-  "endDate" | "loungeWrite" | "like" | "comment"
->;
-
-export const Userdata: UseridPropsWithoutImages[] = [
-  {
-    name: "John Doe",
-    follow: 10,
-    follower: 20,
-    introduce: "Hello, I am John Doe.",
-  },
-];
-
-// 프로필 데이터 -------------------------------------------------
-
 // 댓글 데이터 -------------------------------------------------
 interface CommentProps {
   commentdata: {

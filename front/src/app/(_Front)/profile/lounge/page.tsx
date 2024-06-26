@@ -7,7 +7,7 @@ import banner from "../../../../../public/images/banner.png";
 import threedot from "../../../../../public/svgs/threedot.svg";
 import Link from "next/link";
 import { LikeIcon, CommentIcon } from "../../../components/icon/icon";
-import { Userdata, CommentData } from "../userdata";
+import { CommentData } from "../userdata";
 import { OpenComment } from "./comment";
 import WriteEditor from "./WriteEditor";
 
@@ -17,8 +17,6 @@ const UseridProfile: React.FC = () => {
   const [threedotopen, setThreeDotOpen] = useState(
     Array(CommentData.length).fill(false)
   ); // 배열로 상태 관리
-
-  const userinfo = Userdata[0];
 
   const threedotRef = useRef<HTMLDivElement | null>(null);
 
@@ -70,11 +68,9 @@ const UseridProfile: React.FC = () => {
         <Image src={Login} alt="프로필 이미지" width={160} height={160}></Image>
         <ProfileInfo>
           {/* userinfo를 props로 받아온 데이터를 사용합니다. */}
-          <ProfileName>{userinfo.name}</ProfileName>
-          <FollowInfo>
-            팔로잉 {userinfo.follow} &nbsp; 팔로워 {userinfo.follower}
-          </FollowInfo>
-          <ProfileDescription>{userinfo.introduce}</ProfileDescription>
+          <ProfileName></ProfileName>
+          <FollowInfo>팔로잉 &nbsp; 팔로워</FollowInfo>
+          <ProfileDescription></ProfileDescription>
         </ProfileInfo>
       </Profile>
       <SelectBar>
