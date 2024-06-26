@@ -42,8 +42,6 @@ const NaverPayButton = () => {
       document.body.removeChild(script);
     };
   }, []);
-
-  return <input type="button" id="naverPayBtn" value="네이버페이 결제 버튼" />;
 };
 
 export default NaverPayButton;
