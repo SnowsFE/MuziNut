@@ -151,6 +151,7 @@ const Values = styled.div`
   border-bottom: 1px solid #ccc;
   border-left: 1px solid #ccc;
   border-right: 1px solid #ccc;
+  box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.06);
 `;
 
 const Label = styled.div`

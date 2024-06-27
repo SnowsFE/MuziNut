@@ -310,6 +310,7 @@ const BoardsContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 20px;
+  box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.06);
 `;
 
 // 박스 스타일

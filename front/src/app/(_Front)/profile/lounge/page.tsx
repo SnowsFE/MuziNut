@@ -365,6 +365,7 @@ const LoungeContainer = styled.div`
   border: 1px solid #ccc;
   border-radius: 12px;
   margin: 0 0 16px 0;
+  box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.06);
 `;
 
 // -------------------------------------------------------------------------------------------------------

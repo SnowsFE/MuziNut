@@ -191,6 +191,7 @@ const Banner = styled.div`
   img {
     border-radius: 12px;
     margin-bottom: 32px;
+    box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.06);
   }
 `;
 
@@ -241,6 +242,7 @@ const EventName = styled.div`
   height: 160px;
   border: 1px solid #ccc;
   border-radius: 12px;
+  box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.06);
 `;
 
 // 이벤트 데이터 타이틀
@@ -272,6 +274,7 @@ const NoticeContent = styled.div`
   flex-direction: column;
   padding: 10px;
   border: 1px solid #ccc;
+  box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.06);
   border-radius: 12px;
   width: calc(50% - 10px); // 50% 너비에서 간격을 뺀 값
   box-sizing: border-box;
