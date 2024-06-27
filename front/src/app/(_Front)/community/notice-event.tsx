@@ -1,11 +1,27 @@
-import React from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 import Banner2 from "../../../../public/images/banner2.png";
 import ProfileImages from "../../../../public/images/artist3.png";
-import { NewIcon } from "@/app/components/icon/icon";
 
 const eventData = [
+  {
+    name: "이미지",
+    title: "너의 뮤즈에게 투표해봐, 너의 뮤즈에게 투표해봐",
+  },
+  {
+    name: "이미지",
+    title:
+      "넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!",
+  },
+  {
+    name: "이미지",
+    title: "한정판 칭호 이벤트!!",
+  },
+  {
+    name: "이미지라 서버에 저장할 필요있나?",
+    title: "첫 가입 이벤트",
+  },
   {
     name: "이미지",
     title: "너의 뮤즈에게 투표해봐, 너의 뮤즈에게 투표해봐",
@@ -99,15 +115,38 @@ const noticeData = [
 ];
 
 export const NoticeEvent: React.FC = () => {
+  const [eventToShow, setEventToShow] = useState(4);
+
+  // 더 많은 이벤트를 보여주기 위한 함수입니다.
+  const handleShowMoreEvents = () => {
+    // 현재 보여주는 이벤트 수가 전체 이벤트 수보다 크거나 같으면, 초기값으로 다시 설정합니다.
+    if (eventToShow >= eventData.length) {
+      setEventToShow(4);
+    } else {
+      // 남은 이벤트 수를 계산합니다.
+      const remainingEvents = eventData.length - eventToShow;
+      // 한 번에 추가로 보여줄 이벤트 수를 계산합니다. (최대 4개 또는 남은 이벤트 수 중 작은 값)
+      const increment = Math.min(4, remainingEvents);
+
+      // 현재 보여줄 이벤트 수를 업데이트합니다.
+      setEventToShow(eventToShow + increment);
+    }
+  };
+
   return (
     <Container>
       <Banner>
         <Image src={Banner2} alt="banner-image" />
       </Banner>
       <Event>
-        <Title>이벤트</Title>
+        <Title>
+          <ul>
+            <li>이벤트</li>
+            <li onClick={handleShowMoreEvents}>더보기</li>
+          </ul>
+        </Title>
         <EventData>
-          {eventData.map((data, i) => (
+          {eventData.slice(0, eventToShow).map((data, i) => (
             <Content key={i}>
               <EventName>{data.name}</EventName>
               <EventTitle>{data.title}</EventTitle>
@@ -165,20 +204,36 @@ const Event = styled.div`
 // 이벤트 타이틀
 const Title = styled.div`
   font-size: 24px;
+  ul {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li:nth-child(2) {
+    font-size: 14px;
+    font-family: "esamanru Light";
+    cursor: pointer;
+  }
 `;
 
 // 이벤트 데이터 컨테이너
 const EventData = styled.div`
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-  gap: 30px;
+  gap: 20px;
 `;
 
 // 이벤트 데이터
 const Content = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: calc(25% - 22.5px); // 4개의 아이템이 한 줄에 들어가도록 너비 조정
+  cursor: pointer;
 `;
 
 // 이벤트 데이터 이름
@@ -201,7 +256,7 @@ const Notice = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: 32px;
+  margin-bottom: 38px;
 `;
 
 // 공지사항 데이터 컨테이너
@@ -220,6 +275,7 @@ const NoticeContent = styled.div`
   border-radius: 12px;
   width: calc(50% - 10px); // 50% 너비에서 간격을 뺀 값
   box-sizing: border-box;
+  cursor: pointer;
 `;
 
 // 공지사항 제목

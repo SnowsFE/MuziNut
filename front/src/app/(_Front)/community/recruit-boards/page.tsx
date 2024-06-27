@@ -2,12 +2,14 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
+import { Headers } from "../header";
 
 const RecruitBoards: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("recruit-boards");
 
   return (
     <RecruitBoardsContainer>
+      <Headers />
       <SelectBar>
         <SelectContainer>
           <StyledLink

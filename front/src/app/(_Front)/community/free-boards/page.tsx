@@ -2,12 +2,14 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
+import { Headers } from "../header";
 
 const FreeBoards: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("free-boards");
 
   return (
     <FreeBoardsContainer>
+      <Headers />
       <SelectBar>
         <SelectContainer>
           <StyledLink
