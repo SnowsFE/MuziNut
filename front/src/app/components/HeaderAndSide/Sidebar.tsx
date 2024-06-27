@@ -54,7 +54,7 @@ export default function Sidebar({ isSidebarOpen }: SidebarProps) {
                 {isSidebarOpen && (
                   <ul>
                     <li>
-                        <span>차트</span>
+                      <span>차트</span>
                     </li>
                     <li>
                       <a href="/chart/music">
@@ -86,25 +86,20 @@ export default function Sidebar({ isSidebarOpen }: SidebarProps) {
                 {isSidebarOpen && (
                   <ul>
                     <li>
-                        <span>커뮤니티</span>
+                      <span>커뮤니티</span>
                     </li>
                     <li>
-                      <a href="#">
-                        <span>음악 게시판</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
+                      <a href="/community/free-boards">
                         <span>자유 게시판</span>
                       </a>
                     </li>
                     <li>
-                      <a href="#">
+                      <a href="/community/request-boards">
                         <span>게시판 요청</span>
                       </a>
                     </li>
                     <li>
-                      <a href="#">
+                      <a href="/community/recruit-boards">
                         <span>모집</span>
                       </a>
                     </li>
@@ -128,7 +123,7 @@ export default function Sidebar({ isSidebarOpen }: SidebarProps) {
                 {isSidebarOpen && (
                   <ul>
                     <li>
-                        <span>마이픽</span>
+                      <span>마이픽</span>
                     </li>
                     <li>
                       <a href="/mypick/bestpick">
@@ -137,7 +132,7 @@ export default function Sidebar({ isSidebarOpen }: SidebarProps) {
                     </li>
                     <li>
                       <a href="/mypick/vote">
-                        <span>후원하기</span>
+                        <span>투표하기</span>
                       </a>
                     </li>
                   </ul>
@@ -216,7 +211,7 @@ export default function Sidebar({ isSidebarOpen }: SidebarProps) {
                 {isSidebarOpen && (
                   <ul>
                     <li>
-                        <span>이벤트</span>
+                      <span>이벤트</span>
                     </li>
                     <li>
                       <a href="/event-notice">

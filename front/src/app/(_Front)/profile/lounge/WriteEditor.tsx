@@ -64,7 +64,7 @@ const WriteEditor: React.FC = () => {
 
                 try {
                   // 서버에 파일 업로드 요청
-                  const response = await fetch("/upload", {
+                  const response = await fetch("/profile/lounge", {
                     method: "POST",
                     body: formData,
                   });

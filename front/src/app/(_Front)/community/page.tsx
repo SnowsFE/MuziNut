@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 import Image from "next/image";
-import Nuts from "../../../../public/images/Nuts.png";
+import Nuts from "../../../../public/images/Muzinut.png";
+import { NoticeEvent } from "./notice-event";
 
 const Main: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("community");
@@ -38,14 +39,6 @@ const Main: React.FC = () => {
             </SelectItem>
           </StyledLink>
           <StyledLink
-            href={"/community/music-boards"}
-            onClick={() => setSelectedTab("music-boards")}
-          >
-            <SelectItem selected={selectedTab === "music-boards"}>
-              음악 게시판
-            </SelectItem>
-          </StyledLink>
-          <StyledLink
             href={"/community/request-boards"}
             onClick={() => setSelectedTab("request-boards")}
           >
@@ -63,6 +56,7 @@ const Main: React.FC = () => {
           </StyledLink>
         </SelectContainer>
       </SelectBar>
+      <NoticeEvent />
     </MainContainer>
   );
 };
@@ -81,16 +75,15 @@ const Header = styled.div`
 const HeaderIcon = styled.div`
   img {
     margin-right: 24px;
-    width: 86px;
-    height: 86px;
-    border-radius: 16px;
-    background-color: var(--text-color);
-    box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.1);
+    padding: 24px 0;
+    width: 50px;
+    height: 50px;
   }
 `;
 
 // 헤더 카피
 const HeaderCopy = styled.div`
+  padding: 8px 0;
   ul {
     list-style-type: none;
     padding: 0;

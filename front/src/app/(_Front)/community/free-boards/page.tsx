@@ -25,14 +25,6 @@ const FreeBoards: React.FC = () => {
             </SelectItem>
           </StyledLink>
           <StyledLink
-            href={"/community/music-boards"}
-            onClick={() => setSelectedTab("music-boards")}
-          >
-            <SelectItem selected={selectedTab === "music-boards"}>
-              음악 게시판
-            </SelectItem>
-          </StyledLink>
-          <StyledLink
             href={"/community/request-boards"}
             onClick={() => setSelectedTab("request-boards")}
           >

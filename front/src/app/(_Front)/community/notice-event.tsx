@@ -1,0 +1,280 @@
+import React from "react";
+import styled from "styled-components";
+import Image from "next/image";
+import Banner2 from "../../../../public/images/banner2.png";
+import ProfileImages from "../../../../public/images/artist3.png";
+import { NewIcon } from "@/app/components/icon/icon";
+
+const eventData = [
+  {
+    name: "이미지",
+    title: "너의 뮤즈에게 투표해봐, 너의 뮤즈에게 투표해봐",
+  },
+  {
+    name: "이미지",
+    title:
+      "넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!",
+  },
+  {
+    name: "이미지",
+    title: "한정판 칭호 이벤트!!",
+  },
+  {
+    name: "이미지라 서버에 저장할 필요있나?",
+    title: "첫 가입 이벤트",
+  },
+];
+
+const noticeData = [
+  {
+    title: "새로운 기능 업데이트 안내",
+    isNew: true,
+    profileName: "관리자",
+    likes: 25,
+    views: 120,
+  },
+  {
+    title: "서버 점검 안내",
+    isNew: false,
+    profileName: "운영팀",
+    likes: 10,
+    views: 200,
+  },
+  {
+    title: "서버 점검 안내",
+    isNew: false,
+    profileName: "운영팀",
+    likes: 10,
+    views: 200,
+  },
+  {
+    title: "새로운 이벤트 시작",
+    isNew: true,
+    profileName: "관리자",
+    likes: 15,
+    views: 180,
+  },
+  {
+    title: "앱 업데이트 공지",
+    isNew: false,
+    profileName: "운영팀",
+    likes: 20,
+    views: 250,
+  },
+  {
+    title: "유저 인터뷰",
+    isNew: true,
+    profileName: "관리자",
+    likes: 30,
+    views: 300,
+  },
+  {
+    title: "서비스 이용 안내",
+    isNew: false,
+    profileName: "운영팀",
+    likes: 5,
+    views: 100,
+  },
+  {
+    title: "시스템 점검 예정",
+    isNew: true,
+    profileName: "관리자",
+    likes: 12,
+    views: 220,
+  },
+  {
+    title: "새로운 기능 안내",
+    isNew: false,
+    profileName: "운영팀",
+    likes: 8,
+    views: 160,
+  },
+  {
+    title: "버그 수정 안내",
+    isNew: true,
+    profileName: "관리자",
+    likes: 18,
+    views: 210,
+  },
+];
+
+export const NoticeEvent: React.FC = () => {
+  return (
+    <Container>
+      <Banner>
+        <Image src={Banner2} alt="banner-image" />
+      </Banner>
+      <Event>
+        <Title>이벤트</Title>
+        <EventData>
+          {eventData.map((data, i) => (
+            <Content key={i}>
+              <EventName>{data.name}</EventName>
+              <EventTitle>{data.title}</EventTitle>
+            </Content>
+          ))}
+        </EventData>
+      </Event>
+      <Notice>
+        <Title>공지사항</Title>
+        <NoticeData>
+          {noticeData.map((notice, i) => (
+            <NoticeContent key={i}>
+              <NoticeTitle>
+                {notice.title}
+                {notice.isNew && <NewBadge></NewBadge>}
+              </NoticeTitle>
+              <ProfileSection>
+                <ProfileImage src={ProfileImages} alt="profile-image" />
+                <ProfileName>{notice.profileName}</ProfileName>
+                <Stats>
+                  <Likes>좋아요: {notice.likes}</Likes>
+                  <Views>조회수: {notice.views}</Views>
+                </Stats>
+              </ProfileSection>
+            </NoticeContent>
+          ))}
+        </NoticeData>
+      </Notice>
+    </Container>
+  );
+};
+
+// 넓이를 지정하는 바깥 테두리
+const Container = styled.div`
+  width: 100%;
+  margin-top: 30px;
+  border-radius: 12px;
+`;
+
+// 최상단 배너 [공고 or 유료 배너]
+const Banner = styled.div`
+  img {
+    border-radius: 12px;
+    margin-bottom: 32px;
+  }
+`;
+
+// 이벤트 섹션
+const Event = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+// 이벤트 타이틀
+const Title = styled.div`
+  font-size: 24px;
+`;
+
+// 이벤트 데이터 컨테이너
+const EventData = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+`;
+
+// 이벤트 데이터
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+// 이벤트 데이터 이름
+const EventName = styled.div`
+  height: 160px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+`;
+
+// 이벤트 데이터 타이틀
+const EventTitle = styled.div`
+  font-family: "esamanru Medium";
+  margin-top: 10px;
+  margin-bottom: 45px;
+  padding: 0 0 0 5px;
+`;
+
+// 공지사항 섹션
+const Notice = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 32px;
+`;
+
+// 공지사항 데이터 컨테이너
+const NoticeData = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+`;
+
+// 공지사항 항목
+const NoticeContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  width: calc(50% - 10px); // 50% 너비에서 간격을 뺀 값
+  box-sizing: border-box;
+`;
+
+// 공지사항 제목
+const NoticeTitle = styled.div`
+  font-size: 16px;
+  font-family: "esamanru Medium";
+  display: flex;
+  align-items: center;
+`;
+
+// "N" 배지
+const NewBadge = styled.div`
+  margin-left: 7px;
+  margin-bottom: 1px;
+  background-image: url(data:image/png;base64,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);
+  background-size: 56px 29px;
+  background-repeat: no-repeat;
+  background-position: -43px -16px;
+  width: 12px;
+  height: 12px;
+`;
+
+// 프로필 섹션
+const ProfileSection = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+`;
+
+// 프로필 이미지
+const ProfileImage = styled(Image)`
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+`;
+
+// 프로필 이름
+const ProfileName = styled.div`
+  margin-left: 10px;
+  font-weight: bold;
+`;
+
+// 좋아요 및 조회수 섹션
+const Stats = styled.div`
+  margin-left: auto;
+  display: flex;
+  gap: 10px;
+`;
+
+// 좋아요
+const Likes = styled.div`
+  font-size: 14px;
+`;
+
+// 조회수
+const Views = styled.div`
+  font-size: 14px;
+`;
