@@ -1,0 +1,61 @@
+{
+  "bestCommunity": [
+    {
+      "id": 1,
+      "titleName": "게시판 이름",
+      "authorName": "작성자",
+      "views": 100
+    },
+    {
+      "id": 2,
+      "titleName": "게시판 이름",
+      "authorName": "작성자",
+      "views": 100
+    },
+    {
+      "id": 3,
+      "titleName": "게시판 이름",
+      "authorName": "작성자",
+      "views": 100
+    },
+    {
+      "id": 4,
+      "titleName": "게시판 이름",
+      "authorName": "작성자",
+      "views": 100
+    },
+    {
+      "id": 5,
+      "titleName": "게시판 이름",
+      "authorName": "작성자",
+      "views": 100
+    }
+  ],
+
+  "newCommunity": [
+    {
+      "id": 1,
+      "titleName": "게시판 이름",
+      "authorName": "작성자",
+      "views": 100
+    },
+    {
+      "id": 2,
+      "titleName": "게시판 이름",
+      "authorName": "작성자",
+      "views": 100
+    },
+    {
+      "id": 3,
+      "titleName": "게시판 이름",
+      "authorName": "작성자",
+      "views": 100
+    },
+    {
+      "id": 4,
+      "titleName": "게시판 이름",
+      "authorName": "작성자",
+      "views": 100
+    }
+  ]
+}
