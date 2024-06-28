@@ -10,6 +10,7 @@ import alarm from "@/../public/svgs/alarm.svg";
 import menuBar from "@/../public/svgs/menu.svg";
 import profile from "@/../public/svgs/profile.svg";
 import DarkMode from "../darkmode/globalstyle";
+import Link from "next/link";
 
 interface NavbarProps {
   toggleSidebar: () => void;
@@ -32,7 +33,9 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
         <div className={styles.menu__bar} onClick={handleMenuClick}>
           <Image src={menuBar} alt="addalbum" width={36} height={36} />
         </div>
-        <div className={styles.logo}>MuziNut</div>
+        <div className={styles.logo}>
+          <a href="/">MuziNut</a>
+        </div>
       </div>
 
       {/* 가운데(검색 창) */}
@@ -53,9 +56,9 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
       {/* 오른쪽 nav 메뉴 */}
       <div className={styles.right__section}>
         <div className={styles.album__upload}>
-          <a href="/submit/album">
+        <Link href="/add-album/[step]" as="/add-album/1">
             <Image src={addalbum} alt="addalbum" width={40} height={40} />
-          </a>
+          </Link>
           <span>업로드</span>
         </div>
 

@@ -10,7 +10,7 @@
   grid-area: header;
 }
 .main__page {
-  /* padding: 12px 42px 0 48px; */
+  padding: 12px 42px 0 48px;
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
   margin-top: 70px;
