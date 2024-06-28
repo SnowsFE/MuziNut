@@ -7,7 +7,15 @@ import banner from "../../../../../public/images/banner.png";
 import threedot from "../../../../../public/svgs/threedot.svg";
 import Link from "next/link";
 import { LikeIcon, CommentIcon } from "../../../components/icon/icon";
-import { Userdata, CommentData } from "../userdata";
+import { CommentData } from "../userdata";
+import { OpenComment } from "./comment";
+import WriteEditor from "./WriteEditor";
+import {
+  BannerData,
+  ProfileData,
+  useFileState,
+  ProfileEditForm,
+} from "../../../components/multi-part-form-data/multi-part-form-data";
 
 // UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
@@ -15,8 +23,6 @@ const UseridProfile: React.FC = () => {
   const [threedotopen, setThreeDotOpen] = useState(
     Array(CommentData.length).fill(false)
   ); // 배열로 상태 관리
-
-  const userinfo = Userdata[0];
 
   const threedotRef = useRef<HTMLDivElement | null>(null);
 
@@ -43,20 +49,68 @@ const UseridProfile: React.FC = () => {
     };
   }, []);
 
+  const [openComments, setOpenComments] = useState(
+    Array(CommentData.length).fill(false)
+  ); // 댓글 열기 상태 관리
+
+  const handleCommentToggle = (index: number) => {
+    const newOpenComments = [...openComments];
+    newOpenComments[index] = !newOpenComments[index];
+    setOpenComments(newOpenComments);
+  };
+
+  const [writeVisible, setWriteVisible] = useState(false);
+
+  const handleWriteClick = () => {
+    setWriteVisible(!writeVisible);
+  };
+
+  const [bannerUrl, setBannerUrl] = useState<string>(banner.src);
+  const [profileUrl, setProfileUrl] = useState<string>(Login.src);
+  const [editFormVisible, setEditFormVisible] = useState(false);
+
+  // onUpload 함수 정의
+  const onUpload = (data: { bannerUrl?: string; profileUrl?: string }) => {
+    if (data.bannerUrl) {
+      console.log("배너 이미지가 변경되었습니다:", data.bannerUrl);
+      setBannerUrl(data.bannerUrl);
+    }
+    if (data.profileUrl) {
+      console.log("프로필 이미지가 변경되었습니다:", data.profileUrl);
+      setProfileUrl(data.profileUrl);
+    }
+  };
+
+  // useFileState 훅을 이용하여 상태와 함수들을 가져옵니다.
+  const { profileInfo, handleProfileInfoChange, handleSubmit } =
+    useFileState(onUpload);
+
+  // 프로필 정보 수정 폼 열기
+  const openEditForm = () => {
+    setEditFormVisible(true);
+  };
+
+  // 프로필 정보 수정 폼 닫기
+  const closeEditForm = () => {
+    setEditFormVisible(false);
+  };
+
   return (
     <ProfileContainer>
       <Banner>
-        <Image src={banner} alt="배너 이미지" />
+        <Image src={bannerUrl} alt="banner-image" width={1280} height={210} />
+        <BannerData onUpload={onUpload} />
       </Banner>
       <Profile>
-        <Image src={Login} alt="프로필 이미지" width={160} height={160}></Image>
+        <EditForm onClick={openEditForm}>⚙️</EditForm>
+        <Image src={profileUrl} alt="profile-image" width={160} height={160} />
+        <ProfileData onUpload={onUpload} />
         <ProfileInfo>
-          {/* userinfo를 props로 받아온 데이터를 사용합니다. */}
-          <ProfileName>{userinfo.name}</ProfileName>
+          <ProfileName>{profileInfo.name}</ProfileName>
           <FollowInfo>
-            팔로잉 {userinfo.follow} &nbsp; 팔로워 {userinfo.follower}
+            팔로잉 {profileInfo.follow} &nbsp; 팔로워 {profileInfo.follower}
           </FollowInfo>
-          <ProfileDescription>{userinfo.introduce}</ProfileDescription>
+          <ProfileDescription>{profileInfo.introduce}</ProfileDescription>
         </ProfileInfo>
       </Profile>
       <SelectBar>
@@ -89,6 +143,7 @@ const UseridProfile: React.FC = () => {
           >
             <SelectItem selected={selectedTab === "nuts"}>넛츠</SelectItem>
           </StyledLink>
+          <Write onClick={handleWriteClick}>Talk</Write>
         </SelectContainer>
       </SelectBar>
       {/* 라운지 큰 컨테이너 */}
@@ -136,6 +191,7 @@ const UseridProfile: React.FC = () => {
                 <LoungeWrite>{commentdata.write}</LoungeWrite>
                 {/* 라운지 글작성 이미지 */}
                 <LoungeImage>
+                  {" "}
                   <Image
                     src={banner}
                     alt="프로필 이미지"
@@ -150,15 +206,24 @@ const UseridProfile: React.FC = () => {
                   <LikeIcon />
                   {commentdata.like}
                 </LoungeLike>
-                <LoungeComment>
+                <LoungeComment onClick={() => handleCommentToggle(index)}>
                   <CommentIcon />
                   {commentdata.comment}
                 </LoungeComment>
               </LoungeLikeCommentContainer>
+              {openComments[index] && <OpenComment />}
+              <ProfileEditForm
+                profileInfo={profileInfo}
+                onChange={handleProfileInfoChange}
+                onSubmit={handleSubmit}
+                onCancel={closeEditForm}
+                visible={editFormVisible}
+              />
             </LoungeContainer>
           </React.Fragment>
         ))}
       </Lounge>
+      {writeVisible && <WriteEditor />}
     </ProfileContainer>
   );
 };
@@ -168,15 +233,31 @@ export default UseridProfile;
 // 마이페이지 전체를 감싸는 컨테이너
 const ProfileContainer = styled.div``;
 
+// 글쓰기
+const Write = styled.div`
+  font-size: 18px;
+  margin-left: auto;
+  cursor: pointer;
+
+  &:hover {
+    color: #16be78;
+  }
+`;
 // 배너
 const Banner = styled.div`
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
-  height: 100%;
+  position: relative;
 
   img {
+    background-color: var(--text-color);
     border-radius: 20px;
     overflow: hidden;
+  }
+
+  :nth-child(2) {
+    display: flex;
+    justify-content: flex-end;
   }
 `;
 
@@ -188,6 +269,7 @@ const Profile = styled.div`
   padding-top: 16px;
   display: flex;
   align-items: center;
+  position: relative;
 
   // 프로필 이미지
   img {
@@ -283,6 +365,7 @@ const LoungeContainer = styled.div`
   border: 1px solid #ccc;
   border-radius: 12px;
   margin: 0 0 16px 0;
+  box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.06);
 `;
 
 // -------------------------------------------------------------------------------------------------------
@@ -318,6 +401,10 @@ const LoungeProfileDetail = styled.div`
   position: relative;
   cursor: pointer;
 
+  border: 1px solid none;
+  background-color: white;
+  border-radius: 7px;
+
   img {
     &:hover {
       border: 1px;
@@ -333,7 +420,7 @@ const LoungeProfileDetail = styled.div`
 const LoungeWriteContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0px 15px 25px 15px;
+  padding: 0px 15px 10px 15px;
 `;
 
 // 라운지 글쓰기
@@ -354,7 +441,7 @@ const LoungeImage = styled.div`
 const LoungeLikeCommentContainer = styled.div`
   display: flex;
   align-items: center;
-  padding: 0px 15px 25px 15px;
+  padding: 0px 15px 10px 15px;
   gap: 20px;
 `;
 
@@ -370,6 +457,7 @@ const LoungeComment = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+  cursor: pointer;
 `;
 
 // 쓰리닷 오픈 시
@@ -391,8 +479,17 @@ const ThreeDotOpen = styled.div`
     padding: 4px 8px;
     border-radius: 12px;
     cursor: pointer;
+
     &:hover {
-      background-color: #f0f0f0;
+      transform: scale(1.05);
     }
   }
+`;
+
+// 프로필 에디터
+const EditForm = styled.div`
+  position: absolute;
+  right: 0;
+  top: 52px;
+  cursor: pointer;
 `;

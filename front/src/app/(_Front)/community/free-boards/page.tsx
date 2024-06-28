@@ -2,14 +2,13 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
-import { NoticeEvent } from "./notice-event";
-import { Headers } from "./header";
+import { Headers } from "../header";
 
-const Main: React.FC = () => {
-  const [selectedTab, setSelectedTab] = useState("community");
+const FreeBoards: React.FC = () => {
+  const [selectedTab, setSelectedTab] = useState("free-boards");
 
   return (
-    <MainContainer>
+    <FreeBoardsContainer>
       <Headers />
       <SelectBar>
         <SelectContainer>
@@ -45,18 +44,17 @@ const Main: React.FC = () => {
           </StyledLink>
         </SelectContainer>
       </SelectBar>
-      <NoticeEvent />
-    </MainContainer>
+    </FreeBoardsContainer>
   );
 };
 
-export default Main;
+export default FreeBoards;
 
-// 메인 전체를 감싸는 컨테이너
-const MainContainer = styled.div``;
+// 마이페이지 전체를 감싸는 컨테이너
+const FreeBoardsContainer = styled.div``;
 
 // -------------------------------------------------------------------------------------------------------
-// 선택 네비바
+// 메인, 라운지 선택바
 const SelectBar = styled.div`
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
@@ -66,7 +64,7 @@ const SelectBar = styled.div`
   font-size: 16px;
 `;
 
-// 나란히 하기위한 Flex 박스 컨테이너
+// 메인 라운지를 나란히 하기위한 Flex 박스 컨테이너
 const SelectContainer = styled.div`
   width: 100%;
   display: flex;
@@ -94,7 +92,7 @@ const SelectItem = styled.div<{ selected: boolean }>`
   }
 `;
 
-// 링크 태그 스타일을 주기위한 요소 추가
+// 메인 라운지 링크 태그 스타일을 주기위한 요소 추가
 const StyledLink = styled(Link)`
   color: var(--text-color);
   text-decoration: none;
