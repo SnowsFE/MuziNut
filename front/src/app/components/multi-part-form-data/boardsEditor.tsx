@@ -2,7 +2,7 @@ import React, { useMemo, useRef, useState, useEffect } from "react";
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
 import styled, { keyframes, css } from "styled-components";
-import QuillToolbar from "../(_Front)/profile/lounge/EditorOption";
+import QuillToolbar from "../../(_Front)/profile/lounge/EditorOption";
 import Quill from "quill";
 
 // Quill에서 사용할 사용자 정의 폰트 설정
