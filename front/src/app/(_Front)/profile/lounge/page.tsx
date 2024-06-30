@@ -30,6 +30,7 @@ const UseridProfile: React.FC = () => {
   const [profileUrl, setProfileUrl] = useState<string>(Login.src);
   const [editFormVisible, setEditFormVisible] = useState(false);
   const [publishedContent, setPublishedContent] = useState<string[]>([]);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   const threedotRef = useRef<HTMLDivElement>(null);
 
@@ -63,7 +64,8 @@ const UseridProfile: React.FC = () => {
   };
 
   const handleWriteClick = () => {
-    setWriteVisible((prev) => !prev);
+    setWriteVisible(true);
+    setEditingIndex(null);
   };
 
   const onUpload = (data: { bannerUrl?: string; profileUrl?: string }) => {
@@ -106,17 +108,24 @@ const UseridProfile: React.FC = () => {
   }, []);
 
   // 글 등록 콜백 함수
-  const handlePublish: React.Dispatch<React.SetStateAction<any>> = (
-    content: any
-  ) => {
-    setPublishedContent((prev) => [...prev, content]);
+  const handlePublish = (content: string) => {
+    if (editingIndex !== null) {
+      // 글 수정
+      const updatedContent = [...publishedContent];
+      updatedContent[editingIndex] = content;
+      setPublishedContent(updatedContent);
+      setEditingIndex(null);
+    } else {
+      // 새 글 등록
+      setPublishedContent((prev) => [...prev, content]);
+    }
+    setWriteVisible(false);
   };
 
   // 글 수정 콜백 함수
-  const handleEdit = (index: number, content: string) => {
-    const updatedContent = [...publishedContent];
-    updatedContent[index] = content;
-    setPublishedContent(updatedContent);
+  const handleEdit = (index: number) => {
+    setEditingIndex(index);
+    setWriteVisible(true);
   };
 
   // 글 삭제 콜백 함수
@@ -205,10 +214,8 @@ const UseridProfile: React.FC = () => {
                 />
                 {threedotopen[index] && (
                   <ThreeDotOpen>
-                    <label onClick={() => handleEdit(index, content)}>
-                      수정
-                    </label>
-                    |<label onClick={() => handleDelete(index)}>삭제</label>
+                    <label onClick={() => handleEdit(index)}>수정</label>|
+                    <label onClick={() => handleDelete(index)}>삭제</label>
                   </ThreeDotOpen>
                 )}
               </LoungeProfileDetail>
@@ -234,26 +241,27 @@ const UseridProfile: React.FC = () => {
                 {LoungePostData[index].comment}
               </LoungeComment>
             </LoungeLikeCommentContainer>
-            <ButtonContainer>
-              <StyledButton onClick={() => handleEdit(index, content)}>
-                수정
-              </StyledButton>
-              <StyledButton onClick={() => handleDelete(index)}>
-                삭제
-              </StyledButton>
-            </ButtonContainer>
             {openComments[index] && <OpenComment />}
           </LoungeContainer>
         ))}
       </Lounge>
-      {writeVisible && <WriteEditor onPublish={handlePublish} />}
-      <ProfileEditForm
-        profileInfo={profileInfo}
-        onChange={handleProfileInfoChange}
-        onSubmit={handleSubmit}
-        onCancel={closeEditForm}
-        visible={editFormVisible}
-      />
+      {writeVisible && (
+        <WriteEditor
+          onPublish={handlePublish}
+          onClose={() => setWriteVisible(false)}
+          initialContent={
+            editingIndex !== null ? publishedContent[editingIndex] : undefined
+          }
+        />
+      )}
+      {editFormVisible && (
+        <ProfileEditForm
+          onClose={closeEditForm}
+          profileInfo={profileInfo}
+          handleProfileInfoChange={handleProfileInfoChange}
+          handleSubmit={handleSubmit}
+        />
+      )}
     </ProfileContainer>
   );
 };
@@ -504,7 +512,7 @@ const ThreeDotOpen = styled.div`
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 15px;
-  bottom: -18px;
+  bottom: -17px;
   left: 50px;
   z-index: 1;
   display: flex;
@@ -530,24 +538,4 @@ const EditForm = styled.div`
   right: 0;
   top: 52px;
   cursor: pointer;
-`;
-
-// 수정 및 삭제 버튼을 감싸는 컨테이너
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-`;
-
-// 수정 및 삭제 버튼 스타일
-const StyledButton = styled.button`
-  background-color: #f5f5f5;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 5px 10px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #e7e7e7;
-  }
 `;
