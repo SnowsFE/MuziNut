@@ -1,15 +1,18 @@
 // 댓글 데이터 -------------------------------------------------
-interface CommentProps {
-  commentdata: {
+interface LoungePostProps {
+  loungepostdata: {
     write: string;
     img: string;
     like: number;
     comment: number;
   };
 }
-export type CommentPropsOmit = Omit<CommentProps["commentdata"], "img">;
+export type LoungePostPropsOmit = Omit<
+  LoungePostProps["loungepostdata"],
+  "img"
+>;
 
-export const CommentData: CommentPropsOmit[] = [
+export const LoungePostData: LoungePostPropsOmit[] = [
   {
     write: "안녕하세요",
     like: 3,

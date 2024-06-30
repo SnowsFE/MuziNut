@@ -104,12 +104,7 @@ const WriteEditor: React.FC = () => {
   }, []);
 
   // 에디터 내용 변경 핸들러
-  const handleChange = (
-    content: string,
-    delta: any,
-    source: string,
-    editor: any
-  ) => {
+  const handleChange = (content: string) => {
     setContent(content);
     console.log("Content changed: ", content); // 텍스트 변경 로그
   };

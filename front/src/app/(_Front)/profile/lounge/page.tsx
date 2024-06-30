@@ -7,7 +7,7 @@ import banner from "../../../../../public/images/banner.png";
 import threedot from "../../../../../public/svgs/threedot.svg";
 import Link from "next/link";
 import { LikeIcon, CommentIcon } from "../../../components/icon/icon";
-import { CommentData } from "../userdata";
+import { LoungePostData } from "../userdata";
 import { OpenComment } from "./comment";
 import WriteEditor from "./WriteEditor";
 import {
@@ -21,7 +21,7 @@ import {
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("lounge");
   const [threedotopen, setThreeDotOpen] = useState(
-    Array(CommentData.length).fill(false)
+    Array(LoungePostData.length).fill(false)
   ); // 배열로 상태 관리
 
   const threedotRef = useRef<HTMLDivElement | null>(null);
@@ -38,7 +38,7 @@ const UseridProfile: React.FC = () => {
         threedotRef.current &&
         !threedotRef.current.contains(event.target as Node)
       ) {
-        setThreeDotOpen(Array(CommentData.length).fill(false));
+        setThreeDotOpen(Array(LoungePostData.length).fill(false));
       }
     };
 
@@ -50,7 +50,7 @@ const UseridProfile: React.FC = () => {
   }, []);
 
   const [openComments, setOpenComments] = useState(
-    Array(CommentData.length).fill(false)
+    Array(LoungePostData.length).fill(false)
   ); // 댓글 열기 상태 관리
 
   const handleCommentToggle = (index: number) => {
@@ -93,6 +93,16 @@ const UseridProfile: React.FC = () => {
   // 프로필 정보 수정 폼 닫기
   const closeEditForm = () => {
     setEditFormVisible(false);
+  };
+
+  const [loungeContent, setLoungeContent] = useState<string[]>(
+    LoungePostData.map(() => "")
+  );
+
+  const handleLoungeContentChange = (index: number, value: string) => {
+    const newContent = [...loungeContent];
+    newContent[index] = value;
+    setLoungeContent(newContent);
   };
 
   return (
@@ -146,28 +156,21 @@ const UseridProfile: React.FC = () => {
           <Write onClick={handleWriteClick}>Talk</Write>
         </SelectContainer>
       </SelectBar>
-      {/* 라운지 큰 컨테이너 */}
       <Lounge>
-        {/* 라운지 Border 컨테이너 */}
-        {CommentData.map((commentdata, index) => (
+        {LoungePostData.map((loungepostdata, index) => (
           <React.Fragment key={index}>
             <LoungeContainer>
-              {/* 라운지 프로필 */}
               <LoungeProfileInfo>
-                {/* 라운지 프로필 이미지 */}
                 <LoungeProfileImage>
                   <Image
                     src={Login}
                     alt="프로필 이미지"
-                    width={50}
-                    height={50}
+                    width={40}
+                    height={40}
                   ></Image>
                 </LoungeProfileImage>
-                {/* 라운지 프로필 닉네임 */}
                 <LoungeProfileName>코딩</LoungeProfileName>
-                {/* 라운지 프로필 업로드 시간 ~ 기간 */}
                 <LoungeProfileUploadTime>3일전</LoungeProfileUploadTime>
-                {/* 라운지 (공유하기, 신고하기 기능) */}
                 <LoungeProfileDetail
                   ref={threedotRef}
                   onClick={() => handleThreeDotClick(index)}
@@ -185,13 +188,9 @@ const UseridProfile: React.FC = () => {
                   )}
                 </LoungeProfileDetail>
               </LoungeProfileInfo>
-              {/* 라운지 글작성 컨테이너 */}
               <LoungeWriteContainer>
-                {/* 라운지 글작성 */}
-                <LoungeWrite>{commentdata.write}</LoungeWrite>
-                {/* 라운지 글작성 이미지 */}
+                <LoungeWrite>{loungepostdata.write}</LoungeWrite>
                 <LoungeImage>
-                  {" "}
                   <Image
                     src={banner}
                     alt="프로필 이미지"
@@ -204,11 +203,11 @@ const UseridProfile: React.FC = () => {
               <LoungeLikeCommentContainer>
                 <LoungeLike>
                   <LikeIcon />
-                  {commentdata.like}
+                  {loungepostdata.like}
                 </LoungeLike>
                 <LoungeComment onClick={() => handleCommentToggle(index)}>
                   <CommentIcon />
-                  {commentdata.comment}
+                  {loungepostdata.comment}
                 </LoungeComment>
               </LoungeLikeCommentContainer>
               {openComments[index] && <OpenComment />}
@@ -373,10 +372,12 @@ const LoungeContainer = styled.div`
 const LoungeProfileInfo = styled.div`
   display: flex;
   padding: 15px 15px 15px 15px;
-  gap: 10px;
+  gap: 7px;
+  font-size: 13px;
   align-items: center;
+
   :first-child {
-    margin-right: 1px;
+    margin-right: 2px;
   }
 `;
 
@@ -384,14 +385,19 @@ const LoungeProfileInfo = styled.div`
 const LoungeProfileImage = styled.div`
   img {
     border-radius: 32px;
+    margin-top: 2px;
   }
 `;
 
 // 라운지 프로필 닉네임
-const LoungeProfileName = styled.div``;
+const LoungeProfileName = styled.div`
+  margin-bottom: 2px;
+`;
 
 // 라운지 프로필 업로드 시간 ~ 기간
-const LoungeProfileUploadTime = styled.div``;
+const LoungeProfileUploadTime = styled.div`
+  margin-bottom: 2px;
+`;
 
 // 라운지 프로필 삼각점바 (공유하기, 신고하기 기능)
 const LoungeProfileDetail = styled.div`
