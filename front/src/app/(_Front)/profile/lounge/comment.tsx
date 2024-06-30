@@ -84,14 +84,30 @@ const BestCommentList = styled.div`
   display: flex;
   flex-direction: column;
   width: 95%;
-  padding: 50px 50px 0 50px;
+  padding: 40px 50px 0 50px;
+
+  position: relative; /* 부모 요소로부터 상대적 위치 설정 */
+
+  /* ::after 가상 요소를 사용하여 하단에 선 추가 */
+  &::after {
+    content: ""; /* 가상 요소의 내용을 빈 문자열로 설정 */
+    position: absolute; /* 절대적 위치 설정 */
+    bottom: -1px; /* 아래쪽에 배치 */
+    width: 92.5%; /* 가로 너비를 100%로 설정 */
+    height: 1px; /* 선의 높이(두께)를 설정 */
+    background-color: #ccc; /* 선의 색상 설정 */
+  }
 `;
 
 // 베스트 픽 댓글 목록 헤더 [ 프로필, 닉네임, 시간 ]
 const BestCommentHeader = styled.div`
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 7px;
+
+  :first-child {
+    margin-right: 2px;
+  }
 `;
 
 // 베스트 픽 댓글 작성자 프로필
@@ -104,12 +120,12 @@ const BestCommentProfile = styled.img<{ src: string }>`
 
 // 베스트 픽 댓글 작성자 닉네임
 const BestCommentNickname = styled.div`
-  margin-left: 3px;
+  font-size: 13px;
 `;
 
 // 베스트 픽 댓글 작성 시간
 const BestCommentTime = styled.div`
-  margin-left: 3px;
+  font-size: 13px;
 `;
 
 // 베스트 픽 댓글 본문
@@ -122,7 +138,8 @@ const BestCommentBody = styled.div`
 // 베스트 픽 댓글 본문
 const BestCommentText = styled.div`
   padding: 10px 0;
-  font-size: 16px;
+  font-size: 14px;
+  font-family: "esamanru Medium";
 `;
 
 // 베스트 픽 댓글 작동
@@ -137,6 +154,7 @@ const BestCommentLike = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+  font-size: 14px;
 
   :first-child {
     margin-top: 1px;
@@ -163,7 +181,7 @@ const BestCommentContainerBox = styled.div`
 const BestComment = styled.div`
   display: flex;
   align-self: flex-start;
-  font-size: 20px;
+  font-size: 18px;
   padding: 0 0 10px 0;
   cursor: pointer;
 `;

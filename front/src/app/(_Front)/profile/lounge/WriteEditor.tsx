@@ -15,18 +15,18 @@ const Size = Quill.import("attributors/style/size");
 Size.whitelist = ["13px", "16px", "18px", "24px", "28px", "32px"];
 Quill.register(Size, true);
 
-const WriteEditor: React.FC = () => {
+const WriteEditor: React.FC<{
+  onPublish: React.Dispatch<React.SetStateAction<string>>;
+}> = ({ onPublish }) => {
   const quillRef = useRef<ReactQuill>(null);
   const [content, setContent] = useState<string>("");
   const [visible, setVisible] = useState<boolean>(true);
   const [render, setRender] = useState<boolean>(true);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (!visible) {
-        const timer = setTimeout(() => setRender(false), 500);
-        return () => clearTimeout(timer);
-      }
+    if (!visible) {
+      const timer = setTimeout(() => setRender(false), 500);
+      return () => clearTimeout(timer);
     }
   }, [visible]);
 
@@ -38,21 +38,12 @@ const WriteEditor: React.FC = () => {
 
   // Quill 모듈 설정
   const modules = useMemo(() => {
-    if (typeof window === "undefined") {
-      return {};
-    }
-
     return {
       toolbar: {
         container: "#toolbar",
         handlers: {
           // 이미지 삽입 핸들러
           image: function () {
-            // 브라우저 환경에서만 실행
-            if (typeof window === "undefined") {
-              return;
-            }
-
             const input = document.createElement("input");
             input.setAttribute("type", "file");
             input.setAttribute("accept", "image/*");
@@ -94,12 +85,10 @@ const WriteEditor: React.FC = () => {
 
   // Quill 에디터 초기 설정
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const quill = quillRef.current?.getEditor();
-      if (quill) {
-        quill.format("font", "esamanruLight");
-        quill.format("size", "13px");
-      }
+    const quill = quillRef.current?.getEditor();
+    if (quill) {
+      quill.format("font", "esamanruLight");
+      quill.format("size", "13px");
     }
   }, []);
 
@@ -112,17 +101,17 @@ const WriteEditor: React.FC = () => {
   // 글 등록 버튼 클릭 핸들러
   const handlePublishClick = async () => {
     try {
-      const response = await fetch("/publish", {
+      const formData = new FormData();
+      formData.append("content", content);
+
+      const response = await fetch("/profile/lounge", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ content }),
+        body: formData,
       });
 
       if (response.ok) {
         console.log("글이 성공적으로 등록되었습니다.");
-        // 추가적인 UI 업데이트나 리다이렉션 등을 수행할 수 있습니다.
+        onPublish(content); // 콜백 함수 호출
       } else {
         console.error("글 등록에 실패했습니다.");
       }

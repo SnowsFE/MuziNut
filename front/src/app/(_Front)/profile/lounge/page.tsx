@@ -17,19 +17,26 @@ import {
   ProfileEditForm,
 } from "../../../components/multi-part-form-data/multi-part-form-data";
 
-// UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("lounge");
   const [threedotopen, setThreeDotOpen] = useState(
     Array(LoungePostData.length).fill(false)
-  ); // 배열로 상태 관리
+  );
+  const [openComments, setOpenComments] = useState(
+    Array(LoungePostData.length).fill(false)
+  );
+  const [writeVisible, setWriteVisible] = useState(false);
+  const [bannerUrl, setBannerUrl] = useState<string>(banner.src);
+  const [profileUrl, setProfileUrl] = useState<string>(Login.src);
+  const [editFormVisible, setEditFormVisible] = useState(false);
+  const [publishedContent, setPublishedContent] = useState<string[]>([]);
 
-  const threedotRef = useRef<HTMLDivElement | null>(null);
+  const threedotRef = useRef<HTMLDivElement>(null);
 
   const handleThreeDotClick = (index: number) => {
-    const newThreeDotOpen = [...threedotopen];
-    newThreeDotOpen[index] = !newThreeDotOpen[index];
-    setThreeDotOpen(newThreeDotOpen);
+    setThreeDotOpen((prev) =>
+      prev.map((item, i) => (i === index ? !item : item))
+    );
   };
 
   useEffect(() => {
@@ -49,60 +56,74 @@ const UseridProfile: React.FC = () => {
     };
   }, []);
 
-  const [openComments, setOpenComments] = useState(
-    Array(LoungePostData.length).fill(false)
-  ); // 댓글 열기 상태 관리
-
   const handleCommentToggle = (index: number) => {
-    const newOpenComments = [...openComments];
-    newOpenComments[index] = !newOpenComments[index];
-    setOpenComments(newOpenComments);
+    setOpenComments((prev) =>
+      prev.map((item, i) => (i === index ? !item : item))
+    );
   };
-
-  const [writeVisible, setWriteVisible] = useState(false);
 
   const handleWriteClick = () => {
-    setWriteVisible(!writeVisible);
+    setWriteVisible((prev) => !prev);
   };
 
-  const [bannerUrl, setBannerUrl] = useState<string>(banner.src);
-  const [profileUrl, setProfileUrl] = useState<string>(Login.src);
-  const [editFormVisible, setEditFormVisible] = useState(false);
-
-  // onUpload 함수 정의
   const onUpload = (data: { bannerUrl?: string; profileUrl?: string }) => {
     if (data.bannerUrl) {
-      console.log("배너 이미지가 변경되었습니다:", data.bannerUrl);
       setBannerUrl(data.bannerUrl);
     }
     if (data.profileUrl) {
-      console.log("프로필 이미지가 변경되었습니다:", data.profileUrl);
       setProfileUrl(data.profileUrl);
     }
   };
 
-  // useFileState 훅을 이용하여 상태와 함수들을 가져옵니다.
-  const { profileInfo, handleProfileInfoChange, handleSubmit } =
-    useFileState(onUpload);
-
-  // 프로필 정보 수정 폼 열기
   const openEditForm = () => {
     setEditFormVisible(true);
   };
 
-  // 프로필 정보 수정 폼 닫기
   const closeEditForm = () => {
     setEditFormVisible(false);
   };
 
-  const [loungeContent, setLoungeContent] = useState<string[]>(
-    LoungePostData.map(() => "")
-  );
+  const { profileInfo, handleProfileInfoChange, handleSubmit } =
+    useFileState(onUpload);
 
-  const handleLoungeContentChange = (index: number, value: string) => {
-    const newContent = [...loungeContent];
-    newContent[index] = value;
-    setLoungeContent(newContent);
+  // 임시 데이터 - 실제 백엔드 API로 데이터를 받아오는 것으로 대체해야 합니다.
+  const tempLoungePostData = [
+    {
+      profileImage: profileUrl,
+      profileName: "사용자 이름",
+      uploadTime: new Date().toLocaleDateString(),
+      content: "임시 데이터 내용입니다.",
+      bannerImage: banner.src,
+      like: 0,
+      comment: 0,
+    },
+    // 추가적인 임시 데이터를 필요에 따라 추가할 수 있습니다.
+  ];
+
+  // 컴포넌트가 처음 렌더링될 때 임시 데이터를 설정합니다.
+  useEffect(() => {
+    setPublishedContent(tempLoungePostData.map((post) => post.content));
+  }, []);
+
+  // 글 등록 콜백 함수
+  const handlePublish: React.Dispatch<React.SetStateAction<any>> = (
+    content: any
+  ) => {
+    setPublishedContent((prev) => [...prev, content]);
+  };
+
+  // 글 수정 콜백 함수
+  const handleEdit = (index: number, content: string) => {
+    const updatedContent = [...publishedContent];
+    updatedContent[index] = content;
+    setPublishedContent(updatedContent);
+  };
+
+  // 글 삭제 콜백 함수
+  const handleDelete = (index: number) => {
+    const updatedContent = [...publishedContent];
+    updatedContent.splice(index, 1);
+    setPublishedContent(updatedContent);
   };
 
   return (
@@ -157,72 +178,82 @@ const UseridProfile: React.FC = () => {
         </SelectContainer>
       </SelectBar>
       <Lounge>
-        {LoungePostData.map((loungepostdata, index) => (
-          <React.Fragment key={index}>
-            <LoungeContainer>
-              <LoungeProfileInfo>
-                <LoungeProfileImage>
-                  <Image
-                    src={Login}
-                    alt="프로필 이미지"
-                    width={40}
-                    height={40}
-                  ></Image>
-                </LoungeProfileImage>
-                <LoungeProfileName>코딩</LoungeProfileName>
-                <LoungeProfileUploadTime>3일전</LoungeProfileUploadTime>
-                <LoungeProfileDetail
-                  ref={threedotRef}
-                  onClick={() => handleThreeDotClick(index)}
-                >
-                  <Image
-                    src={threedot}
-                    alt="공유하기, 신고하기 기능"
-                    width={24}
-                    height={24}
-                  />
-                  {threedotopen[index] && (
-                    <ThreeDotOpen>
-                      <label>공유</label>|<label>신고</label>
-                    </ThreeDotOpen>
-                  )}
-                </LoungeProfileDetail>
-              </LoungeProfileInfo>
-              <LoungeWriteContainer>
-                <LoungeWrite>{loungepostdata.write}</LoungeWrite>
-                <LoungeImage>
-                  <Image
-                    src={banner}
-                    alt="프로필 이미지"
-                    width={1280}
-                    height={256}
-                  ></Image>
-                </LoungeImage>
-              </LoungeWriteContainer>
-              {/* 라운지 좋아요 댓글 컨테이너 */}
-              <LoungeLikeCommentContainer>
-                <LoungeLike>
-                  <LikeIcon />
-                  {loungepostdata.like}
-                </LoungeLike>
-                <LoungeComment onClick={() => handleCommentToggle(index)}>
-                  <CommentIcon />
-                  {loungepostdata.comment}
-                </LoungeComment>
-              </LoungeLikeCommentContainer>
-              {openComments[index] && <OpenComment />}
-              <ProfileEditForm
-                profileInfo={profileInfo}
-                onChange={handleProfileInfoChange}
-                onSubmit={handleSubmit}
-                onCancel={closeEditForm}
-                visible={editFormVisible}
-              />
-            </LoungeContainer>
-          </React.Fragment>
+        {publishedContent.map((content, index) => (
+          <LoungeContainer key={index}>
+            <LoungeProfileInfo>
+              <LoungeProfileImage>
+                <Image
+                  src={profileUrl}
+                  alt="프로필 이미지"
+                  width={40}
+                  height={40}
+                />
+              </LoungeProfileImage>
+              <LoungeProfileName>{profileInfo.name}</LoungeProfileName>
+              <LoungeProfileUploadTime>
+                {new Date().toLocaleDateString()}
+              </LoungeProfileUploadTime>
+              <LoungeProfileDetail
+                ref={threedotRef}
+                onClick={() => handleThreeDotClick(index)}
+              >
+                <Image
+                  src={threedot}
+                  alt="공유하기, 신고하기 기능"
+                  width={24}
+                  height={24}
+                />
+                {threedotopen[index] && (
+                  <ThreeDotOpen>
+                    <label onClick={() => handleEdit(index, content)}>
+                      수정
+                    </label>
+                    |<label onClick={() => handleDelete(index)}>삭제</label>
+                  </ThreeDotOpen>
+                )}
+              </LoungeProfileDetail>
+            </LoungeProfileInfo>
+            <LoungeWriteContainer>
+              <LoungeWrite>{content}</LoungeWrite>
+              <LoungeImage>
+                <Image
+                  src={banner}
+                  alt="배너 이미지"
+                  width={1280}
+                  height={256}
+                />
+              </LoungeImage>
+            </LoungeWriteContainer>
+            <LoungeLikeCommentContainer>
+              <LoungeLike>
+                <LikeIcon />
+                {LoungePostData[index].like}
+              </LoungeLike>
+              <LoungeComment onClick={() => handleCommentToggle(index)}>
+                <CommentIcon />
+                {LoungePostData[index].comment}
+              </LoungeComment>
+            </LoungeLikeCommentContainer>
+            <ButtonContainer>
+              <StyledButton onClick={() => handleEdit(index, content)}>
+                수정
+              </StyledButton>
+              <StyledButton onClick={() => handleDelete(index)}>
+                삭제
+              </StyledButton>
+            </ButtonContainer>
+            {openComments[index] && <OpenComment />}
+          </LoungeContainer>
         ))}
       </Lounge>
-      {writeVisible && <WriteEditor />}
+      {writeVisible && <WriteEditor onPublish={handlePublish} />}
+      <ProfileEditForm
+        profileInfo={profileInfo}
+        onChange={handleProfileInfoChange}
+        onSubmit={handleSubmit}
+        onCancel={closeEditForm}
+        visible={editFormVisible}
+      />
     </ProfileContainer>
   );
 };
@@ -449,6 +480,7 @@ const LoungeLikeCommentContainer = styled.div`
   align-items: center;
   padding: 0px 15px 10px 15px;
   gap: 20px;
+  font-size: 14px;
 `;
 
 // 라운지 좋아요
@@ -498,4 +530,24 @@ const EditForm = styled.div`
   right: 0;
   top: 52px;
   cursor: pointer;
+`;
+
+// 수정 및 삭제 버튼을 감싸는 컨테이너
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+`;
+
+// 수정 및 삭제 버튼 스타일
+const StyledButton = styled.button`
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #e7e7e7;
+  }
 `;
