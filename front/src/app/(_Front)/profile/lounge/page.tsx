@@ -495,14 +495,14 @@ const LoungeLikeCommentContainer = styled.div`
 const LoungeLike = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 7px;
 `;
 
 // 라운지 댓글
 const LoungeComment = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   cursor: pointer;
 `;
 

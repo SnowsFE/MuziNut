@@ -3,6 +3,8 @@ import styled from "styled-components";
 import Image from "next/image";
 import Banner2 from "../../../../public/images/banner2.png";
 import ProfileImages from "../../../../public/images/artist3.png";
+import Link from "next/link";
+import { LikeIcon, ViewIcon } from "@/app/components/icon/icon";
 
 const eventData = [
   {
@@ -141,15 +143,19 @@ export const NoticeEvent: React.FC = () => {
       <Event>
         <Title>
           <ul>
-            <li>이벤트</li>
+            <Link href={"/event"}>
+              <li>이벤트</li>
+            </Link>
             <li onClick={handleShowMoreEvents}>더보기</li>
           </ul>
         </Title>
         <EventData>
           {eventData.slice(0, eventToShow).map((data, i) => (
             <Content key={i}>
-              <EventName>{data.name}</EventName>
-              <EventTitle>{data.title}</EventTitle>
+              <Link href={`/community/event/${i}`}>
+                <EventName>{data.name}</EventName>
+                <EventTitle>{data.title}</EventTitle>
+              </Link>
             </Content>
           ))}
         </EventData>
@@ -159,16 +165,22 @@ export const NoticeEvent: React.FC = () => {
         <NoticeData>
           {noticeData.map((notice, i) => (
             <NoticeContent key={i}>
-              <NoticeTitle>
-                {notice.title}
-                {notice.isNew && <NewBadge></NewBadge>}
-              </NoticeTitle>
+              <Link href={`/community/notice/${i}`}>
+                <NoticeTitle>
+                  {notice.title}
+                  {notice.isNew && <NewBadge></NewBadge>}
+                </NoticeTitle>
+              </Link>
               <ProfileSection>
                 <ProfileImage src={ProfileImages} alt="profile-image" />
                 <ProfileName>{notice.profileName}</ProfileName>
                 <Stats>
-                  <Likes>좋아요: {notice.likes}</Likes>
-                  <Views>조회수: {notice.views}</Views>
+                  <Likes>
+                    <LikeIcon /> {notice.likes}
+                  </Likes>
+                  <Views>
+                    <ViewIcon /> {notice.views}
+                  </Views>
                 </Stats>
               </ProfileSection>
             </NoticeContent>
@@ -205,6 +217,7 @@ const Event = styled.div`
 // 이벤트 타이틀
 const Title = styled.div`
   font-size: 24px;
+
   ul {
     display: flex;
     align-items: flex-end;
@@ -212,6 +225,14 @@ const Title = styled.div`
     list-style-type: none;
     padding: 0;
     margin: 0;
+
+    :link {
+      text-decoration: none;
+    }
+  }
+
+  li {
+    color: var(--text-color);
   }
 
   li:nth-child(2) {
@@ -226,7 +247,7 @@ const EventData = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 20px;
+  gap: 15px;
 `;
 
 // 이벤트 데이터
@@ -235,6 +256,15 @@ const Content = styled.div`
   flex-direction: column;
   width: calc(25% - 22.5px); // 4개의 아이템이 한 줄에 들어가도록 너비 조정
   cursor: pointer;
+
+  :link {
+    text-decoration: none;
+    color: var(--text-color);
+
+    &:hover {
+      transform: scale(1.01);
+    }
+  }
 `;
 
 // 이벤트 데이터 이름
@@ -279,6 +309,15 @@ const NoticeContent = styled.div`
   width: calc(50% - 10px); // 50% 너비에서 간격을 뺀 값
   box-sizing: border-box;
   cursor: pointer;
+
+  &:hover {
+    transform: scale(1.01);
+  }
+
+  :link {
+    text-decoration: none;
+    color: var(--text-color);
+  }
 `;
 
 // 공지사항 제목
@@ -323,17 +362,24 @@ const ProfileName = styled.div`
 
 // 좋아요 및 조회수 섹션
 const Stats = styled.div`
-  margin-left: auto;
   display: flex;
+  align-items: center;
+  margin-left: auto;
   gap: 10px;
 `;
 
 // 좋아요
 const Likes = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
   font-size: 14px;
 `;
 
 // 조회수
 const Views = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
   font-size: 14px;
 `;

@@ -1,6 +1,8 @@
 // 댓글 데이터 -------------------------------------------------
 interface LoungePostProps {
   loungepostdata: {
+    profile: string;
+    name: string;
     write: string;
     img: string;
     like: number;
@@ -14,20 +16,11 @@ export type LoungePostPropsOmit = Omit<
 
 export const LoungePostData: LoungePostPropsOmit[] = [
   {
-    write: "안녕하세요",
-    like: 3,
-    comment: 4,
-  },
-  {
-    write:
-      "반갑습니다 저는 지금 일단 밥을 좀 먹어야겠어요 방구뿡 방구뿡 방구방구 뿡뿡, 반갑습니다 저는 지금 일단 밥을 좀 먹어야겠어요 방구뿡 방구뿡 방구방구 뿡뿡, 반갑습니다 저는 지금 일단 밥을 좀 먹어야겠어요 방구뿡 방구뿡 방구방구 뿡뿡",
-    like: 5,
-    comment: 7,
-  },
-  {
-    write: "안녕하세요",
-    like: 3124,
-    comment: 4112,
+    profile: "",
+    name: "",
+    write: "",
+    like: 0,
+    comment: 0,
   },
 ];
 
