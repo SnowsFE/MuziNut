@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { FaSearch } from "react-icons/fa";
-import EventPost from "./eventpost";
+import NoticePost from "./noticepost";
 import Image from "next/image";
-import Eventbanner from "../../../../public/images/eventbanner.png";
+import Noticebanner from "../../../../public/images/eventbanner.png";
 
-const EventBody: React.FC = () => {
+const NoticeBody: React.FC = () => {
   const [selected, setSelected] = useState<string>("인기순");
 
   const handleSelect = (option: string) => {
@@ -13,45 +13,45 @@ const EventBody: React.FC = () => {
   };
 
   return (
-    <EventContainer>
-      <EventBanner>
-        <Image src={Eventbanner} alt="event-banner"></Image>
-      </EventBanner>
-      <EventController>
-        <EventOptions>
+    <NoticeContainer>
+      <NoticeBanner>
+        <Image src={Noticebanner} alt="event-banner"></Image>
+      </NoticeBanner>
+      <NoticeController>
+        <NoticeOptions>
           <ul>
             {["인기순", "최신순", "좋아요순"].map((option, index) => (
               <li key={option}>
-                <EventOption
+                <NoticeOption
                   isSelected={selected === option}
                   onClick={() => handleSelect(option)}
                 >
                   {selected === option && "✔ "}
                   {option}
-                </EventOption>
+                </NoticeOption>
                 {index < 2 && <Dot />}
               </li>
             ))}
           </ul>
-        </EventOptions>
+        </NoticeOptions>
         <SearchContainer>
           <ControllerSearchTitle>제목</ControllerSearchTitle>
-          <ControllerSearch placeholder="이벤트 검색" />
+          <ControllerSearch placeholder="공지사항 검색" />
           <SearchIcon />
         </SearchContainer>
-      </EventController>
-      <EventPost />
-    </EventContainer>
+      </NoticeController>
+      <NoticePost />
+    </NoticeContainer>
   );
 };
 
-export default EventBody;
+export default NoticeBody;
 
-// 이벤트 페이지 가장 바깥을 감싸는 컨테이너
-const EventContainer = styled.div``;
+// 공지사항 페이지 가장 바깥을 감싸는 컨테이너
+const NoticeContainer = styled.div``;
 
-// 이벤트 페이지 헤더 제목
-const EventBanner = styled.div`
+// 공지사항 페이지 헤더 제목
+const NoticeBanner = styled.div`
   margin-top: 24px;
 
   img {
@@ -61,15 +61,15 @@ const EventBanner = styled.div`
   }
 `;
 
-// 이벤트 선택바 인기순, 최신순, 좋아요순, 제목 [ 검색하기 부분 ]
-const EventController = styled.div`
+// 공지사항 선택바 인기순, 최신순, 좋아요순, 제목 [ 검색하기 부분 ]
+const NoticeController = styled.div`
   padding: 10px 0 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 `;
 
-const EventOptions = styled.div`
+const NoticeOptions = styled.div`
   ul {
     list-style-type: none;
     padding: 0;
@@ -83,8 +83,8 @@ const EventOptions = styled.div`
   }
 `;
 
-// 이벤트 선택바 옵션
-const EventOption = styled.div<{ isSelected: boolean }>`
+// 공지사항 선택바 옵션
+const NoticeOption = styled.div<{ isSelected: boolean }>`
   cursor: pointer;
   color: ${(props) => (props.isSelected ? "#16be78" : "inherit")};
   font-family: ${(props) =>

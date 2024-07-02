@@ -21,22 +21,22 @@ const NoticeEvent: React.FC = () => {
   const [eventData, setEventData] = useState<EventDataProps[]>([]);
   const [noticeData, setNoticeData] = useState<any[]>([]); // 이곳에 공지사항 데이터를 저장
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [eventRes, noticeRes] = await Promise.all([
-          axios.get("/event"), // 이벤트 데이터 가져오기
-          axios.get("/notice"), // 공지사항 데이터 가져오기
-        ]);
-        setEventData(eventRes.data);
-        setNoticeData(noticeRes.data);
-      } catch (error) {
-        console.error("데이터를 가져오지 못했습니다:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const [eventRes, noticeRes] = await Promise.all([
+  //         axios.get("/event"), // 이벤트 데이터 가져오기
+  //         axios.get("/notice"), // 공지사항 데이터 가져오기
+  //       ]);
+  //       setEventData(eventRes.data);
+  //       setNoticeData(noticeRes.data);
+  //     } catch (error) {
+  //       console.error("데이터를 가져오지 못했습니다:", error);
+  //     }
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
   // 더 많은 이벤트를 보여주기 위한 함수입니다.
   const handleShowMoreEvents = () => {

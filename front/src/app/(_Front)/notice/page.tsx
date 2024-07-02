@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 import { NoticeHeader } from "./noticeheader";
+import NoticeBody from "./noticebody";
 
 const Notice: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("notice");
@@ -22,6 +23,7 @@ const Notice: React.FC = () => {
           </StyledLink>
         </SelectContainer>
       </SelectBar>
+      <NoticeBody />
     </MainContainer>
   );
 };
