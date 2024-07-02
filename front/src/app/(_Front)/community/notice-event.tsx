@@ -24,15 +24,17 @@ const NoticeEvent: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const eventRes = await axios.get("/event"); // 이벤트 데이터 가져오기
+        const [eventRes, noticeRes] = await Promise.all([
+          axios.get("/event"), // 이벤트 데이터 가져오기
+          axios.get("/notice"), // 공지사항 데이터 가져오기
+        ]);
         setEventData(eventRes.data);
-
-        const noticeRes = await axios.get("/notice"); // 공지사항 데이터 가져오기
         setNoticeData(noticeRes.data);
       } catch (error) {
         console.error("데이터를 가져오지 못했습니다:", error);
       }
     };
+
     fetchData();
   }, []);
 
