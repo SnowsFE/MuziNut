@@ -249,10 +249,10 @@ const PageButton = styled.div<{ isActive?: boolean }>`
   font-size: 14px;
   font-family: "esamanru Medium";
   margin: 0 5px;
+  cursor: pointer;
   width: 20px;
   text-align: center;
   padding: 8.5px 7px;
-  cursor: pointer;
   border-radius: 5px;
   background-color: ${({ isActive }) => (isActive ? "#ddd" : "#f1f1f1")};
   &:hover {
