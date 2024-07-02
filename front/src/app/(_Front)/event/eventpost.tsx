@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
 interface Post {
@@ -21,7 +21,7 @@ const EventPost: React.FC<EventPostProps> = ({ selected }) => {
       title: "첫 번째 게시글",
       author: "작성자1",
       date: "2024-07-01",
-      views: 100,
+      views: 200,
       likes: 10,
     },
     {
@@ -30,87 +30,17 @@ const EventPost: React.FC<EventPostProps> = ({ selected }) => {
       author: "작성자2",
       date: "2024-07-02",
       views: 150,
-      likes: 20,
-    },
-    {
-      id: 3,
-      title: "세 번째 게시글",
-      author: "작성자3",
-      date: "2024-07-03",
-      views: 200,
       likes: 30,
     },
-    {
-      id: 4,
-      title: "네 번째 게시글",
-      author: "작성자4",
-      date: "2024-07-04",
-      views: 250,
-      likes: 40,
-    },
-    {
-      id: 5,
-      title: "다섯 번째 게시글",
-      author: "작성자5",
-      date: "2024-07-05",
-      views: 300,
-      likes: 50,
-    },
-    {
-      id: 6,
-      title: "여섯 번째 게시글",
-      author: "작성자6",
-      date: "2024-07-06",
-      views: 350,
-      likes: 60,
-    },
-    {
-      id: 7,
-      title: "일곱 번째 게시글",
-      author: "작성자7",
-      date: "2024-07-07",
-      views: 400,
-      likes: 70,
-    },
-    {
-      id: 8,
-      title: "여덟 번째 게시글",
-      author: "작성자8",
-      date: "2024-07-08",
-      views: 450,
-      likes: 80,
-    },
-    {
-      id: 9,
-      title: "아홉 번째 게시글",
-      author: "작성자9",
-      date: "2024-07-09",
-      views: 500,
-      likes: 90,
-    },
-    {
-      id: 10,
-      title: "열 번째 게시글",
-      author: "작성자10",
-      date: "2024-07-10",
-      views: 550,
-      likes: 100,
-    },
-    {
-      id: 11,
-      title: "열 번째 게시글",
-      author: "작성자10",
-      date: "2024-07-10",
-      views: 550,
-      likes: 100,
-    },
+    // ... 나머지 게시글 데이터 추가
   ];
 
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 10;
+  const [sortedPosts, setSortedPosts] = useState<Post[]>(posts); // 초기값으로 모든 게시물을 포함한 상태를 설정
 
   // 정렬 함수
-  const sortPosts = (posts: Post[], criterion: string): Post[] => {
+  const sortPosts = (criterion: string): Post[] => {
     switch (criterion) {
       case "인기순":
         return [...posts].sort((a, b) => b.views - a.views);
@@ -125,17 +55,27 @@ const EventPost: React.FC<EventPostProps> = ({ selected }) => {
     }
   };
 
+  useEffect(() => {
+    // 선택된 정렬 기준에 따라 게시물을 정렬하여 상태 업데이트
+    const sorted = sortPosts(selected);
+    setSortedPosts(sorted);
+    setCurrentPage(1); // 페이지를 첫 번째 페이지로 초기화
+  }, [selected]); // selected 값이 변경될 때마다 호출
+
   // 현재 페이지에 해당하는 게시글을 계산
-  const sortedPosts = sortPosts(posts, selected);
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = sortedPosts.slice(indexOfFirstPost, indexOfLastPost);
 
   // 페이지 번호를 계산
   const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(posts.length / postsPerPage); i++) {
+  for (let i = 1; i <= Math.ceil(sortedPosts.length / postsPerPage); i++) {
     pageNumbers.push(i);
   }
+
+  const handlePageClick = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <Container>
@@ -162,7 +102,7 @@ const EventPost: React.FC<EventPostProps> = ({ selected }) => {
           {pageNumbers.map((number) => (
             <PageButton
               key={number}
-              onClick={() => setCurrentPage(number)}
+              onClick={() => handlePageClick(number)}
               isActive={number === currentPage}
             >
               {number}
