@@ -1,8 +1,21 @@
 import { useState } from "react";
 import styled from "styled-components";
 
-const EventPost: React.FC = () => {
-  const posts = [
+interface Post {
+  id: number;
+  title: string;
+  author: string;
+  date: string;
+  views: number;
+  likes: number;
+}
+
+interface EventPostProps {
+  selected: string;
+}
+
+const EventPost: React.FC<EventPostProps> = ({ selected }) => {
+  const posts: Post[] = [
     {
       id: 1,
       title: "첫 번째 게시글",
@@ -96,10 +109,27 @@ const EventPost: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 10;
 
+  // 정렬 함수
+  const sortPosts = (posts: Post[], criterion: string): Post[] => {
+    switch (criterion) {
+      case "인기순":
+        return [...posts].sort((a, b) => b.views - a.views);
+      case "최신순":
+        return [...posts].sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+      case "좋아요순":
+        return [...posts].sort((a, b) => b.likes - a.likes);
+      default:
+        return posts;
+    }
+  };
+
   // 현재 페이지에 해당하는 게시글을 계산
+  const sortedPosts = sortPosts(posts, selected);
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+  const currentPosts = sortedPosts.slice(indexOfFirstPost, indexOfLastPost);
 
   // 페이지 번호를 계산
   const pageNumbers = [];
@@ -219,7 +249,9 @@ const PageButton = styled.div<{ isActive?: boolean }>`
   font-size: 14px;
   font-family: "esamanru Medium";
   margin: 0 5px;
-  padding: 10px;
+  width: 20px;
+  text-align: center;
+  padding: 8.5px 7px;
   cursor: pointer;
   border-radius: 5px;
   background-color: ${({ isActive }) => (isActive ? "#ddd" : "#f1f1f1")};

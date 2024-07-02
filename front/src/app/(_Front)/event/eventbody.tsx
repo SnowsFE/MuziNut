@@ -40,7 +40,7 @@ const EventBody: React.FC = () => {
           <SearchIcon />
         </SearchContainer>
       </EventController>
-      <EventPost />
+      <EventPost selected={selected} />
     </EventContainer>
   );
 };
