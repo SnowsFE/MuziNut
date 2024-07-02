@@ -1,123 +1,40 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 import Banner2 from "../../../../public/images/banner2.png";
 import ProfileImages from "../../../../public/images/artist3.png";
 import Link from "next/link";
 import { LikeIcon, ViewIcon } from "@/app/components/icon/icon";
+import axios from "axios";
 
-const eventData = [
-  {
-    name: "이미지",
-    title: "너의 뮤즈에게 투표해봐, 너의 뮤즈에게 투표해봐",
-  },
-  {
-    name: "이미지",
-    title:
-      "넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!",
-  },
-  {
-    name: "이미지",
-    title: "한정판 칭호 이벤트!!",
-  },
-  {
-    name: "이미지라 서버에 저장할 필요있나?",
-    title: "첫 가입 이벤트",
-  },
-  {
-    name: "이미지",
-    title: "너의 뮤즈에게 투표해봐, 너의 뮤즈에게 투표해봐",
-  },
-  {
-    name: "이미지",
-    title:
-      "넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!",
-  },
-  {
-    name: "이미지",
-    title: "한정판 칭호 이벤트!!",
-  },
-  {
-    name: "이미지라 서버에 저장할 필요있나?",
-    title: "첫 가입 이벤트",
-  },
-];
+interface EventDataProps {
+  title: string;
+  eventImage: string;
+  profileImage: string;
+  profileName: string;
+  likes: number;
+  views: number;
+}
 
-const noticeData = [
-  {
-    title: "새로운 기능 업데이트 안내",
-    isNew: true,
-    profileName: "관리자",
-    likes: 25,
-    views: 120,
-  },
-  {
-    title: "서버 점검 안내",
-    isNew: false,
-    profileName: "운영팀",
-    likes: 10,
-    views: 200,
-  },
-  {
-    title: "서버 점검 안내",
-    isNew: false,
-    profileName: "운영팀",
-    likes: 10,
-    views: 200,
-  },
-  {
-    title: "새로운 이벤트 시작",
-    isNew: true,
-    profileName: "관리자",
-    likes: 15,
-    views: 180,
-  },
-  {
-    title: "앱 업데이트 공지",
-    isNew: false,
-    profileName: "운영팀",
-    likes: 20,
-    views: 250,
-  },
-  {
-    title: "유저 인터뷰",
-    isNew: true,
-    profileName: "관리자",
-    likes: 30,
-    views: 300,
-  },
-  {
-    title: "서비스 이용 안내",
-    isNew: false,
-    profileName: "운영팀",
-    likes: 5,
-    views: 100,
-  },
-  {
-    title: "시스템 점검 예정",
-    isNew: true,
-    profileName: "관리자",
-    likes: 12,
-    views: 220,
-  },
-  {
-    title: "새로운 기능 안내",
-    isNew: false,
-    profileName: "운영팀",
-    likes: 8,
-    views: 160,
-  },
-  {
-    title: "버그 수정 안내",
-    isNew: true,
-    profileName: "관리자",
-    likes: 18,
-    views: 210,
-  },
-];
-
-export const NoticeEvent: React.FC = () => {
+const NoticeEvent: React.FC = () => {
   const [eventToShow, setEventToShow] = useState(4);
+  const [eventData, setEventData] = useState<EventDataProps[]>([]);
+  const [noticeData, setNoticeData] = useState<any[]>([]); // 이곳에 공지사항 데이터를 저장
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const eventRes = await axios.get("/event"); // 이벤트 데이터 가져오기
+        setEventData(eventRes.data);
+
+        const noticeRes = await axios.get("/notice"); // 공지사항 데이터 가져오기
+        setNoticeData(noticeRes.data);
+      } catch (error) {
+        console.error("데이터를 가져오지 못했습니다:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   // 더 많은 이벤트를 보여주기 위한 함수입니다.
   const handleShowMoreEvents = () => {
@@ -152,8 +69,8 @@ export const NoticeEvent: React.FC = () => {
         <EventData>
           {eventData.slice(0, eventToShow).map((data, i) => (
             <Content key={i}>
-              <Link href={`/community/event/${i}`}>
-                <EventName>{data.name}</EventName>
+              <Link href={`/event/${i}`}>
+                <EventImage>{data.eventImage}</EventImage>
                 <EventTitle>{data.title}</EventTitle>
               </Link>
             </Content>
@@ -165,14 +82,14 @@ export const NoticeEvent: React.FC = () => {
         <NoticeData>
           {noticeData.map((notice, i) => (
             <NoticeContent key={i}>
-              <Link href={`/community/notice/${i}`}>
+              <Link href={`/notice/${i}`}>
                 <NoticeTitle>
                   {notice.title}
                   {notice.isNew && <NewBadge></NewBadge>}
                 </NoticeTitle>
               </Link>
               <ProfileSection>
-                <ProfileImage src={ProfileImages} alt="profile-image" />
+                <ProfileImage src={ProfileImages} alt="profile-image" />{" "}
                 <ProfileName>{notice.profileName}</ProfileName>
                 <Stats>
                   <Likes>
@@ -190,6 +107,8 @@ export const NoticeEvent: React.FC = () => {
     </Container>
   );
 };
+
+export default NoticeEvent;
 
 // 넓이를 지정하는 바깥 테두리
 const Container = styled.div`
@@ -268,7 +187,7 @@ const Content = styled.div`
 `;
 
 // 이벤트 데이터 이름
-const EventName = styled.div`
+const EventImage = styled.div`
   height: 160px;
   border: 1px solid #ccc;
   border-radius: 12px;

@@ -100,11 +100,9 @@ const UseridProfile: React.FC = () => {
         <PlyNutHeaderMargin>
           <PlyNutHeader>
             <ul>
-              <li>NO</li>
-              <li>닉네임</li>
+              <li>앨범</li>
+              <li>아티스트</li>
               <li>곡명</li>
-              <li>장르</li>
-              <li>좋아요</li>
               <li>삭제하기</li>
             </ul>
           </PlyNutHeader>

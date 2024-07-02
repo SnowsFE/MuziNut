@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
-import { NoticeEvent } from "./notice-event";
+import NoticeEvent from "./notice-event";
 import { Headers } from "./header";
 
 const Main: React.FC = () => {
