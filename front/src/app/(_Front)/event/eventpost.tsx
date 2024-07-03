@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import axios from "axios";
 
 interface Post {
   id: number;
   title: string;
-  author: string;
-  date: string;
-  views: number;
-  likes: number;
+  writer: string;
+  createdDt: string;
+  view: number;
+  like: number;
 }
 
 interface EventPostProps {
@@ -19,37 +20,48 @@ const EventPost: React.FC<EventPostProps> = ({ selected }) => {
     {
       id: 1,
       title: "첫 번째 게시글",
-      author: "작성자1",
-      date: "2024-07-01",
-      views: 200,
-      likes: 10,
+      writer: "작성자1",
+      createdDt: "2024-07-01",
+      view: 200,
+      like: 10,
     },
     {
       id: 2,
       title: "두 번째 게시글",
-      author: "작성자2",
-      date: "2024-07-02",
-      views: 150,
-      likes: 30,
+      writer: "작성자2",
+      createdDt: "2024-07-02",
+      view: 150,
+      like: 30,
     },
-    // ... 나머지 게시글 데이터 추가
   ];
 
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 10;
   const [sortedPosts, setSortedPosts] = useState<Post[]>(posts); // 초기값으로 모든 게시물을 포함한 상태를 설정
+  const [getData, setgetData] = useState();
+
+  const PostData = async () => {
+    try {
+      const res = await axios.get("/event");
+      setgetData(res.data);
+      console.log(res.data);
+    } catch (error) {
+      console.error("Failed to fetch posts", error);
+    }
+  };
 
   // 정렬 함수
   const sortPosts = (criterion: string): Post[] => {
     switch (criterion) {
       case "인기순":
-        return [...posts].sort((a, b) => b.views - a.views);
+        return [...posts].sort((a, b) => b.view - a.view);
       case "최신순":
         return [...posts].sort(
-          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+          (a, b) =>
+            new Date(b.createdDt).getTime() - new Date(a.createdDt).getTime()
         );
       case "좋아요순":
-        return [...posts].sort((a, b) => b.likes - a.likes);
+        return [...posts].sort((a, b) => b.like - a.like);
       default:
         return posts;
     }
@@ -91,10 +103,10 @@ const EventPost: React.FC<EventPostProps> = ({ selected }) => {
         {currentPosts.map((post) => (
           <Post key={post.id}>
             <PostItem>{post.title}</PostItem>
-            <PostItem>{post.author}</PostItem>
-            <PostItem>{post.date}</PostItem>
-            <PostItem>{post.views}</PostItem>
-            <PostItem>{post.likes}</PostItem>
+            <PostItem>{post.writer}</PostItem>
+            <PostItem>{post.createdDt}</PostItem>
+            <PostItem>{post.view}</PostItem>
+            <PostItem>{post.like}</PostItem>
           </Post>
         ))}
         <PageNation>

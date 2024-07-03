@@ -7,7 +7,6 @@ import banner from "../../../../../../public/images/banner.png";
 import threedot from "../../../../../../public/svgs/threedot.svg";
 import Link from "next/link";
 import { LikeIcon, CommentIcon } from "../../../../components/icon/icon";
-import { Userdata, CommentData } from "../../userdata";
 import FollowButton from "../../../../components/button/button";
 
 // UseridProps를 props로 받습니다.

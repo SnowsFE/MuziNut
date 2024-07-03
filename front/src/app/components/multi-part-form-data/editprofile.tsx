@@ -31,14 +31,13 @@ export const useFileState = (onUpload: (data: any) => void) => {
 
   // 프로필 정보 유효성 검사
   const validateProfileInfo = () => {
-    if (profileInfo.name.length > 15) {
-      alert("이름은 최대 15글자까지 입력할 수 있습니다.");
+    if (profileInfo.name.length > 10) {
       return false;
     }
-    if (profileInfo.introduce.length > 80) {
-      alert("자기소개는 최대 80글자까지 입력할 수 있습니다.");
+    if (profileInfo.introduce.length > 70) {
       return false;
     }
+    alert("프로필을 수정하였습니다!");
     return true;
   };
 
@@ -103,12 +102,12 @@ export const useFileState = (onUpload: (data: any) => void) => {
   ) => {
     const { name, value } = e.target;
     // 이름과 소개글 길이 제한
-    if (name === "name" && value.length > 15) {
-      alert("이름은 최대 15글자까지 입력할 수 있습니다.");
+    if (name === "name" && value.length > 10) {
+      alert("이름은 최대 10글자까지 입력할 수 있습니다.");
       return;
     }
-    if (name === "introduce" && value.length > 80) {
-      alert("자기소개는 최대 80글자까지 입력할 수 있습니다.");
+    if (name === "introduce" && value.length > 70) {
+      alert("자기소개는 최대 70글자까지 입력할 수 있습니다.");
       return;
     }
     setProfileInfo((prevInfo) => ({ ...prevInfo, [name]: value }));
@@ -292,8 +291,14 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
     if (nameError || introduceError) return; // 에러가 있으면 제출을 막음
 
     Object.keys(tempProfileInfo).forEach((key) => {
-      onChange({ target: { name: key, value: tempProfileInfo[key] } });
+      onChange({
+        target: {
+          name: key,
+          value: tempProfileInfo[key as keyof typeof tempProfileInfo], // tempProfileInfo의 key에 해당하는 값의 타입을 명시적으로 지정
+        },
+      } as ChangeEvent<HTMLInputElement | HTMLTextAreaElement>);
     });
+
     onSubmit?.();
     onCancel?.(); // 폼 제출 후 취소 처리
   };
@@ -304,17 +309,17 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
     const { name, value } = e.target;
     setTempProfileInfo((prevInfo) => ({ ...prevInfo, [name]: value }));
 
-    // 입력 필드 변경 시 에러 상태 초기화
+    // 입력 필드 변경 시 에러 상태 초기화 및 길이 체크
     if (name === "name") {
-      if (value.length > 15) {
+      if (value.trim().length === 0 || value.length > 10) {
         setNameError(true);
-      } else if (value.length > 0) {
+      } else {
         setNameError(false);
       }
     } else if (name === "introduce") {
-      if (value.length > 80) {
+      if (value.trim().length === 0 || value.length > 70) {
         setIntroduceError(true);
-      } else if (value.length > 0) {
+      } else {
         setIntroduceError(false);
       }
     }
@@ -342,7 +347,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
         </InputLabel1>
         {nameError && (
           <NameErrorMessage>
-            이름은 최대 15글자까지 입력할 수 있습니다.
+            최소 1글자 이상, 최대 10글자까지 입력할 수 있습니다.
           </NameErrorMessage>
         )}
         <InputLabel2>
@@ -357,7 +362,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
         </InputLabel2>
         {introduceError && (
           <IntroduceErrorMessage>
-            자기소개는 최대 80글자까지 입력할 수 있습니다.
+            최소 1글자 이상, 최대 70글자까지 입력할 수 있습니다.
           </IntroduceErrorMessage>
         )}
         <ButtonContainer>

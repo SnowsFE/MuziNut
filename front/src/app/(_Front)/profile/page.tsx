@@ -10,7 +10,7 @@ import {
   ProfileData,
   useFileState,
   ProfileEditForm,
-} from "../../components/multi-part-form-data/multi-part-form-data";
+} from "../../components/multi-part-form-data/editprofile";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("main");

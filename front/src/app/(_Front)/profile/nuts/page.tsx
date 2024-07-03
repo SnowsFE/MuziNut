@@ -14,7 +14,7 @@ import {
   ProfileData,
   useFileState,
   ProfileEditForm,
-} from "../../../components/multi-part-form-data/multi-part-form-data";
+} from "../../../components/multi-part-form-data/editprofile";
 
 // UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
