@@ -113,13 +113,12 @@ const UseridProfile: React.FC = () => {
           <Image src={Login} alt="메인 앨범" width={500} height={400}></Image>
           <Like>💚 130</Like>
           <AlbumInformation>
-            <Info1>앨범 이름</Info1>
-            <Info2>참여한 아티스트</Info2>
-            <Info3>장르</Info3>
+            <Info1>곡 이름</Info1>
+            <Info2>장르</Info2>
             <AlbumIntro>
-              <AlbumIntroTitle>앨범 소개</AlbumIntroTitle>
+              <AlbumIntroTitle>곡 소개</AlbumIntroTitle>
               <AlbumIntroBody>
-                오늘은 2024년 6월 7일입니다 랩 신곡 업로드 가겠습니다..!
+                이 곡은 제가 제일 좋아하는 사람에게 헌정하는 곡입니다.
               </AlbumIntroBody>
             </AlbumIntro>
           </AlbumInformation>
@@ -285,7 +284,7 @@ const MainAlbumContainer = styled.div`
   display: flex;
   position: relative;
   align-items: center;
-  padding: 20px 35px 35px 35px;
+  padding: 16px 35px 33px 35px;
   gap: 5%;
   border-bottom: 1px solid #ccc;
 
@@ -316,10 +315,9 @@ const AlbumInformation = styled.div`
 const Info1 = styled.div`
   font-size: 32px;
 `;
+
+// 앨범 장르
 const Info2 = styled.div`
-  font-size: 28px;
-`;
-const Info3 = styled.div`
   font-size: 23px;
 `;
 

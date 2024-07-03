@@ -6,7 +6,7 @@ import Image from "next/image";
 import Eventbanner from "../../../../public/images/eventbanner.png";
 
 const EventBody: React.FC = () => {
-  const [selected, setSelected] = useState<string>("인기순");
+  const [selected, setSelected] = useState<string>("최신순");
 
   const handleSelect = (option: string) => {
     setSelected(option);

@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, useEffect, useRef, ChangeEvent } from "react";
 import styled, { keyframes, css } from "styled-components";
 
 // useFileState 훅과 초기 데이터
@@ -117,6 +117,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
   return {
     files,
     profileInfo,
+    setProfileInfo, // 프로필 정보 설정 함수 추가
     handleFileChange,
     handleProfileInfoChange,
     handleSubmit,
@@ -152,24 +153,45 @@ const BannerData: React.FC<{ onUpload: (data: any) => void }> = ({
 const ProfileData: React.FC<{ onUpload: (data: any) => void }> = ({
   onUpload,
 }) => {
-  const { handleFileChange, handleSubmit } = useFileState(onUpload);
+  const { handleFileChange, handleSubmit, profileInfo, setProfileInfo } =
+    useFileState(onUpload);
 
-  const handleFileInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    await handleFileChange(e, "profile");
+  const [isEditVisible, setEditVisible] = useState(false);
+
+  const handleEditSubmit = () => {
     handleSubmit();
+    setEditVisible(false);
+  };
+
+  const handleEditCancel = () => {
+    setEditVisible(false);
   };
 
   return (
-    <UploadForm>
-      <Label>
-        <HiddenInput
-          type="file"
-          onChange={handleFileInputChange}
-          id="profile-file"
-        />
-        <CustomButton2 htmlFor="profile-file">⚙️</CustomButton2>
-      </Label>
-    </UploadForm>
+    <>
+      <UploadForm>
+        <Label>
+          <HiddenInput
+            type="file"
+            onChange={(e) => handleFileChange(e, "profile")}
+            id="profile-file"
+          />
+          <CustomButton2 htmlFor="profile-file">⚙️</CustomButton2>
+        </Label>
+      </UploadForm>
+      <ProfileEditForm
+        profileInfo={profileInfo}
+        onChange={(e) =>
+          setProfileInfo((prev) => ({
+            ...prev,
+            [e.target.name]: e.target.value,
+          }))
+        }
+        onSubmit={handleEditSubmit}
+        onCancel={handleEditCancel}
+        visible={isEditVisible}
+      />
+    </>
   );
 };
 
@@ -244,36 +266,102 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
   onCancel,
   visible,
 }) => {
+  const [tempProfileInfo, setTempProfileInfo] = useState(profileInfo);
+  const [nameError, setNameError] = useState(false);
+  const [introduceError, setIntroduceError] = useState(false);
+  const nameRef = useRef<HTMLInputElement>(null);
+  const introduceRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    setTempProfileInfo(profileInfo); // 폼이 열릴 때 임시 상태 초기화
+  }, [profileInfo]);
+
   if (!visible) return null;
 
   const handleFormSubmit = () => {
+    // Validate minimum length
+    if (tempProfileInfo.name.length === 0) {
+      setNameError(true);
+      return;
+    }
+    if (tempProfileInfo.introduce.length === 0) {
+      setIntroduceError(true);
+      return;
+    }
+
+    if (nameError || introduceError) return; // 에러가 있으면 제출을 막음
+
+    Object.keys(tempProfileInfo).forEach((key) => {
+      onChange({ target: { name: key, value: tempProfileInfo[key] } });
+    });
     onSubmit?.();
     onCancel?.(); // 폼 제출 후 취소 처리
+  };
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setTempProfileInfo((prevInfo) => ({ ...prevInfo, [name]: value }));
+
+    // 입력 필드 변경 시 에러 상태 초기화
+    if (name === "name") {
+      if (value.length > 15) {
+        setNameError(true);
+      } else if (value.length > 0) {
+        setNameError(false);
+      }
+    } else if (name === "introduce") {
+      if (value.length > 80) {
+        setIntroduceError(true);
+      } else if (value.length > 0) {
+        setIntroduceError(false);
+      }
+    }
+  };
+
+  const handleCancel = () => {
+    setTempProfileInfo(profileInfo); // 취소 시 임시 상태 초기화
+    onCancel?.();
   };
 
   return (
     <OutContainer visible={visible}>
       <ProfileEditContainer visible={visible}>
         <Title>프로필 수정</Title>
-        <InputLabel>
+        <InputLabel1>
           닉네임
           <InputField1
             type="text"
             name="name"
-            value={profileInfo.name}
-            onChange={onChange}
+            value={tempProfileInfo.name}
+            onChange={handleChange}
+            ref={nameRef}
+            style={{ borderColor: nameError ? "red" : "#ccc" }}
           />
-        </InputLabel>
-        <InputLabel>
+        </InputLabel1>
+        {nameError && (
+          <NameErrorMessage>
+            이름은 최대 15글자까지 입력할 수 있습니다.
+          </NameErrorMessage>
+        )}
+        <InputLabel2>
           자기소개
           <InputField2
             name="introduce"
-            value={profileInfo.introduce}
-            onChange={onChange}
+            value={tempProfileInfo.introduce}
+            onChange={handleChange}
+            ref={introduceRef}
+            style={{ borderColor: introduceError ? "red" : "#ccc" }}
           />
-        </InputLabel>
+        </InputLabel2>
+        {introduceError && (
+          <IntroduceErrorMessage>
+            자기소개는 최대 80글자까지 입력할 수 있습니다.
+          </IntroduceErrorMessage>
+        )}
         <ButtonContainer>
-          <CancelButton onClick={onCancel}>취소</CancelButton>
+          <CancelButton onClick={handleCancel}>취소</CancelButton>
           <SaveButton onClick={handleFormSubmit}>저장</SaveButton>
         </ButtonContainer>
       </ProfileEditContainer>
@@ -313,7 +401,7 @@ const ProfileEditContainer = styled.div<{ visible: boolean }>`
   transform: translate(-50%, -50%);
   width: 500px;
   height: 300px;
-  padding: 30px 45px 0;
+  padding: 30px 45px 10px 45px;
   border-radius: 15px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   background: white;
@@ -329,14 +417,22 @@ const ProfileEditContainer = styled.div<{ visible: boolean }>`
 const Title = styled.div`
   text-align: center;
   font-size: 24px;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   color: black;
 `;
 
-const InputLabel = styled.label`
+const InputLabel1 = styled.label`
   display: flex;
   flex-direction: column;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  font-family: "esamanru Medium";
+  color: black;
+`;
+
+const InputLabel2 = styled.label`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
   font-family: "esamanru Medium";
   color: black;
 `;
@@ -344,6 +440,7 @@ const InputLabel = styled.label`
 const InputField1 = styled.input`
   padding: 8px;
   font-size: 14px;
+  font-family: "esamanru Light";
   border: 1px solid #ccc;
   border-radius: 4px;
   margin-top: 4px;
@@ -353,6 +450,7 @@ const InputField2 = styled.textarea`
   height: 50px;
   padding: 8px;
   font-size: 14px;
+  font-family: "esamanru Light";
   border: 1px solid #ccc;
   border-radius: 4px;
   margin-top: 4px;
@@ -362,7 +460,6 @@ const InputField2 = styled.textarea`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin-top: 13px;
 `;
 
 const SaveButton = styled.button`
@@ -372,6 +469,7 @@ const SaveButton = styled.button`
   border-radius: 25px;
   padding: 10px 20px;
   font-size: 16px;
+  font-family: "esamanru Medium";
   cursor: pointer;
 
   &:hover {
@@ -386,11 +484,31 @@ const CancelButton = styled.button`
   border-radius: 25px;
   padding: 10px 20px;
   font-size: 16px;
-  cursor: pointer;
+  font-family: "esamanru Medium";
   margin-right: 10px;
+  cursor: pointer;
 
   &:hover {
     background-color: #bbb;
   }
 `;
+
+const NameErrorMessage = styled.p`
+  position: absolute;
+  right: 47px;
+  top: 74px;
+  color: red;
+  font-size: 12px;
+  font-family: "esamanru Medium";
+`;
+
+const IntroduceErrorMessage = styled.p`
+  position: absolute;
+  right: 47px;
+  top: 161px;
+  color: red;
+  font-size: 12px;
+  font-family: "esamanru Medium";
+`;
+
 export { BannerData, ProfileData, ProfileEditForm };

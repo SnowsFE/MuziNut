@@ -256,10 +256,11 @@ const UseridProfile: React.FC = () => {
       )}
       {editFormVisible && (
         <ProfileEditForm
-          onClose={closeEditForm}
           profileInfo={profileInfo}
-          handleProfileInfoChange={handleProfileInfoChange}
-          handleSubmit={handleSubmit}
+          onChange={handleProfileInfoChange}
+          onSubmit={handleSubmit}
+          onCancel={closeEditForm}
+          visible={editFormVisible}
         />
       )}
     </ProfileContainer>
