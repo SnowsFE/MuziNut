@@ -16,39 +16,27 @@ interface EventPostProps {
 }
 
 const EventPost: React.FC<EventPostProps> = ({ selected }) => {
-  const posts: Post[] = [
-    {
-      id: 1,
-      title: "첫 번째 게시글",
-      writer: "작성자1",
-      createdDt: "2024-07-01",
-      view: 200,
-      like: 10,
-    },
-    {
-      id: 2,
-      title: "두 번째 게시글",
-      writer: "작성자2",
-      createdDt: "2024-07-02",
-      view: 150,
-      like: 30,
-    },
-  ];
+  const posts: Post[] = [];
 
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 10;
   const [sortedPosts, setSortedPosts] = useState<Post[]>(posts); // 초기값으로 모든 게시물을 포함한 상태를 설정
-  const [getData, setgetData] = useState();
+  // 데이터를 저장할 상태를 useState를 이용해 초기화
+  const [getData, setgetData] = useState<Post[]>([]);
 
-  const PostData = async () => {
-    try {
-      const res = await axios.get("/event");
-      setgetData(res.data);
-      console.log(res.data);
-    } catch (error) {
-      console.error("Failed to fetch posts", error);
-    }
-  };
+  // PostData 함수를 useEffect 내에서 호출하여 데이터를 가져옴
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get("/event");
+        setgetData(res.data); // 받아온 데이터를 상태에 업데이트
+      } catch (error) {
+        console.error("데이터를 불러오지 못했습니다", error);
+      }
+    };
+
+    fetchData(); // useEffect 내에서 fetchData 함수를 호출하여 데이터를 가져옴
+  }, []); // 빈 배열을 전달하여 컴포넌트가 마운트될 때 한 번만 호출되도록 설정
 
   // 정렬 함수
   const sortPosts = (criterion: string): Post[] => {
