@@ -4,12 +4,18 @@ import { FaSearch } from "react-icons/fa";
 import EventPost from "./eventpost";
 import Image from "next/image";
 import Eventbanner from "../../../../public/images/eventbanner.png";
+import WriteQuill from "./writequill";
 
 const EventBody: React.FC = () => {
   const [selected, setSelected] = useState<string>("최신순");
+  const [writeVisible, setWriteVisible] = useState(false);
 
   const handleSelect = (option: string) => {
     setSelected(option);
+  };
+
+  const openWriteForm = () => {
+    setWriteVisible(true);
   };
 
   return (
@@ -35,12 +41,18 @@ const EventBody: React.FC = () => {
           </ul>
         </EventOptions>
         <SearchContainer>
-          <ControllerSearchTitle>제목</ControllerSearchTitle>
+          <Write onClick={openWriteForm}>글쓰기</Write>
           <ControllerSearch placeholder="이벤트 검색" />
           <SearchIcon />
         </SearchContainer>
       </EventController>
       <EventPost selected={selected} />
+      {writeVisible && (
+        <WriteQuill
+          onPublish={() => setWriteVisible(false)}
+          onClose={() => setWriteVisible(false)}
+        />
+      )}
     </EventContainer>
   );
 };
@@ -110,15 +122,19 @@ const SearchContainer = styled.div`
   position: relative;
 `;
 
-const ControllerSearchTitle = styled.div`
-  background-color: #e9ebf1;
-  color: black;
+// 글쓰기
+const Write = styled.div`
+  background-color: #16be78;
   padding: 10px 15px;
-  border: 1px solid #ddd;
   border-radius: 8px;
   margin-right: 8px;
   font-size: 14px;
-  font-family: "esamanru Medium";
+  font-family: "esamanru Bold";
+  cursor: pointer;
+
+  &:hover {
+    background-color: #1bb373;
+  }
 `;
 
 const ControllerSearch = styled.input`
