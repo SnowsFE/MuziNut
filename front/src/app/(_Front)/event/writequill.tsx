@@ -35,44 +35,11 @@ const WriteQuill: React.FC<{
       toolbar: {
         container: "#toolbar",
         handlers: {
-          image: function () {
-            const input = document.createElement("input");
-            input.setAttribute("type", "file");
-            input.setAttribute("accept", "image/*");
-            input.onchange = async () => {
-              const file = input.files?.[0];
-              if (file) {
-                const formData = new FormData();
-                formData.append("file", file);
-
-                try {
-                  const response = await fetch("/profile/lounge", {
-                    method: "POST",
-                    body: formData,
-                  });
-
-                  if (response.ok) {
-                    const data = await response.json();
-                    const quill = quillRef.current?.getEditor();
-                    const range = quill?.getSelection();
-                    if (quill && range) {
-                      quill.insertEmbed(range.index, "image", data.url);
-                      console.log("이미지가 삽입되었습니다: ", data.url);
-                    }
-                  } else {
-                    console.error("이미지 업로드 실패.");
-                  }
-                } catch (error) {
-                  console.error("이미지 업로드 중 오류 발생:", error);
-                }
-              }
-            };
-            input.click();
-          },
+          image: handleImageUpload,
         },
       },
     };
-  }, []);
+  }, [content, initialContent, onClose, onPublish]);
 
   useEffect(() => {
     const quill = quillRef.current?.getEditor();
@@ -84,15 +51,31 @@ const WriteQuill: React.FC<{
 
   const handleChange = (content: string) => {
     setContent(content);
-    console.log("Content changed: ", content);
+    console.log("글 변경", content);
   };
 
-  const handlePublishClick = async () => {
-    try {
-      const formData = new FormData();
-      formData.append("content", content);
+  const handleImageUpload = () => {
+    const input = document.createElement("input");
+    input.setAttribute("type", "file");
+    input.setAttribute("accept", "image/*");
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (file) {
+        await handleSubmit(file);
+      }
+    };
+    input.click();
+  };
 
-      const response = await fetch("/profile/lounge", {
+  const handleSubmit = async (file?: File) => {
+    const formData = new FormData();
+    formData.append("content", content);
+    if (file) {
+      formData.append("file", file);
+    }
+
+    try {
+      const response = await fetch("/event", {
         method: "POST",
         body: formData,
       });
@@ -121,8 +104,6 @@ const WriteQuill: React.FC<{
     }
   };
 
-  if (!render) return null;
-
   return (
     <>
       <Overlay visible={visible} />
@@ -149,7 +130,7 @@ const WriteQuill: React.FC<{
           >
             취소
           </CancelButton>
-          <StyledButton onClick={handlePublishClick}>
+          <StyledButton onClick={() => handleSubmit()}>
             {initialContent ? "글 수정" : "글 등록"}
           </StyledButton>
         </ButtonContainer>

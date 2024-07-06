@@ -134,7 +134,7 @@ const DarkBackground = styled.div`
   background-color: #fff;
   border-radius: 12px;
   z-index: 1;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
 const Content = styled.div`
