@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Submit } from "@/app/components/icon/icon";
@@ -7,7 +8,8 @@ import {
   BookMarkIcon,
 } from "@/app/components/icon/icon";
 import Image from "next/image";
-import threedot from "../../../../../public/svgs/threedot.svg";
+import threedot from "../../../../../../public/svgs/threedot.svg";
+import HeaderBar from "./selectbar";
 
 interface PostProps {
   title: string;
@@ -60,7 +62,7 @@ const PostBox: React.FC = () => {
   }, []);
 
   const redirectToEvent = () => {
-    window.location.href = "/event";
+    window.location.href = "/community/free-boards";
   };
 
   const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -98,51 +100,54 @@ const PostBox: React.FC = () => {
   };
 
   return (
-    <Container>
-      <Header>
-        <ListContainer>
-          <ListButton onClick={redirectToEvent}>이벤트 &gt;</ListButton>
-        </ListContainer>
-        <Title>{title}</Title>
-        <ProfileContainer>
-          <ProfileImage src={image} alt="프로필 이미지" />
-          <ProfileInfo>
-            <ProfileName>{writer}</ProfileName>
-            <TimeViewsContainer>
-              <Time>{createdDt}</Time>
-              <Views>
-                <MiniViewIcon /> {view}
-              </Views>
-            </TimeViewsContainer>
-          </ProfileInfo>
-          <ShareContainer>
-            <BookMarkIcon />
-            <Image src={threedot} alt="공유하기, 신고하기"></Image>
-          </ShareContainer>
-        </ProfileContainer>
-      </Header>
-      <Body dangerouslySetInnerHTML={{ __html: write }} />
-      <Footer>
-        <LikeButton>
-          <LikeIcon /> {like}
-        </LikeButton>
-      </Footer>
-      <CommentsSection>
-        <CommentsCount>댓글 0개</CommentsCount>
-        <CommentInputContainer>
-          <CommentInput
-            value={comment}
-            onChange={handleCommentChange}
-            placeholder="댓글을 입력하세요..."
-            maxLength={500} // 최대 입력 글자 수
-          />
-          <CommentSubmitButton onClick={handleCommentSubmit}>
-            <Submit />
-          </CommentSubmitButton>
-          <CommentLength>{commentLength}/500</CommentLength>
-        </CommentInputContainer>
-      </CommentsSection>
-    </Container>
+    <>
+      <HeaderBar />
+      <Container>
+        <Header>
+          <ListContainer>
+            <ListButton onClick={redirectToEvent}>자유게시판 &gt;</ListButton>
+          </ListContainer>
+          <Title>{title}</Title>
+          <ProfileContainer>
+            <ProfileImage src={image} alt="프로필 이미지" />
+            <ProfileInfo>
+              <ProfileName>{writer}</ProfileName>
+              <TimeViewsContainer>
+                <Time>{createdDt}</Time>
+                <Views>
+                  <MiniViewIcon /> {view}
+                </Views>
+              </TimeViewsContainer>
+            </ProfileInfo>
+            <ShareContainer>
+              <BookMarkIcon />
+              <Image src={threedot} alt="공유하기, 신고하기"></Image>
+            </ShareContainer>
+          </ProfileContainer>
+        </Header>
+        <Body dangerouslySetInnerHTML={{ __html: write }} />
+        <Footer>
+          <LikeButton>
+            <LikeIcon /> {like}
+          </LikeButton>
+        </Footer>
+        <CommentsSection>
+          <CommentsCount>댓글 0개</CommentsCount>
+          <CommentInputContainer>
+            <CommentInput
+              value={comment}
+              onChange={handleCommentChange}
+              placeholder="댓글을 입력하세요..."
+              maxLength={500} // 최대 입력 글자 수
+            />
+            <CommentSubmitButton onClick={handleCommentSubmit}>
+              <Submit />
+            </CommentSubmitButton>
+            <CommentLength>{commentLength}/500</CommentLength>
+          </CommentInputContainer>
+        </CommentsSection>
+      </Container>
+    </>
   );
 };
 
