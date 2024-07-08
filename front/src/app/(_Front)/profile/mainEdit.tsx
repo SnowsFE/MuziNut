@@ -1,11 +1,17 @@
 import React, { useState, useEffect, useRef, ChangeEvent } from "react";
 import styled, { keyframes, css } from "styled-components";
+import axios from "axios";
 
 // useFileState 훅과 초기 데이터
 export const useFileState = (onUpload: (data: any) => void) => {
   const [files, setFiles] = useState<{ [key: string]: File | null }>({
     bannerImg: null,
     profileImg: null,
+    mainSongAlbumImage: null,
+    albumImage: null,
+  });
+
+  const [imageURLs, setImageURLs] = useState<{ [key: string]: string | null }>({
     mainSongAlbumImage: null,
     albumImage: null,
   });
@@ -84,28 +90,47 @@ export const useFileState = (onUpload: (data: any) => void) => {
       return;
     }
 
-    // 폼 데이터 제출 핸들러
-    const formData = new FormData();
-    if (files.bannerImg) formData.append("bannerImg", files.bannerImg);
-    if (files.profileImg) formData.append("profileImg", files.profileImg);
-    formData.append("profileInfo", JSON.stringify(profileInfo));
-    formData.append("albumInfo", JSON.stringify(albumInfo));
+    // 백엔드 통신 데이터
+    const handleSubmitProfile = async () => {
+      const formData = new FormData();
+      if (files.bannerImg) formData.append("bannerImg", files.bannerImg);
+      if (files.profileImg) formData.append("profileImg", files.profileImg);
+      if (files.mainSongAlbumImage)
+        formData.append("mainSongAlbumImage", files.mainSongAlbumImage);
+      if (files.albumImage) formData.append("albumImage", files.albumImage);
 
-    try {
-      const response = await fetch("/profile", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await response.json();
-      if (response.ok) {
-        console.log("파일이 성공적으로 업로드되었습니다:", data);
-        onUpload(data);
-      } else {
-        console.error("업로드 실패:", data);
+      try {
+        const response = await axios.post("/profile", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        const data = response.data;
+        if (response.status === 200 && data.success) {
+          console.log("파일이 성공적으로 업로드되었습니다:", data);
+
+          // 백엔드에서 받은 URL들을 상태로 설정
+          setImageURLs({
+            mainSongAlbumImage: data.mainSongAlbumImageURL,
+            albumImage: data.albumImageURL,
+          });
+
+          onUpload(data);
+        } else {
+          console.error("업로드 실패:", data);
+        }
+      } catch (error) {
+        console.error("파일이 올라가지 않았습니다", error);
       }
-    } catch (error) {
-      console.error("파일이 올라가지 않았습니다", error);
-    }
+    };
+
+    return {
+      files,
+      imageURLs,
+      handleFileChange,
+      handleSubmitProfile,
+    };
   };
 
   // 프로필 정보 변경 핸들러
