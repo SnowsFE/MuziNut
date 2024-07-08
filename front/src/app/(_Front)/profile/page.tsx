@@ -10,7 +10,7 @@ import {
   ProfileData,
   useFileState,
   ProfileEditForm,
-} from "../../components/multi-part-form-data/editprofile";
+} from "./mainEdit";
 import { BaseImgBox } from "@/app/components/icon/icon";
 
 const UseridProfile: React.FC = () => {

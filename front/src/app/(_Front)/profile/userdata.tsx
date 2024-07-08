@@ -36,16 +36,16 @@ export const BoardData: BoardsData[] = [
     board: "다리 짧은 민서에 대해서 신고합니다",
   },
   {
-    board: "항녕",
+    board: "민서",
   },
   {
-    board: "왕녕",
+    board: "정말",
   },
   {
-    board: "앙녕",
+    board: "너무",
   },
   {
-    board: "앙냥",
+    board: "귀엽다",
   },
   {
     board: "안녕",

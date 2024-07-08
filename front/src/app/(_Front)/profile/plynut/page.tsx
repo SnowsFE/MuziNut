@@ -10,7 +10,7 @@ import {
   ProfileData,
   useFileState,
   ProfileEditForm,
-} from "../../../components/multi-part-form-data/editprofile";
+} from "./plynutEdit";
 
 // UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
@@ -57,11 +57,12 @@ const UseridProfile: React.FC = () => {
         <Image src={profileUrl} alt="profile-image" width={160} height={160} />
         <ProfileData onUpload={onUpload} />
         <ProfileInfo>
-          <ProfileName>{profileInfo.name}</ProfileName>
+          <ProfileName>{profileInfo.nickname}</ProfileName>
           <FollowInfo>
-            팔로잉 {profileInfo.follow} &nbsp; 팔로워 {profileInfo.follower}
+            팔로잉 {profileInfo.followingCount} &nbsp; 팔로워{" "}
+            {profileInfo.followersCount}
           </FollowInfo>
-          <ProfileDescription>{profileInfo.introduce}</ProfileDescription>
+          <ProfileDescription>{profileInfo.intro}</ProfileDescription>
         </ProfileInfo>
       </Profile>
       <SelectBar>

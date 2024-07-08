@@ -15,7 +15,7 @@ import {
   ProfileData,
   useFileState,
   ProfileEditForm,
-} from "../../../components/multi-part-form-data/editprofile";
+} from "./loungeEditor";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("lounge");
@@ -146,11 +146,12 @@ const UseridProfile: React.FC = () => {
         <Image src={profileUrl} alt="profile-image" width={160} height={160} />
         <ProfileData onUpload={onUpload} />
         <ProfileInfo>
-          <ProfileName>{profileInfo.name}</ProfileName>
+          <ProfileName>{profileInfo.nickname}</ProfileName>
           <FollowInfo>
-            팔로잉 {profileInfo.follow} &nbsp; 팔로워 {profileInfo.follower}
+            팔로잉 {profileInfo.followingCount} &nbsp; 팔로워{" "}
+            {profileInfo.followersCount}
           </FollowInfo>
-          <ProfileDescription>{profileInfo.introduce}</ProfileDescription>
+          <ProfileDescription>{profileInfo.intro}</ProfileDescription>
         </ProfileInfo>
       </Profile>
       <SelectBar>
@@ -198,7 +199,7 @@ const UseridProfile: React.FC = () => {
                   height={40}
                 />
               </LoungeProfileImage>
-              <LoungeProfileName>{profileInfo.name}</LoungeProfileName>
+              <LoungeProfileName>{profileInfo.nickname}</LoungeProfileName>
               <LoungeProfileUploadTime>
                 {new Date().toLocaleDateString()}
               </LoungeProfileUploadTime>
