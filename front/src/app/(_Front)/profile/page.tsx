@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import styled, { keyframes } from "styled-components";
 import Image from "next/image";
-import Login from "../../../../public/images/login.png";
+import profile from "../../../../public/images/artist.png";
 import banner from "../../../../public/images/banner.png";
 import Link from "next/link";
 import {
@@ -15,22 +15,16 @@ import { BaseImgBox } from "@/app/components/icon/icon";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("main");
-  const images = [Login, Login, Login, Login, Login];
-  const imagesName = [
-    "앨범 제목",
-    "앨범 제목",
-    "앨범 제목",
-    "앨범 제목",
-    "앨범 제목",
-    "앨범 제목",
-    "앨범 제목",
-    "앨범 제목",
-    "앨범 제목",
-    "앨범 제목",
+  const AlbumImages = [
+    { BaseImgBox },
+    { BaseImgBox },
+    { BaseImgBox },
+    { BaseImgBox },
+    { BaseImgBox },
   ];
 
   const [bannerUrl, setBannerUrl] = useState<string>(banner.src);
-  const [profileUrl, setProfileUrl] = useState<string>(Login.src);
+  const [profileUrl, setProfileUrl] = useState<string>(profile.src);
   const [editFormVisible, setEditFormVisible] = useState(false);
 
   // onUpload 함수 정의
@@ -116,9 +110,10 @@ const UseridProfile: React.FC = () => {
           <BaseImgBox />
         </QuestionContainer>
         <AlbumInfoBox>
-          <Like>💚 130</Like>
+          {/* reponse.data.likeCount */}
+          <Like>💚 {albumInfo.likeCount}</Like>
           <AlbumInformation>
-            <Info1>{albumInfo.title}</Info1>
+            <Info1>{albumInfo.songTitle}</Info1>
             <Info2>{albumInfo.genre}</Info2>
             <AlbumMusician>
               <AlbumLyricist>작사 : {albumInfo.lyricist}</AlbumLyricist>
@@ -130,12 +125,12 @@ const UseridProfile: React.FC = () => {
       <BodyAlbum>
         {/* <AlbumName>앨범</AlbumName> */}
         <AlbumList>
-          {images.map((img, index) => (
+          {AlbumImages.map((img, index) => (
             <AlbumItem key={index}>
               <QuestionContainer2>
                 <BaseImgBox />
               </QuestionContainer2>
-              <AlbumTitle>{imagesName[index]}</AlbumTitle>
+              <AlbumTitle>{albumInfo.albumTitle}</AlbumTitle>
             </AlbumItem>
           ))}
         </AlbumList>

@@ -18,10 +18,12 @@ export const useFileState = (onUpload: (data: any) => void) => {
   });
 
   const [albumInfo, setalbumInfo] = useState({
-    title: "곡이름",
+    songTitle: "곡 명",
+    albumTitle: "앨범제목",
     genre: "장르",
     lyricist: "작사가",
     composer: "작곡가",
+    likeCount: 0,
   });
 
   // 이미지 크기 검사 함수
@@ -112,11 +114,11 @@ export const useFileState = (onUpload: (data: any) => void) => {
   ) => {
     const { name, value } = e.target;
     // 이름과 소개글 길이 제한
-    if (name === "name" && value.length > 10) {
+    if (name === "nickname" && value.length > 10) {
       alert("이름은 최대 10글자까지 입력할 수 있습니다.");
       return;
     }
-    if (name === "introduce" && value.length > 70) {
+    if (name === "intro" && value.length > 70) {
       alert("자기소개는 최대 70글자까지 입력할 수 있습니다.");
       return;
     }
@@ -127,7 +129,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
     files,
     profileInfo,
     albumInfo,
-    setProfileInfo, // 프로필 정보 설정 함수 추가
+    setProfileInfo,
     handleFileChange,
     handleProfileInfoChange,
     handleSubmit,
@@ -258,7 +260,6 @@ const CustomButton2 = styled.label`
   font-size: 18px; /* 아이콘 크기 조정 */
 `;
 
-// 프로필 데이터 수정
 interface ProfileEditFormProps {
   profileInfo: {
     nickname: string;
@@ -285,7 +286,9 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
 
   useEffect(() => {
     setTempProfileInfo(profileInfo); // 폼이 열릴 때 임시 상태 초기화
-  }, [profileInfo]);
+    setNameError(false);
+    setIntroduceError(false); // 폼이 열릴 때 에러 상태 초기화
+  }, [profileInfo, visible]);
 
   if (!visible) return null;
 
@@ -311,9 +314,10 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
       } as ChangeEvent<HTMLInputElement | HTMLTextAreaElement>);
     });
 
-    const success = onSubmit?.();
-    if (success) {
+    if (onSubmit) {
+      onSubmit();
       alert("프로필이 성공적으로 저장되었습니다!");
+      onCancel?.(); // 저장 후 폼 밖으로 나가게 함
     }
   };
 
@@ -324,13 +328,13 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
     setTempProfileInfo((prevInfo) => ({ ...prevInfo, [name]: value }));
 
     // 입력 필드 변경 시 에러 상태 초기화 및 길이 체크
-    if (name === "name") {
+    if (name === "nickname") {
       if (value.trim().length === 0 || value.length > 10) {
         setNameError(true);
       } else {
         setNameError(false);
       }
-    } else if (name === "introduce") {
+    } else if (name === "intro") {
       if (value.trim().length === 0 || value.length > 70) {
         setIntroduceError(true);
       } else {
@@ -342,6 +346,8 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
   const handleCancel = () => {
     if (window.confirm("정말로 취소하시겠습니까?")) {
       setTempProfileInfo(profileInfo); // 취소 시 임시 상태 초기화
+      setNameError(false); // 에러 상태 초기화
+      setIntroduceError(false); // 에러 상태 초기화
       onCancel?.();
     }
   };
@@ -354,7 +360,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
           닉네임
           <InputField1
             type="text"
-            name="name"
+            name="nickname" // name 속성 값 수정
             value={tempProfileInfo.nickname}
             onChange={handleChange}
             ref={nameRef}
@@ -369,7 +375,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
         <InputLabel2>
           자기소개
           <InputField2
-            name="introduce"
+            name="intro" // name 속성 값 수정
             value={tempProfileInfo.intro}
             onChange={handleChange}
             ref={introduceRef}
