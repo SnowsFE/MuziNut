@@ -105,7 +105,7 @@ const PostBox: React.FC = () => {
       <Container>
         <Header>
           <ListContainer>
-            <ListButton onClick={redirectToEvent}>자유게시판 &gt;</ListButton>
+            <ListButton onClick={redirectToEvent}>모집게시판 &gt;</ListButton>
           </ListContainer>
           <Title>{title}</Title>
           <ProfileContainer>

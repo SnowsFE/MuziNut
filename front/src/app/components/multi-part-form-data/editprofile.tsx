@@ -4,14 +4,24 @@ import styled, { keyframes, css } from "styled-components";
 // useFileState 훅과 초기 데이터
 export const useFileState = (onUpload: (data: any) => void) => {
   const [files, setFiles] = useState<{ [key: string]: File | null }>({
-    banner: null,
-    profile: null,
+    bannerImg: null,
+    profileImg: null,
+    mainSongAlbumImage: null,
+    albumImage: null,
   });
+
   const [profileInfo, setProfileInfo] = useState({
-    name: "닉네임",
-    follow: 0,
-    follower: 0,
-    introduce: "자기소개를 입력하세요",
+    nickname: "닉네임",
+    followingCount: 0,
+    followersCount: 0,
+    intro: "자기소개를 입력하세요",
+  });
+
+  const [albumInfo, setalbumInfo] = useState({
+    title: "곡이름",
+    genre: "장르",
+    lyricist: "작사가",
+    composer: "작곡가",
   });
 
   // 이미지 크기 검사 함수
@@ -31,13 +41,12 @@ export const useFileState = (onUpload: (data: any) => void) => {
 
   // 프로필 정보 유효성 검사
   const validateProfileInfo = () => {
-    if (profileInfo.name.length > 10) {
+    if (profileInfo.nickname.length > 10) {
       return false;
     }
-    if (profileInfo.introduce.length > 70) {
+    if (profileInfo.intro.length > 70) {
       return false;
     }
-    alert("프로필을 수정하였습니다!");
     return true;
   };
 
@@ -75,12 +84,13 @@ export const useFileState = (onUpload: (data: any) => void) => {
 
     // 폼 데이터 제출 핸들러
     const formData = new FormData();
-    if (files.banner) formData.append("banner", files.banner);
-    if (files.profile) formData.append("profile", files.profile);
+    if (files.bannerImg) formData.append("bannerImg", files.bannerImg);
+    if (files.profileImg) formData.append("profileImg", files.profileImg);
     formData.append("profileInfo", JSON.stringify(profileInfo));
+    formData.append("albumInfo", JSON.stringify(albumInfo));
 
     try {
-      const response = await fetch("/profile/boards", {
+      const response = await fetch("/profile", {
         method: "POST",
         body: formData,
       });
@@ -116,6 +126,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
   return {
     files,
     profileInfo,
+    albumInfo,
     setProfileInfo, // 프로필 정보 설정 함수 추가
     handleFileChange,
     handleProfileInfoChange,
@@ -130,7 +141,7 @@ const BannerData: React.FC<{ onUpload: (data: any) => void }> = ({
   const { handleFileChange, handleSubmit } = useFileState(onUpload);
 
   const handleFileInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    await handleFileChange(e, "banner");
+    await handleFileChange(e, "bannerImg");
     handleSubmit();
   };
 
@@ -172,7 +183,7 @@ const ProfileData: React.FC<{ onUpload: (data: any) => void }> = ({
         <Label>
           <HiddenInput
             type="file"
-            onChange={(e) => handleFileChange(e, "profile")}
+            onChange={(e) => handleFileChange(e, "profileImg")}
             id="profile-file"
           />
           <CustomButton2 htmlFor="profile-file">⚙️</CustomButton2>
@@ -229,7 +240,7 @@ const CustomButton = styled.label`
   &:hover {
     opacity: 1;
   }
-  font-size: 18px; /* 아이콘 크기 조정 */
+  font-size: 18px;
 `;
 
 const CustomButton2 = styled.label`
@@ -247,10 +258,11 @@ const CustomButton2 = styled.label`
   font-size: 18px; /* 아이콘 크기 조정 */
 `;
 
+// 프로필 데이터 수정
 interface ProfileEditFormProps {
   profileInfo: {
-    name: string;
-    introduce: string;
+    nickname: string;
+    intro: string;
   };
   onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onSubmit?: () => void; // 추가: 저장 버튼 클릭 시 호출할 함수
@@ -278,12 +290,12 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
   if (!visible) return null;
 
   const handleFormSubmit = () => {
-    // Validate minimum length
-    if (tempProfileInfo.name.length === 0) {
+    // 최소 입력 길이
+    if (tempProfileInfo.nickname.length === 0) {
       setNameError(true);
       return;
     }
-    if (tempProfileInfo.introduce.length === 0) {
+    if (tempProfileInfo.intro.length === 0) {
       setIntroduceError(true);
       return;
     }
@@ -299,8 +311,10 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
       } as ChangeEvent<HTMLInputElement | HTMLTextAreaElement>);
     });
 
-    onSubmit?.();
-    onCancel?.(); // 폼 제출 후 취소 처리
+    const success = onSubmit?.();
+    if (success) {
+      alert("프로필이 성공적으로 저장되었습니다!");
+    }
   };
 
   const handleChange = (
@@ -326,8 +340,10 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
   };
 
   const handleCancel = () => {
-    setTempProfileInfo(profileInfo); // 취소 시 임시 상태 초기화
-    onCancel?.();
+    if (window.confirm("정말로 취소하시겠습니까?")) {
+      setTempProfileInfo(profileInfo); // 취소 시 임시 상태 초기화
+      onCancel?.();
+    }
   };
 
   return (
@@ -339,7 +355,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
           <InputField1
             type="text"
             name="name"
-            value={tempProfileInfo.name}
+            value={tempProfileInfo.nickname}
             onChange={handleChange}
             ref={nameRef}
             style={{ borderColor: nameError ? "red" : "#ccc" }}
@@ -354,7 +370,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
           자기소개
           <InputField2
             name="introduce"
-            value={tempProfileInfo.introduce}
+            value={tempProfileInfo.intro}
             onChange={handleChange}
             ref={introduceRef}
             style={{ borderColor: introduceError ? "red" : "#ccc" }}

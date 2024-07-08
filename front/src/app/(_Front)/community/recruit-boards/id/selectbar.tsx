@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Headers } from "../../header";
 
 const HeaderBar: React.FC = () => {
-  const [selectedTab, setSelectedTab] = useState("request-boards");
+  const [selectedTab, setSelectedTab] = useState("recruit-boards");
 
   return (
     <FreeBoardsContainer>

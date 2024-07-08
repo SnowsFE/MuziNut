@@ -396,7 +396,7 @@ const StyledLink = styled(Link)`
 const Lounge = styled.div`
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
-  padding-top: 24px;
+  padding: 24px 0;
 `;
 
 // 라운지 Border 컨테이너

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import Image from "next/image";
 import Login from "../../../../public/images/login.png";
 import banner from "../../../../public/images/banner.png";
@@ -11,6 +11,7 @@ import {
   useFileState,
   ProfileEditForm,
 } from "../../components/multi-part-form-data/editprofile";
+import { BaseImgBox } from "@/app/components/icon/icon";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("main");
@@ -45,7 +46,7 @@ const UseridProfile: React.FC = () => {
   };
 
   // useFileState 훅을 이용하여 상태와 함수들을 가져옵니다.
-  const { profileInfo, handleProfileInfoChange, handleSubmit } =
+  const { profileInfo, albumInfo, handleProfileInfoChange, handleSubmit } =
     useFileState(onUpload);
 
   // 프로필 정보 수정 폼 열기
@@ -69,11 +70,12 @@ const UseridProfile: React.FC = () => {
         <Image src={profileUrl} alt="profile-image" width={160} height={160} />
         <ProfileData onUpload={onUpload} />
         <ProfileInfo>
-          <ProfileName>{profileInfo.name}</ProfileName>
+          <ProfileName>{profileInfo.nickname}</ProfileName>
           <FollowInfo>
-            팔로잉 {profileInfo.follow} &nbsp; 팔로워 {profileInfo.follower}
+            팔로잉 {profileInfo.followingCount} &nbsp; 팔로워{" "}
+            {profileInfo.followersCount}
           </FollowInfo>
-          <ProfileDescription>{profileInfo.introduce}</ProfileDescription>
+          <ProfileDescription>{profileInfo.intro}</ProfileDescription>
         </ProfileInfo>
       </Profile>
       <SelectBar>
@@ -108,33 +110,31 @@ const UseridProfile: React.FC = () => {
           </StyledLink>
         </SelectContainer>
       </SelectBar>
-      <MainAlbum>
-        <MainAlbumContainer>
-          <Image src={Login} alt="메인 앨범" width={500} height={400}></Image>
+      <MainMusicContainer>
+        {/* <MainTitle>곡</MainTitle> */}
+        <QuestionContainer>
+          <BaseImgBox />
+        </QuestionContainer>
+        <AlbumInfoBox>
           <Like>💚 130</Like>
           <AlbumInformation>
-            <Info1>곡 이름</Info1>
-            <Info2>장르</Info2>
-            <AlbumIntro>
-              <AlbumIntroTitle>곡 소개</AlbumIntroTitle>
-              <AlbumIntroBody>
-                이 곡은 제가 제일 좋아하는 사람에게 헌정하는 곡입니다.
-              </AlbumIntroBody>
-            </AlbumIntro>
+            <Info1>{albumInfo.title}</Info1>
+            <Info2>{albumInfo.genre}</Info2>
+            <AlbumMusician>
+              <AlbumLyricist>작사 : {albumInfo.lyricist}</AlbumLyricist>
+              <AlbumComposer>작곡 : {albumInfo.composer}</AlbumComposer>
+            </AlbumMusician>
           </AlbumInformation>
-        </MainAlbumContainer>
-      </MainAlbum>
+        </AlbumInfoBox>
+      </MainMusicContainer>
       <BodyAlbum>
-        <AlbumName>앨범</AlbumName>
+        {/* <AlbumName>앨범</AlbumName> */}
         <AlbumList>
           {images.map((img, index) => (
             <AlbumItem key={index}>
-              <Image
-                src={img}
-                alt={`바디 앨범 ${index + 1}`}
-                width={150}
-                height={150}
-              />
+              <QuestionContainer2>
+                <BaseImgBox />
+              </QuestionContainer2>
               <AlbumTitle>{imagesName[index]}</AlbumTitle>
             </AlbumItem>
           ))}
@@ -272,25 +272,72 @@ const StyledLink = styled(Link)`
 // -------------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------------
-// 메인 앨범
-const MainAlbum = styled.div`
-  padding-right: calc(50% - 642px);
-  padding-left: calc(50% - 642px);
-  padding-top: 16px;
-`;
+// 메인 곡
 
-// 앨범 이미지와 설명을 감싸는 컨테이너
-const MainAlbumContainer = styled.div`
+// 곡 이미지와 설명을 감싸는 컨테이너
+const MainMusicContainer = styled.div`
   display: flex;
   position: relative;
   align-items: center;
-  padding: 16px 35px 33px 35px;
+
   gap: 5%;
   border-bottom: 1px solid #ccc;
 
   img {
     border: none;
-    border-radius: 12px;
+    border-radius: 8px;
+    width: 100%;
+    height: auto;
+  }
+`;
+
+// 곡
+const MainTitle = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 25px 15px;
+  font-size: 24px;
+`;
+
+// 퀘스쳔 박스 컨테이너
+const QuestionContainer = styled.div`
+  width: 50%;
+  max-width: 50%;
+  max-height: auto;
+  height: auto;
+  z-index: 1;
+`;
+
+// 그림자 애니메이션
+const shadowAnimation = keyframes`
+  0% {
+    box-shadow: 0 2px 12px var(--text-color);
+  }
+  50% {
+    box-shadow: 0 6px 20px var(--text-color);
+  }
+  100% {
+    box-shadow: 0 2px 12px var(--text-color);
+  }
+`;
+
+// 메인 곡 Json Box
+const AlbumInfoBox = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  padding: 20px;
+  margin-right: 55px;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px var(--text-color);
+  transition: 0.3s ease;
+
+  &:hover {
+    animation: ${shadowAnimation} 1.2s infinite;
   }
 `;
 
@@ -299,58 +346,66 @@ const Like = styled.div`
   position: absolute;
   right: 0;
   top: 0;
-  padding: 33px 40px;
-  font-size: 18px;
+  font-size: 20px;
+  color: #16be78;
+  font-weight: bold;
+  padding: 20px;
 `;
 
 // 앨범 설명 세로 정렬
 const AlbumInformation = styled.div`
   display: flex;
   flex-direction: column;
-  position: relative;
   gap: 10px;
 `;
 
-// 앨범 설명
+// 앨범 제목
 const Info1 = styled.div`
-  font-size: 32px;
+  font-size: 36px;
+  font-weight: bold;
+  color: var(--text-color);
 `;
 
 // 앨범 장르
 const Info2 = styled.div`
-  font-size: 23px;
+  font-size: 20px;
+  color: var(--text-color);
+  padding: 5px 0;
 `;
 
-// 앨범 소개
-const AlbumIntro = styled.div`
-  padding-top: 24px;
+// 작사 작곡 컨테이너
+const AlbumMusician = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  font-size: 14px;
+  color: var(--text-color);
+  gap: 5px;
 `;
 
-// 앨범 소개 제목
-const AlbumIntroTitle = styled.div`
-  font-size: 23px;
-`;
+// 작사
+const AlbumLyricist = styled.div``;
 
-// 앨범 소개 본문
-const AlbumIntroBody = styled.div`
-  font-size: 18px;
-`;
+// 작곡
+const AlbumComposer = styled.div``;
+
 // -------------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------------
 // 바디 앨범
 const BodyAlbum = styled.div`
-  padding-right: calc(50% - 642px);
-  padding-left: calc(50% - 642px);
   padding-top: 16px;
+  position: relative;
 `;
+
 // 바디 앨범 타이틀 [앨범]
 const AlbumName = styled.div`
-  padding: 10px 35px 0px 35px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 25px 15px;
+  font-size: 24px;
 `;
+
 // 앨범 목록
 const AlbumList = styled.div`
   display: flex;
@@ -358,10 +413,18 @@ const AlbumList = styled.div`
   padding: 10px 35px 0px 35px;
 `;
 
+// 앨범 퀘스쳔 박스
+const QuestionContainer2 = styled.div`
+  width: 150px;
+  height: 150px;
+  max-width: 150px;
+  max-height: 150px;
+`;
+
 // 앨범 설명
 const AlbumTitle = styled.div`
-  margin-top: 8px;
-  font-size: 14px;
+  font-size: 20px;
+  margin-bottom: 15px;
 `;
 
 // 앨범 이미지
@@ -371,6 +434,10 @@ const AlbumItem = styled.div`
   align-items: center;
   text-align: center;
   padding: 0 0 2rem 0;
+
+  img {
+    border-radius: 12px;
+  }
 `;
 
 // 프로필 에디터
