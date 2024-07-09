@@ -2,8 +2,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import Login from "../../../../../public/images/login.png";
-import banner from "../../../../../public/images/banner.png";
+import BaseImg from "../../../../../public/images/BaseImg.png";
+import BaseBanner from "../../../../../public/images/BaseBanner.png";
 import threedot from "../../../../../public/svgs/threedot.svg";
 import Link from "next/link";
 import { LikeIcon, CommentIcon } from "../../../components/icon/icon";
@@ -26,8 +26,8 @@ const UseridProfile: React.FC = () => {
     Array(LoungePostData.length).fill(false)
   );
   const [writeVisible, setWriteVisible] = useState(false);
-  const [bannerUrl, setBannerUrl] = useState<string>(banner.src);
-  const [profileUrl, setProfileUrl] = useState<string>(Login.src);
+  const [bannerUrl, setBannerUrl] = useState<string>(BaseBanner.src);
+  const [profileUrl, setProfileUrl] = useState<string>(BaseImg.src);
   const [editFormVisible, setEditFormVisible] = useState(false);
   const [publishedContent, setPublishedContent] = useState<string[]>([]);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
@@ -95,7 +95,7 @@ const UseridProfile: React.FC = () => {
       profileName: "사용자 이름",
       uploadTime: new Date().toLocaleDateString(),
       content: "임시 데이터 내용입니다.",
-      bannerImage: banner.src,
+      bannerImage: BaseBanner.src,
       like: 0,
       comment: 0,
     },
@@ -225,7 +225,7 @@ const UseridProfile: React.FC = () => {
               <LoungeWrite>{content}</LoungeWrite>
               <LoungeImage>
                 <Image
-                  src={banner}
+                  src={BaseBanner}
                   alt="배너 이미지"
                   width={1280}
                   height={256}

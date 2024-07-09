@@ -70,9 +70,6 @@ const WriteQuill: React.FC<{
   const handleSubmit = async (file?: File) => {
     const formData = new FormData();
     formData.append("content", content);
-    if (file) {
-      formData.append("file", file);
-    }
 
     try {
       const response = await fetch("/community/free-boards", {

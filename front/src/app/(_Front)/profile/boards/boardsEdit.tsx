@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, ChangeEvent } from "react";
 import styled, { keyframes, css } from "styled-components";
+import axios from "axios";
 
 // useFileState 훅과 초기 데이터
 export const useFileState = (onUpload: (data: any) => void) => {
@@ -13,6 +14,11 @@ export const useFileState = (onUpload: (data: any) => void) => {
     followingCount: 0,
     followersCount: 0,
     intro: "자기소개를 입력하세요",
+  });
+
+  const [boardsInfo, setboardsInfo] = useState({
+    boardsTitle: "",
+    bookmarkTitle: "",
   });
 
   // 이미지 크기 검사 함수
@@ -73,27 +79,49 @@ export const useFileState = (onUpload: (data: any) => void) => {
       return;
     }
 
-    // 폼 데이터 제출 핸들러
-    const formData = new FormData();
-    if (files.bannerImg) formData.append("bannerImg", files.bannerImg);
-    if (files.profileImg) formData.append("profileImg", files.profileImg);
-    formData.append("profileInfo", JSON.stringify(profileInfo));
-
-    try {
-      const response = await fetch("/profile/boards", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await response.json();
-      if (response.ok) {
-        console.log("파일이 성공적으로 업로드되었습니다:", data);
-        onUpload(data);
-      } else {
-        console.error("업로드 실패:", data);
+    // 프로필 제출 핸들러
+    const handleSubmitProfile = async () => {
+      // 프로필 정보 유효성 검사
+      if (!validateProfileInfo()) {
+        return;
       }
-    } catch (error) {
-      console.error("파일이 올라가지 않았습니다", error);
-    }
+
+      const formData = new FormData();
+      if (files.bannerImg) formData.append("bannerImg", files.bannerImg);
+      if (files.profileImg) formData.append("profileImg", files.profileImg);
+
+      // 프로필 정보와 앨범 정보를 JSON 문자열로 추가
+      formData.append("profileInfo", JSON.stringify(profileInfo));
+      formData.append("boardsInfo", JSON.stringify(boardsInfo));
+
+      try {
+        const response = await axios.post("/profile/boards", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        const data = response.data;
+        if (response.status === 200 && data.success) {
+          console.log("파일이 성공적으로 업로드되었습니다:", data);
+
+          onUpload({
+            bannerUrl: data.bannerImageURL,
+            profileUrl: data.profileImageURL,
+          });
+        } else {
+          console.error("업로드 실패:", data);
+        }
+      } catch (error) {
+        console.error("파일이 올라가지 않았습니다", error);
+      }
+    };
+
+    return {
+      files,
+      handleFileChange,
+      handleSubmitProfile,
+    };
   };
 
   // 프로필 정보 변경 핸들러
@@ -116,6 +144,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
   return {
     files,
     profileInfo,
+    boardsInfo,
     setProfileInfo,
     handleFileChange,
     handleProfileInfoChange,

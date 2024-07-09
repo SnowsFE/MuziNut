@@ -2,7 +2,7 @@ import React, { useMemo, useRef, useState, useEffect } from "react";
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
 import styled, { keyframes, css } from "styled-components";
-import QuillToolbar from "./EditorOption";
+import QuillToolbar from "../../profile/lounge/EditorOption";
 import Quill from "quill";
 
 const Font = Quill.import("formats/font");
@@ -13,7 +13,7 @@ const Size = Quill.import("attributors/style/size");
 Size.whitelist = ["13px", "16px", "18px", "24px", "28px", "32px"];
 Quill.register(Size, true);
 
-const WriteEditor: React.FC<{
+const WriteQuill: React.FC<{
   onPublish: (content: string) => void;
   onClose: () => void;
   initialContent?: string;
@@ -30,56 +30,16 @@ const WriteEditor: React.FC<{
     }
   }, [visible]);
 
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      setVisible(false);
-      onClose();
-    }
-  };
-
   const modules = useMemo(() => {
     return {
       toolbar: {
         container: "#toolbar",
         handlers: {
-          image: function () {
-            const input = document.createElement("input");
-            input.setAttribute("type", "file");
-            input.setAttribute("accept", "image/*");
-            input.onchange = async () => {
-              const file = input.files?.[0];
-              if (file) {
-                const formData = new FormData();
-                formData.append("file", file);
-
-                try {
-                  const response = await fetch("/profile/lounge", {
-                    method: "POST",
-                    body: formData,
-                  });
-
-                  if (response.ok) {
-                    const data = await response.json();
-                    const quill = quillRef.current?.getEditor();
-                    const range = quill?.getSelection();
-                    if (quill && range) {
-                      quill.insertEmbed(range.index, "image", data.url);
-                      console.log("이미지가 삽입되었습니다: ", data.url);
-                    }
-                  } else {
-                    console.error("이미지 업로드 실패.");
-                  }
-                } catch (error) {
-                  console.error("이미지 업로드 중 오류 발생:", error);
-                }
-              }
-            };
-            input.click();
-          },
+          image: handleImageUpload,
         },
       },
     };
-  }, []);
+  }, [content, initialContent, onClose, onPublish]);
 
   useEffect(() => {
     const quill = quillRef.current?.getEditor();
@@ -91,14 +51,27 @@ const WriteEditor: React.FC<{
 
   const handleChange = (content: string) => {
     setContent(content);
-    console.log("Content changed: ", content);
+    console.log("글 변경", content);
   };
 
-  const handlePublishClick = async () => {
-    try {
-      const formData = new FormData();
-      formData.append("content", content);
+  const handleImageUpload = () => {
+    const input = document.createElement("input");
+    input.setAttribute("type", "file");
+    input.setAttribute("accept", "image/*");
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (file) {
+        await handleSubmit(file);
+      }
+    };
+    input.click();
+  };
 
+  const handleSubmit = async (file?: File) => {
+    const formData = new FormData();
+    formData.append("content", content);
+
+    try {
       const response = await fetch("/profile/lounge", {
         method: "POST",
         body: formData,
@@ -128,16 +101,14 @@ const WriteEditor: React.FC<{
     }
   };
 
-  if (!render) return null;
-
   return (
     <>
-      <Overlay visible={visible} onClick={handleOverlayClick} />
+      <Overlay visible={visible} />
       <EditorContainer visible={visible}>
         <Title>라운지 Talk</Title>
         <QuillToolbar />
         <CustomReactQuill
-          placeholder="라운지Talk에서 소중한 일상을 공유해보세요."
+          placeholder="자유롭게 여러분의 생각을 나눠보세요."
           theme="snow"
           ref={quillRef}
           value={content}
@@ -153,7 +124,7 @@ const WriteEditor: React.FC<{
           >
             취소
           </CancelButton>
-          <StyledButton onClick={handlePublishClick}>
+          <StyledButton onClick={() => handleSubmit()}>
             {initialContent ? "글 수정" : "글 등록"}
           </StyledButton>
         </ButtonContainer>
@@ -162,7 +133,7 @@ const WriteEditor: React.FC<{
   );
 };
 
-export default WriteEditor;
+export default WriteQuill;
 
 const fadeOut = keyframes`
   from {
@@ -173,14 +144,22 @@ const fadeOut = keyframes`
   }
 `;
 
-const Overlay = styled.div<{ visible: boolean }>`
+const Overlay = ({ visible }: { visible: boolean }) => {
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    e.preventDefault(); // 기본 동작 막기
+  };
+
+  return <OverlayStyled visible={visible} onClick={handleOverlayClick} />;
+};
+
+const OverlayStyled = styled.div<{ visible: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 1;
+  z-index: 3;
   animation: ${({ visible }) =>
     visible
       ? ""
@@ -200,7 +179,7 @@ const EditorContainer = styled.div<{ visible: boolean }>`
   border-radius: 15px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   background: white;
-  z-index: 2;
+  z-index: 4;
   animation: ${({ visible }) =>
     visible
       ? ""
@@ -217,39 +196,39 @@ const Title = styled.h2`
 
 const CustomReactQuill = styled(ReactQuill)`
   border-radius: 30px;
-  height: 450px; /* 높이를 조정하여 제목란을 위한 공간 확보 */
+  height: 450px;
   margin-bottom: 20px;
   color: black;
 
   .ql-container {
-    font-family: "esamanru Light", sans-serif; // 기본 폰트 설정
+    font-family: "esamanru Light", sans-serif;
   }
 
   .ql-toolbar {
-    font-family: "esamanru Light", sans-serif; // 기본 폰트 설정
+    font-family: "esamanru Light", sans-serif;
   }
 
   .ql-editor {
-    font-family: "esamanru Light", sans-serif; // 기본 폰트 설정
+    font-family: "esamanru Light", sans-serif;
   }
 
   .ql-font-esamanruLight {
-    font-family: "esamanru Light"; // 사용자 정의 폰트 패밀리 적용 클래스
+    font-family: "esamanru Light";
   }
 
   .ql-font-esamanruMedium {
-    font-family: "esamanru Medium"; // 사용자 정의 폰트 패밀리 적용 클래스
+    font-family: "esamanru Medium";
   }
 
   .ql-font-esamanruBold {
-    font-family: "esamanru Bold"; // 사용자 정의 폰트 패밀리 적용 클래스
+    font-family: "esamanru Bold";
   }
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin-top: 13px;
+  margin: 13px 0;
 `;
 
 const StyledButton = styled.button`

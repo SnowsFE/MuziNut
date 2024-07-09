@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import styled, { keyframes } from "styled-components";
 import Image from "next/image";
-import profile from "../../../../public/images/artist.png";
-import banner from "../../../../public/images/banner.png";
+import BaseImg from "../../../../public/images/BaseImg.png";
+import BaseBanner from "../../../../public/images/BaseBanner.png";
 import Link from "next/link";
 import {
   BannerData,
@@ -15,19 +15,18 @@ import { BaseImgBox } from "@/app/components/icon/icon";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("main");
-  const AlbumImages = [
-    { BaseImgBox },
-    { BaseImgBox },
-    { BaseImgBox },
-    { BaseImgBox },
-    { BaseImgBox },
-  ];
-
-  const [bannerUrl, setBannerUrl] = useState<string>(banner.src);
-  const [profileUrl, setProfileUrl] = useState<string>(profile.src);
+  const [bannerUrl, setBannerUrl] = useState<string>(BaseBanner.src);
+  const [profileUrl, setProfileUrl] = useState<string>(BaseImg.src);
   const [editFormVisible, setEditFormVisible] = useState(false);
+  const [albumImageURLs, setAlbumImageURLs] = useState<string[]>([]);
 
-  // onUpload 함수 정의
+  // 백엔드에서 받은 이미지 URL 상태 관리
+  const [mainSongAlbumImageUrl, setMainSongAlbumImageUrl] = useState<
+    string | null
+  >(null);
+  const [albumImageUrl, setAlbumImageUrl] = useState<string | null>(null);
+
+  // 업로드 하는 함수
   const onUpload = (data: { bannerUrl?: string; profileUrl?: string }) => {
     if (data.bannerUrl) {
       console.log("배너 이미지가 변경되었습니다:", data.bannerUrl);
@@ -39,9 +38,18 @@ const UseridProfile: React.FC = () => {
     }
   };
 
-  // useFileState 훅을 이용하여 상태와 함수들을 가져옵니다.
   const { profileInfo, albumInfo, handleProfileInfoChange, handleSubmit } =
-    useFileState(onUpload);
+    useFileState((data) => {
+      setMainSongAlbumImageUrl(data.mainSongAlbumImageURL);
+      setAlbumImageUrl(data.albumImageURL);
+
+      // albumImageURL 배열에 이미지 URL 추가
+      if (data.albumImageURL) {
+        setAlbumImageURLs([...albumImageURLs, data.albumImageURL]);
+      }
+
+      onUpload({ bannerUrl: data.bannerUrl, profileUrl: data.profileUrl });
+    });
 
   // 프로필 정보 수정 폼 열기
   const openEditForm = () => {
@@ -56,12 +64,40 @@ const UseridProfile: React.FC = () => {
   return (
     <ProfileContainer>
       <Banner>
-        <Image src={bannerUrl} alt="banner-image" width={1280} height={210} />
+        {profileInfo.bannerImg ? (
+          <Image
+            src={`data:image/png;base64,${profileInfo.bannerImg}`}
+            alt="banner-image"
+            width={1280}
+            height={210}
+          />
+        ) : (
+          <Image
+            src={BaseBanner}
+            alt="base-banner-image"
+            width={1280}
+            height={210}
+          />
+        )}
         <BannerData onUpload={onUpload} />
       </Banner>
       <Profile>
         <EditForm onClick={openEditForm}>⚙️</EditForm>
-        <Image src={profileUrl} alt="profile-image" width={160} height={160} />
+        {profileInfo.profileImg ? (
+          <Image
+            src={`data:image/png;base64,${profileInfo.profileImg}`}
+            alt="profile-image"
+            width={160}
+            height={160}
+          />
+        ) : (
+          <Image
+            src={BaseImg}
+            alt="base-profile-image"
+            width={160}
+            height={160}
+          />
+        )}
         <ProfileData onUpload={onUpload} />
         <ProfileInfo>
           <ProfileName>{profileInfo.nickname}</ProfileName>
@@ -105,43 +141,57 @@ const UseridProfile: React.FC = () => {
         </SelectContainer>
       </SelectBar>
       <MainMusicContainer>
-        {/* <MainTitle>곡</MainTitle> */}
-        <QuestionContainer>
-          <BaseImgBox />
-        </QuestionContainer>
-        <AlbumInfoBox>
-          {/* reponse.data.likeCount */}
-          <Like>💚 {albumInfo.likeCount}</Like>
-          <AlbumInformation>
-            <Info1>{albumInfo.songTitle}</Info1>
-            <Info2>{albumInfo.genre}</Info2>
-            <AlbumMusician>
-              <AlbumLyricist>작사 : {albumInfo.lyricist}</AlbumLyricist>
-              <AlbumComposer>작곡 : {albumInfo.composer}</AlbumComposer>
-            </AlbumMusician>
-          </AlbumInformation>
-        </AlbumInfoBox>
+        {mainSongAlbumImageUrl ? (
+          <>
+            <QuestionContainer>
+              <Image
+                src={`data:image/png;base64,${mainSongAlbumImageUrl}`}
+                alt="main-song"
+              />
+            </QuestionContainer>
+            <AlbumInfoBox>
+              <Like>💚 {albumInfo.likeCount}</Like>
+              <AlbumInformation>
+                <Info1>{albumInfo.songTitle}</Info1>
+                <Info2>{albumInfo.genre}</Info2>
+                <AlbumMusician>
+                  <AlbumLyricist>작사 : {albumInfo.lyricist}</AlbumLyricist>
+                  <AlbumComposer>작곡 : {albumInfo.composer}</AlbumComposer>
+                </AlbumMusician>
+              </AlbumInformation>
+            </AlbumInfoBox>
+          </>
+        ) : (
+          <QuestionContainer>
+            <BaseImgBox />
+            <MusicTitle> 인기곡이 이곳에 등록됩니다</MusicTitle>
+          </QuestionContainer>
+        )}
       </MainMusicContainer>
       <BodyAlbum>
-        {/* <AlbumName>앨범</AlbumName> */}
-        <AlbumList>
-          {AlbumImages.map((img, index) => (
-            <AlbumItem key={index}>
-              <QuestionContainer2>
-                <BaseImgBox />
-              </QuestionContainer2>
-              <AlbumTitle>{albumInfo.albumTitle}</AlbumTitle>
-            </AlbumItem>
-          ))}
-        </AlbumList>
+        {albumImageURLs.length > 0 ? (
+          <AlbumList>
+            {albumImageURLs.map((url, index) => (
+              <AlbumItem key={index}>
+                <Image
+                  src={`data:image/png;base64,${url}`}
+                  alt={`albumImage${index}`}
+                  width={200}
+                  height={200}
+                />
+                <AlbumTitle>Album Title</AlbumTitle>
+              </AlbumItem>
+            ))}
+          </AlbumList>
+        ) : (
+          <AlbumItem>
+            <QuestionContainer2>
+              <BaseImgBox />
+            </QuestionContainer2>
+            <AlbumTitle>앨범을 제작하면 이곳에 등록됩니다</AlbumTitle>
+          </AlbumItem>
+        )}
       </BodyAlbum>
-      <ProfileEditForm
-        profileInfo={profileInfo}
-        onChange={handleProfileInfoChange}
-        onSubmit={handleSubmit}
-        onCancel={closeEditForm}
-        visible={editFormVisible}
-      />
       <ProfileEditForm
         profileInfo={profileInfo}
         onChange={handleProfileInfoChange}
@@ -287,12 +337,11 @@ const MainMusicContainer = styled.div`
 `;
 
 // 곡
-const MainTitle = styled.div`
+const MusicTitle = styled.div`
   position: absolute;
-  top: 0;
-  left: 0;
-  padding: 25px 15px;
-  font-size: 24px;
+  top: 46%;
+  right: 10%;
+  font-size: 40px;
 `;
 
 // 퀘스쳔 박스 컨테이너

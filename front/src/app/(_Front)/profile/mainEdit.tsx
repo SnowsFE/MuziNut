@@ -3,7 +3,7 @@ import styled, { keyframes, css } from "styled-components";
 import axios from "axios";
 
 // useFileState 훅과 초기 데이터
-export const useFileState = (onUpload: (data: any) => void) => {
+const useFileState = (onUpload: (data: any) => void) => {
   const [files, setFiles] = useState<{ [key: string]: File | null }>({
     bannerImg: null,
     profileImg: null,
@@ -11,19 +11,18 @@ export const useFileState = (onUpload: (data: any) => void) => {
     albumImage: null,
   });
 
-  const [imageURLs, setImageURLs] = useState<{ [key: string]: string | null }>({
-    mainSongAlbumImage: null,
-    albumImage: null,
-  });
-
   const [profileInfo, setProfileInfo] = useState({
+    bannerImg: "",
+    profileImg: "",
     nickname: "닉네임",
     followingCount: 0,
     followersCount: 0,
     intro: "자기소개를 입력하세요",
   });
 
-  const [albumInfo, setalbumInfo] = useState({
+  const [albumInfo, setAlbumInfo] = useState({
+    mainSongAlbumImage: "",
+    albumImage: "",
     songTitle: "곡 명",
     albumTitle: "앨범제목",
     genre: "장르",
@@ -85,52 +84,71 @@ export const useFileState = (onUpload: (data: any) => void) => {
   };
 
   const handleSubmit = async () => {
-    // 프로필 정보 유효성 검사
     if (!validateProfileInfo()) {
       return;
     }
 
-    // 백엔드 통신 데이터
-    const handleSubmitProfile = async () => {
-      const formData = new FormData();
-      if (files.bannerImg) formData.append("bannerImg", files.bannerImg);
-      if (files.profileImg) formData.append("profileImg", files.profileImg);
-      if (files.mainSongAlbumImage)
-        formData.append("mainSongAlbumImage", files.mainSongAlbumImage);
-      if (files.albumImage) formData.append("albumImage", files.albumImage);
+    const formData = new FormData();
+    if (files.bannerImg) formData.append("bannerImg", files.bannerImg);
+    if (files.profileImg) formData.append("profileImg", files.profileImg);
+    if (files.mainSongAlbumImage)
+      formData.append("mainSongAlbumImage", files.mainSongAlbumImage);
+    if (files.albumImage) formData.append("albumImage", files.albumImage);
 
-      try {
-        const response = await axios.post("/profile", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+    formData.append("profileInfo", JSON.stringify(profileInfo));
+    formData.append("albumInfo", JSON.stringify(albumInfo));
+
+    try {
+      const { data, status } = await axios.post("/localhost:8080", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (status === 200 && data.success) {
+        console.log("파일이 성공적으로 업로드되었습니다:", data);
+        await fetchProfileData();
+        onUpload({
+          bannerUrl: data.bannerImageURL,
+          profileUrl: data.profileImageURL,
         });
-
-        const data = response.data;
-        if (response.status === 200 && data.success) {
-          console.log("파일이 성공적으로 업로드되었습니다:", data);
-
-          // 백엔드에서 받은 URL들을 상태로 설정
-          setImageURLs({
-            mainSongAlbumImage: data.mainSongAlbumImageURL,
-            albumImage: data.albumImageURL,
-          });
-
-          onUpload(data);
-        } else {
-          console.error("업로드 실패:", data);
-        }
-      } catch (error) {
-        console.error("파일이 올라가지 않았습니다", error);
+      } else {
+        console.error("업로드 실패:", data);
       }
-    };
+    } catch (error) {
+      console.error("파일이 업로드 되지 않았습니다", error);
+    }
+  };
 
-    return {
-      files,
-      imageURLs,
-      handleFileChange,
-      handleSubmitProfile,
-    };
+  const fetchProfileData = async () => {
+    try {
+      const { data } = await axios.get("/profile");
+      console.log("프로필 데이터 및 이미지 URL:", data);
+
+      setProfileInfo({
+        ...profileInfo, // 기존 상태를 유지하면서 업데이트
+        bannerImg: data.bannerImageURL,
+        profileImg: data.profileImageURL,
+        nickname: data.nickname,
+        followingCount: data.followingCount,
+        followersCount: data.followersCount,
+        intro: data.intro,
+      });
+
+      setAlbumInfo({
+        ...albumInfo, // 기존 상태를 유지하면서 업데이트
+        mainSongAlbumImage: data.mainSongAlbumImage,
+        albumImage: data.albumImage,
+        songTitle: data.songTitle,
+        albumTitle: data.albumTitle,
+        genre: data.genre,
+        lyricist: data.lyricist,
+        composer: data.composer,
+        likeCount: data.likeCount,
+      });
+    } catch (error) {
+      console.error("프로필 데이터와 이미지 URL을 가져오지 못했습니다:", error);
+    }
   };
 
   // 프로필 정보 변경 핸들러
@@ -195,13 +213,18 @@ const ProfileData: React.FC<{ onUpload: (data: any) => void }> = ({
 
   const [isEditVisible, setEditVisible] = useState(false);
 
-  const handleEditSubmit = () => {
-    handleSubmit();
+  const handleEditSubmit = async () => {
+    await handleSubmit();
     setEditVisible(false);
   };
 
   const handleEditCancel = () => {
     setEditVisible(false);
+  };
+
+  const handleFileInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    await handleFileChange(e, "profile");
+    handleSubmit();
   };
 
   return (
@@ -210,7 +233,7 @@ const ProfileData: React.FC<{ onUpload: (data: any) => void }> = ({
         <Label>
           <HiddenInput
             type="file"
-            onChange={(e) => handleFileChange(e, "profileImg")}
+            onChange={handleFileInputChange}
             id="profile-file"
           />
           <CustomButton2 htmlFor="profile-file">⚙️</CustomButton2>
@@ -306,6 +329,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
   const [tempProfileInfo, setTempProfileInfo] = useState(profileInfo);
   const [nameError, setNameError] = useState(false);
   const [introduceError, setIntroduceError] = useState(false);
+  const [isChanged, setIsChanged] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
   const introduceRef = useRef<HTMLTextAreaElement>(null);
 
@@ -313,6 +337,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
     setTempProfileInfo(profileInfo); // 폼이 열릴 때 임시 상태 초기화
     setNameError(false);
     setIntroduceError(false); // 폼이 열릴 때 에러 상태 초기화
+    setIsChanged(false); // 폼이 열릴 때 변경 상태 초기화
   }, [profileInfo, visible]);
 
   if (!visible) return null;
@@ -329,6 +354,12 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
     }
 
     if (nameError || introduceError) return; // 에러가 있으면 제출을 막음
+
+    // 변경된 값이 없으면 제출을 막음
+    if (!isChanged) {
+      alert("변경된 내용이 없습니다.");
+      return;
+    }
 
     Object.keys(tempProfileInfo).forEach((key) => {
       onChange({
@@ -366,6 +397,9 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
         setIntroduceError(false);
       }
     }
+
+    // 변경된 값이 있는지 확인
+    setIsChanged(value !== profileInfo[name as keyof typeof profileInfo]);
   };
 
   const handleCancel = () => {
@@ -373,6 +407,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
       setTempProfileInfo(profileInfo); // 취소 시 임시 상태 초기화
       setNameError(false); // 에러 상태 초기화
       setIntroduceError(false); // 에러 상태 초기화
+      setIsChanged(false); // 변경 상태 초기화
       onCancel?.();
     }
   };
@@ -414,7 +449,9 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
         )}
         <ButtonContainer>
           <CancelButton onClick={handleCancel}>취소</CancelButton>
-          <SaveButton onClick={handleFormSubmit}>저장</SaveButton>
+          <SaveButton onClick={handleFormSubmit} disabled={!isChanged}>
+            저장
+          </SaveButton>
         </ButtonContainer>
       </ProfileEditContainer>
     </OutContainer>
@@ -563,4 +600,4 @@ const IntroduceErrorMessage = styled.p`
   font-family: "esamanru Medium";
 `;
 
-export { BannerData, ProfileData, ProfileEditForm };
+export { BannerData, ProfileData, useFileState, ProfileEditForm };

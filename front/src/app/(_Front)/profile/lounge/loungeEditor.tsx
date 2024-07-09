@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, ChangeEvent } from "react";
 import styled, { keyframes, css } from "styled-components";
+import WriteQuill from "./WriteEditor";
 
 // useFileState 훅과 초기 데이터
 export const useFileState = (onUpload: (data: any) => void) => {
@@ -13,6 +14,12 @@ export const useFileState = (onUpload: (data: any) => void) => {
     followingCount: 0,
     followersCount: 0,
     intro: "자기소개를 입력하세요",
+  });
+
+  const [loungeboards, setloungeboards] = useState({
+    id: 0,
+    writer: "작성자",
+    createDt: "작성 시간",
   });
 
   // 이미지 크기 검사 함수
