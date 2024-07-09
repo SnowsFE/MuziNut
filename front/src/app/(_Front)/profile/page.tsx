@@ -66,7 +66,7 @@ const UseridProfile: React.FC = () => {
       <Banner>
         {profileInfo.bannerImg ? (
           <Image
-            src={`data:image/png;base64,${profileInfo.bannerImg}`}
+            src={`data:image/;base64,${profileInfo.bannerImg}`}
             alt="banner-image"
             width={1280}
             height={210}
@@ -85,7 +85,7 @@ const UseridProfile: React.FC = () => {
         <EditForm onClick={openEditForm}>⚙️</EditForm>
         {profileInfo.profileImg ? (
           <Image
-            src={`data:image/png;base64,${profileInfo.profileImg}`}
+            src={`data:image/;base64,${profileInfo.profileImg}`}
             alt="profile-image"
             width={160}
             height={160}
@@ -145,7 +145,7 @@ const UseridProfile: React.FC = () => {
           <>
             <QuestionContainer>
               <Image
-                src={`data:image/png;base64,${mainSongAlbumImageUrl}`}
+                src={`data:image/;base64,${mainSongAlbumImageUrl}`}
                 alt="main-song"
               />
             </QuestionContainer>
@@ -164,7 +164,7 @@ const UseridProfile: React.FC = () => {
         ) : (
           <QuestionContainer>
             <BaseImgBox />
-            <MusicTitle> 인기곡이 이곳에 등록됩니다</MusicTitle>
+            <MusicTitle>나만의 앨범을 만들어 보세요</MusicTitle>
           </QuestionContainer>
         )}
       </MainMusicContainer>
@@ -174,7 +174,7 @@ const UseridProfile: React.FC = () => {
             {albumImageURLs.map((url, index) => (
               <AlbumItem key={index}>
                 <Image
-                  src={`data:image/png;base64,${url}`}
+                  src={`data:image/;base64,${url}`}
                   alt={`albumImage${index}`}
                   width={200}
                   height={200}
@@ -183,14 +183,7 @@ const UseridProfile: React.FC = () => {
               </AlbumItem>
             ))}
           </AlbumList>
-        ) : (
-          <AlbumItem>
-            <QuestionContainer2>
-              <BaseImgBox />
-            </QuestionContainer2>
-            <AlbumTitle>앨범을 제작하면 이곳에 등록됩니다</AlbumTitle>
-          </AlbumItem>
-        )}
+        ) : null}
       </BodyAlbum>
       <ProfileEditForm
         profileInfo={profileInfo}
@@ -441,28 +434,11 @@ const BodyAlbum = styled.div`
   position: relative;
 `;
 
-// 바디 앨범 타이틀 [앨범]
-const AlbumName = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  padding: 25px 15px;
-  font-size: 24px;
-`;
-
 // 앨범 목록
 const AlbumList = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 10px 35px 0px 35px;
-`;
-
-// 앨범 퀘스쳔 박스
-const QuestionContainer2 = styled.div`
-  width: 150px;
-  height: 150px;
-  max-width: 150px;
-  max-height: 150px;
 `;
 
 // 앨범 설명
