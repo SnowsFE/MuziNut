@@ -65,6 +65,9 @@ const useFileState = (onUpload: (data: any) => void) => {
 
       if (!checkFileType(file)) {
         alert("이미지 파일만 업로드 할 수 있습니다.");
+        // 유효하지 않은 파일이 선택된 경우 파일 상태를 초기화
+        setFiles((prevFiles) => ({ ...prevFiles, [key]: null }));
+        e.target.value = ""; // 선택된 파일 초기화
         return;
       }
 
@@ -73,12 +76,18 @@ const useFileState = (onUpload: (data: any) => void) => {
         isValid = await checkImageDimensions(file, 600, 210);
         if (!isValid) {
           alert("배너 이미지는 최소 600x210 크기여야 합니다.");
+          // 유효하지 않은 파일이 선택된 경우 파일 상태를 초기화
+          setFiles((prevFiles) => ({ ...prevFiles, [key]: null }));
+          e.target.value = ""; // 선택된 파일 초기화
           return;
         }
       } else if (key === "profileImg") {
         isValid = await checkImageDimensions(file, 160, 160);
         if (!isValid) {
           alert("프로필 이미지는 최소 160x160 크기여야 합니다.");
+          // 유효하지 않은 파일이 선택된 경우 파일 상태를 초기화
+          setFiles((prevFiles) => ({ ...prevFiles, [key]: null }));
+          e.target.value = ""; // 선택된 파일 초기화
           return;
         }
       }
@@ -212,7 +221,7 @@ const ProfileData: React.FC<{ onUpload: (data: any) => void }> = ({
   };
 
   const handleFileInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    await handleFileChange(e, "profile");
+    await handleFileChange(e, "profileImg");
     handleSubmit();
   };
 

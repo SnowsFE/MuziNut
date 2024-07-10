@@ -35,7 +35,7 @@ const WriteQuill: React.FC<{
       toolbar: {
         container: "#toolbar",
         handlers: {
-          image: handleImageUpload,
+          image: QuillImageUpload,
         },
       },
     };
@@ -54,25 +54,25 @@ const WriteQuill: React.FC<{
     console.log("글 변경", content);
   };
 
-  const handleImageUpload = () => {
+  const QuillImageUpload = () => {
     const input = document.createElement("input");
     input.setAttribute("type", "file");
     input.setAttribute("accept", "image/*");
     input.onchange = async () => {
       const file = input.files?.[0];
       if (file) {
-        await handleSubmit(file);
+        await QuillSubmit(file);
       }
     };
     input.click();
   };
 
-  const handleSubmit = async (file?: File) => {
+  const QuillSubmit = async (file?: File) => {
     const formData = new FormData();
     formData.append("content", content);
 
     try {
-      const response = await fetch("/profile/lounge", {
+      const response = await fetch("http://localhost:8080", {
         method: "POST",
         body: formData,
       });
@@ -105,7 +105,7 @@ const WriteQuill: React.FC<{
     <>
       <Overlay visible={visible} />
       <EditorContainer visible={visible}>
-        <Title>라운지 Talk</Title>
+        <QuillTitle>라운지 Talk</QuillTitle>
         <QuillToolbar />
         <CustomReactQuill
           placeholder="자유롭게 여러분의 생각을 나눠보세요."
@@ -115,19 +115,19 @@ const WriteQuill: React.FC<{
           onChange={handleChange}
           modules={modules}
         />
-        <ButtonContainer>
-          <CancelButton
+        <QuillButtonContainer>
+          <QuillCancelButton
             onClick={() => {
               setVisible(false);
               onClose();
             }}
           >
             취소
-          </CancelButton>
-          <StyledButton onClick={() => handleSubmit()}>
+          </QuillCancelButton>
+          <StyledButton onClick={() => QuillSubmit()}>
             {initialContent ? "글 수정" : "글 등록"}
           </StyledButton>
-        </ButtonContainer>
+        </QuillButtonContainer>
       </EditorContainer>
     </>
   );
@@ -188,7 +188,7 @@ const EditorContainer = styled.div<{ visible: boolean }>`
         `};
 `;
 
-const Title = styled.h2`
+const QuillTitle = styled.h2`
   text-align: center;
   margin-bottom: 20px;
   color: black;
@@ -225,7 +225,7 @@ const CustomReactQuill = styled(ReactQuill)`
   }
 `;
 
-const ButtonContainer = styled.div`
+const QuillButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   margin: 13px 0;
@@ -244,7 +244,7 @@ const StyledButton = styled.button`
   }
 `;
 
-const CancelButton = styled.button`
+const QuillCancelButton = styled.button`
   background-color: #ccc;
   color: black;
   border: none;

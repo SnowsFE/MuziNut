@@ -5,15 +5,24 @@ import axios from "axios";
 // useFileState 훅과 초기 데이터
 const useFileState = (onUpload: (data: any) => void) => {
   const [files, setFiles] = useState<{ [key: string]: File | null }>({
-    bannerImg: null,
-    profileImg: null,
+    profileBannerImgName: null,
+    profileImgName: null,
     mainSongAlbumImage: null,
     albumImage: null,
   });
 
-  const [profileInfo, setProfileInfo] = useState({
-    bannerImg: "",
-    profileImg: "",
+  interface profileInfoProps {
+    profileBannerImgName: string;
+    profileImgName: string;
+    nickname: string;
+    followingCount: number;
+    followersCount: number;
+    intro: string;
+  }
+
+  const [profileInfo, setProfileInfo] = useState<profileInfoProps>({
+    profileBannerImgName: "",
+    profileImgName: "",
     nickname: "닉네임",
     followingCount: 0,
     followersCount: 0,
@@ -31,6 +40,17 @@ const useFileState = (onUpload: (data: any) => void) => {
     likeCount: 0,
   });
 
+  // 프로필 정보 유효성 검사
+  const validateProfileInfo = () => {
+    if (profileInfo.nickname.length > 10) {
+      return false;
+    }
+    if (profileInfo.intro.length > 70) {
+      return false;
+    }
+    return true;
+  };
+
   // 이미지 크기 검사 함수
   const checkImageDimensions = (
     file: File,
@@ -46,18 +66,12 @@ const useFileState = (onUpload: (data: any) => void) => {
     });
   };
 
-  // 프로필 정보 유효성 검사
-  const validateProfileInfo = () => {
-    if (profileInfo.nickname.length > 10) {
-      return false;
-    }
-    if (profileInfo.intro.length > 70) {
-      return false;
-    }
-    return true;
+  // 파일 형식 검사 함수
+  const checkFileType = (file: File): boolean => {
+    const acceptedImageTypes = ["image/jpeg", "image/png", "image/gif"];
+    return acceptedImageTypes.includes(file.type);
   };
 
-  // 파일 변경 핸들러
   const handleFileChange = async (
     e: ChangeEvent<HTMLInputElement>,
     key: string
@@ -65,17 +79,31 @@ const useFileState = (onUpload: (data: any) => void) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
 
+      if (!checkFileType(file)) {
+        alert("이미지 파일만 업로드 할 수 있습니다.");
+        // 유효하지 않은 파일이 선택된 경우 파일 상태를 초기화
+        setFiles((prevFiles) => ({ ...prevFiles, [key]: null }));
+        e.target.value = ""; // 선택된 파일 초기화
+        return;
+      }
+
       let isValid = true;
-      if (key === "banner") {
+      if (key === "bannerImg") {
         isValid = await checkImageDimensions(file, 600, 210);
         if (!isValid) {
           alert("배너 이미지는 최소 600x210 크기여야 합니다.");
+          // 유효하지 않은 파일이 선택된 경우 파일 상태를 초기화
+          setFiles((prevFiles) => ({ ...prevFiles, [key]: null }));
+          e.target.value = ""; // 선택된 파일 초기화
           return;
         }
-      } else if (key === "profile") {
+      } else if (key === "profileImg") {
         isValid = await checkImageDimensions(file, 160, 160);
         if (!isValid) {
           alert("프로필 이미지는 최소 160x160 크기여야 합니다.");
+          // 유효하지 않은 파일이 선택된 경우 파일 상태를 초기화
+          setFiles((prevFiles) => ({ ...prevFiles, [key]: null }));
+          e.target.value = ""; // 선택된 파일 초기화
           return;
         }
       }
@@ -88,68 +116,87 @@ const useFileState = (onUpload: (data: any) => void) => {
       return;
     }
 
-    const formData = new FormData();
-    if (files.bannerImg) formData.append("bannerImg", files.bannerImg);
-    if (files.profileImg) formData.append("profileImg", files.profileImg);
-    if (files.mainSongAlbumImage)
-      formData.append("mainSongAlbumImage", files.mainSongAlbumImage);
-    if (files.albumImage) formData.append("albumImage", files.albumImage);
+    const bannerFormData = new FormData();
+    if (files.bannerImg) bannerFormData.append("bannerImg", files.bannerImg);
+    bannerFormData.append(
+      "profileInfo",
+      JSON.stringify({
+        nickname: profileInfo.nickname,
+        intro: profileInfo.intro,
+      })
+    );
 
-    formData.append("profileInfo", JSON.stringify(profileInfo));
-    formData.append("albumInfo", JSON.stringify(albumInfo));
+    const profileFormData = new FormData();
+    if (files.profileImg)
+      profileFormData.append("profileImg", files.profileImg);
+    profileFormData.append(
+      "profileInfo",
+      JSON.stringify({
+        nickname: profileInfo.nickname,
+        intro: profileInfo.intro,
+      })
+    );
 
     try {
-      const { data, status } = await axios.post("/localhost:8080", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const [bannerResponse, profileResponse] = await Promise.all([
+        axios.post(
+          "http://localhost:8080/users/set-profile-bannerImage",
+          bannerFormData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        ),
+        axios.post("http://localhost:8080/users/set-profile", profileFormData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }),
+      ]);
 
-      if (status === 200 && data.success) {
-        console.log("파일이 성공적으로 업로드되었습니다:", data);
-        await fetchProfileData();
-        onUpload({
-          bannerUrl: data.bannerImageURL,
-          profileUrl: data.profileImageURL,
-        });
+      // 각 요청의 결과를 처리합니다.
+      if (bannerResponse.status === 200 && bannerResponse.data.success) {
+        console.log("배너 이미지 업로드 성공:", bannerResponse.data);
+        onUpload({ bannerUrl: bannerResponse.data.imageUrl }); // 업로드 성공 시 처리할 동작
       } else {
-        console.error("업로드 실패:", data);
+        console.error("배너 이미지 업로드 실패:", bannerResponse.data);
+      }
+
+      if (profileResponse.status === 200 && profileResponse.data.success) {
+        console.log("프로필 이미지 업로드 성공:", profileResponse.data);
+        onUpload({ profileUrl: profileResponse.data.imageUrl }); // 업로드 성공 시 처리할 동작
+      } else {
+        console.error("프로필 이미지 업로드 실패:", profileResponse.data);
       }
     } catch (error) {
-      console.error("파일이 업로드 되지 않았습니다", error);
+      console.error("이미지 업로드 실패:", error);
     }
   };
 
-  const fetchProfileData = async () => {
-    try {
-      const { data } = await axios.get("/profile");
-      console.log("프로필 데이터 및 이미지 URL:", data);
+  const [userId, setUserId] = useState(2); // 초기 userId 값을 설정합니다.
 
-      setProfileInfo({
-        ...profileInfo, // 기존 상태를 유지하면서 업데이트
-        bannerImg: data.bannerImageURL,
-        profileImg: data.profileImageURL,
-        nickname: data.nickname,
-        followingCount: data.followingCount,
-        followersCount: data.followersCount,
-        intro: data.intro,
-      });
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/profile", {
+          params: { userId },
+        });
+        const data = response.data;
+        console.log("프로필 데이터 가져옴:", data);
 
-      setAlbumInfo({
-        ...albumInfo, // 기존 상태를 유지하면서 업데이트
-        mainSongAlbumImage: data.mainSongAlbumImage,
-        albumImage: data.albumImage,
-        songTitle: data.songTitle,
-        albumTitle: data.albumTitle,
-        genre: data.genre,
-        lyricist: data.lyricist,
-        composer: data.composer,
-        likeCount: data.likeCount,
-      });
-    } catch (error) {
-      console.error("프로필 데이터와 이미지 URL을 가져오지 못했습니다:", error);
-    }
-  };
+        setProfileInfo(data);
+        setAlbumInfo(data);
+
+        // 여기서 console.log로 확인
+        console.log("프로필 데이터 가져옴:", data);
+      } catch (error) {
+        console.error("프로필 데이터를 가져오는데 실패했습니다.", error);
+      }
+    };
+
+    fetchProfileData();
+  }, [userId]); // userId가 변경될 때마다 useEffect가 실행됩니다.
 
   // 프로필 정보 변경 핸들러
   const handleProfileInfoChange = (
@@ -223,7 +270,7 @@ const ProfileData: React.FC<{ onUpload: (data: any) => void }> = ({
   };
 
   const handleFileInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    await handleFileChange(e, "profile");
+    await handleFileChange(e, "profileImg");
     handleSubmit();
   };
 

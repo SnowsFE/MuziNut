@@ -64,9 +64,9 @@ const UseridProfile: React.FC = () => {
   return (
     <ProfileContainer>
       <Banner>
-        {profileInfo.bannerImg ? (
+        {profileInfo.profileBannerImgName ? (
           <Image
-            src={`data:image/;base64,${profileInfo.bannerImg}`}
+            src={`data:image/;base64,${profileInfo.profileBannerImgName}`}
             alt="banner-image"
             width={1280}
             height={210}
@@ -83,9 +83,9 @@ const UseridProfile: React.FC = () => {
       </Banner>
       <Profile>
         <EditForm onClick={openEditForm}>⚙️</EditForm>
-        {profileInfo.profileImg ? (
+        {profileInfo.profileImgName ? (
           <Image
-            src={`data:image/;base64,${profileInfo.profileImg}`}
+            src={`data:image/;base64,${profileInfo.profileImgName}`}
             alt="profile-image"
             width={160}
             height={160}

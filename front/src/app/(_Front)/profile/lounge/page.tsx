@@ -16,8 +16,13 @@ import {
   useFileState,
   ProfileEditForm,
 } from "./loungeEditor";
+import useAuth from "@/app/security/user-authentication";
 
 const UseridProfile: React.FC = () => {
+  // // 유저 토큰 인증 ---------------------------------------------------------------------------
+  // useAuth();
+  // // 유저 토큰 인증 ---------------------------------------------------------------------------
+
   const [selectedTab, setSelectedTab] = useState("lounge");
   const [threedotopen, setThreeDotOpen] = useState(
     Array(LoungePostData.length).fill(false)
@@ -192,12 +197,21 @@ const UseridProfile: React.FC = () => {
           <LoungeContainer key={index}>
             <LoungeProfileInfo>
               <LoungeProfileImage>
-                <Image
-                  src={profileUrl}
-                  alt="프로필 이미지"
-                  width={40}
-                  height={40}
-                />
+                {profileInfo.profileImg ? (
+                  <Image
+                    src={`data:image/;base64,${profileInfo.profileImg}`}
+                    alt="profile-image"
+                    width={40}
+                    height={40}
+                  />
+                ) : (
+                  <Image
+                    src={BaseImg}
+                    alt="base-profile-image"
+                    width={40}
+                    height={40}
+                  />
+                )}
               </LoungeProfileImage>
               <LoungeProfileName>{profileInfo.nickname}</LoungeProfileName>
               <LoungeProfileUploadTime>
