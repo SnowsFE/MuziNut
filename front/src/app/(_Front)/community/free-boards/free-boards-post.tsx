@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import Link from "next/link";
 
 interface Post {
   id: number;
@@ -21,6 +22,7 @@ const FreeBoardsPost: React.FC<FreeBoardsPostProps> = ({ selected }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 10;
   const [sortedPosts, setSortedPosts] = useState<Post[]>(posts); // 초기값으로 모든 게시물을 포함한 상태를 설정
+
   // 데이터를 저장할 상태를 useState를 이용해 초기화
   const [getData, setgetData] = useState<Post[]>([]);
 
@@ -28,15 +30,15 @@ const FreeBoardsPost: React.FC<FreeBoardsPostProps> = ({ selected }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("/community/free-boards");
-        setgetData(res.data); // 받아온 데이터를 상태에 업데이트
+        const res = await axios.get("http://localhost:8080/free-boards");
+        setgetData(res.data);
       } catch (error) {
         console.error("데이터를 불러오지 못했습니다", error);
       }
     };
 
-    fetchData(); // useEffect 내에서 fetchData 함수를 호출하여 데이터를 가져옴
-  }, []); // 빈 배열을 전달하여 컴포넌트가 마운트될 때 한 번만 호출되도록 설정
+    fetchData();
+  }, []);
 
   // 정렬 함수
   const sortPosts = (criterion: string): Post[] => {
@@ -82,6 +84,7 @@ const FreeBoardsPost: React.FC<FreeBoardsPostProps> = ({ selected }) => {
       <DarkBackground />
       <Content>
         <Header>
+          <HeaderItem>번호</HeaderItem>
           <HeaderItem>제목</HeaderItem>
           <HeaderItem>작성자</HeaderItem>
           <HeaderItem>작성일</HeaderItem>
@@ -89,13 +92,15 @@ const FreeBoardsPost: React.FC<FreeBoardsPostProps> = ({ selected }) => {
           <HeaderItem>좋아요</HeaderItem>
         </Header>
         {currentPosts.map((post) => (
-          <Post key={post.id}>
-            <PostItem>{post.title}</PostItem>
-            <PostItem>{post.writer}</PostItem>
-            <PostItem>{post.createdDt}</PostItem>
-            <PostItem>{post.view}</PostItem>
-            <PostItem>{post.like}</PostItem>
-          </Post>
+          <Link key={post.id} href={`/free-boards/${post.id}`} passHref>
+            <Post>
+              <PostItem>{post.title}</PostItem>
+              <PostItem>{post.writer}</PostItem>
+              <PostItem>{post.createdDt}</PostItem>
+              <PostItem>{post.view}</PostItem>
+              <PostItem>{post.like}</PostItem>
+            </Post>
+          </Link>
         ))}
         <PageNation>
           <PageButton onClick={() => setCurrentPage(1)}>{"<<"}</PageButton>
@@ -167,6 +172,7 @@ const Post = styled.div`
   background-color: #fff;
   border-bottom: 1px solid #ebedf3;
   color: black;
+  cursor: pointer;
 `;
 
 const PostItem = styled.div`

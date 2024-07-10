@@ -72,7 +72,7 @@ const WriteQuill: React.FC<{
     formData.append("content", content);
 
     try {
-      const response = await fetch("/community/free-boards", {
+      const response = await fetch("http://localhost:8080/free-boards", {
         method: "POST",
         body: formData,
       });

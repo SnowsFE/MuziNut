@@ -1,51 +1,58 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import Banner2 from "../../../../public/images/banner2.png";
-import ProfileImages from "../../../../public/images/artist3.png";
+import BaseBanner from "../../../../public/images/BaseBanner.png";
+import ProfileImages from "../../../../public/images/BaseImg.png";
 import Link from "next/link";
 import { LikeIcon, ViewIcon } from "@/app/components/icon/icon";
 import axios from "axios";
 
-interface EventDataProps {
+interface NoticeEventDataProps {
   title: string;
   eventImage: string;
   profileImage: string;
   profileName: string;
   likes: number;
   views: number;
+  isNew?: boolean;
+}
+
+{
+  /* <Image src={`data:image/;base64,${BaseBanner}`} alt="banner-image" /> */
 }
 
 const NoticeEvent: React.FC = () => {
   const [eventToShow, setEventToShow] = useState(4);
-  const [eventData, setEventData] = useState<EventDataProps[]>([]);
-  const [noticeData, setNoticeData] = useState<any[]>([]); // 이곳에 공지사항 데이터를 저장
+  const [NoticeEventData, setNoticeEventData] = useState<
+    NoticeEventDataProps[]
+  >([]);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const [eventRes, noticeRes] = await Promise.all([
-  //         axios.get("/event"), // 이벤트 데이터 가져오기
-  //         axios.get("/notice"), // 공지사항 데이터 가져오기
-  //       ]);
-  //       setEventData(eventRes.data);
-  //       setNoticeData(noticeRes.data);
-  //     } catch (error) {
-  //       console.error("데이터를 가져오지 못했습니다:", error);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/community/event-boards"
+        );
 
-  //   fetchData();
-  // }, []);
+        const data = response.data;
+
+        setNoticeEventData(data);
+      } catch (error) {
+        console.error("데이터를 가져오지 못했습니다:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // 더 많은 이벤트를 보여주기 위한 함수입니다.
   const handleShowMoreEvents = () => {
     // 현재 보여주는 이벤트 수가 전체 이벤트 수보다 크거나 같으면, 초기값으로 다시 설정합니다.
-    if (eventToShow >= eventData.length) {
+    if (eventToShow >= NoticeEventData.length) {
       setEventToShow(4);
     } else {
       // 남은 이벤트 수를 계산합니다.
-      const remainingEvents = eventData.length - eventToShow;
+      const remainingEvents = NoticeEventData.length - eventToShow;
       // 한 번에 추가로 보여줄 이벤트 수를 계산합니다. (최대 4개 또는 남은 이벤트 수 중 작은 값)
       const increment = Math.min(4, remainingEvents);
 
@@ -57,7 +64,7 @@ const NoticeEvent: React.FC = () => {
   return (
     <Container>
       <Banner>
-        <Image src={Banner2} alt="banner-image" />
+        <Image src={BaseBanner} alt="banner-image" />
       </Banner>
       <Event>
         <Title>
@@ -69,11 +76,11 @@ const NoticeEvent: React.FC = () => {
           </ul>
         </Title>
         <EventData>
-          {eventData.slice(0, eventToShow).map((data, i) => (
+          {NoticeEventData.slice(0, eventToShow).map((event, i) => (
             <Content key={i}>
               <Link href={`/event/${i}`}>
-                <EventImage>{data.eventImage}</EventImage>
-                <EventTitle>{data.title}</EventTitle>
+                <EventImage>{event.eventImage}</EventImage>
+                <EventTitle>{event.title}</EventTitle>
               </Link>
             </Content>
           ))}
@@ -82,28 +89,35 @@ const NoticeEvent: React.FC = () => {
       <Notice>
         <Title>공지사항</Title>
         <NoticeData>
-          {noticeData.map((notice, i) => (
-            <NoticeContent key={i}>
-              <Link href={`/notice/${i}`}>
-                <NoticeTitle>
-                  {notice.title}
-                  {notice.isNew && <NewBadge></NewBadge>}
-                </NoticeTitle>
-              </Link>
-              <ProfileSection>
-                <ProfileImage src={ProfileImages} alt="profile-image" />{" "}
-                <ProfileName>{notice.profileName}</ProfileName>
-                <Stats>
-                  <Likes>
-                    <LikeIcon /> {notice.likes}
-                  </Likes>
-                  <Views>
-                    <ViewIcon /> {notice.views}
-                  </Views>
-                </Stats>
-              </ProfileSection>
-            </NoticeContent>
-          ))}
+          {NoticeEventData.length > 0 ? (
+            NoticeEventData.map((notice, i) => (
+              <NoticeContent key={i}>
+                <Link href={`/notice/${i}`}>
+                  <NoticeTitle>
+                    {notice.title}
+                    {notice.isNew && <NewBadge />}
+                  </NoticeTitle>
+                </Link>
+                <ProfileSection>
+                  <ProfileImage
+                    src={`data:image/;base64,${ProfileImages}`}
+                    alt="profile-image"
+                  />
+                  <ProfileName>{notice.profileName}</ProfileName>
+                  <Stats>
+                    <Likes>
+                      <LikeIcon /> {notice.likes}
+                    </Likes>
+                    <Views>
+                      <ViewIcon /> {notice.views}
+                    </Views>
+                  </Stats>
+                </ProfileSection>
+              </NoticeContent>
+            ))
+          ) : (
+            <div>공지사항 데이터 입니다</div>
+          )}
         </NoticeData>
       </Notice>
     </Container>
@@ -138,6 +152,7 @@ const Event = styled.div`
 // 이벤트 타이틀
 const Title = styled.div`
   font-size: 24px;
+  cursor: pointer;
 
   ul {
     display: flex;
