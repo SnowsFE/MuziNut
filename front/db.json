@@ -32,10 +32,62 @@
     }
   ],
 
-  "newCommunity": [
+  "free": [
     {
       "id": 1,
+      "titleName": "자유 게시판 이름",
+      "authorName": "작성자",
+      "views": 100
+    },
+    {
+      "id": 2,
       "titleName": "게시판 이름",
+      "authorName": "작성자",
+      "views": 100
+    },
+    {
+      "id": 3,
+      "titleName": "게시판 이름",
+      "authorName": "작성자",
+      "views": 100
+    },
+    {
+      "id": 4,
+      "titleName": "게시판 이름",
+      "authorName": "작성자",
+      "views": 100
+    }
+  ],
+  "music": [
+    {
+      "id": 1,
+      "titleName": "음악 게시판 이름",
+      "authorName": "작성자",
+      "views": 100
+    },
+    {
+      "id": 2,
+      "titleName": "게시판 이름",
+      "authorName": "작성자",
+      "views": 100
+    },
+    {
+      "id": 3,
+      "titleName": "게시판 이름",
+      "authorName": "작성자",
+      "views": 100
+    },
+    {
+      "id": 4,
+      "titleName": "게시판 이름",
+      "authorName": "작성자",
+      "views": 100
+    }
+  ],
+  "recruit": [
+    {
+      "id": 1,
+      "titleName": "모집 게시판 이름",
       "authorName": "작성자",
       "views": 100
     },
