@@ -81,10 +81,10 @@
 }
 
 /* 음원 업로드 */
-.album__upload {
-  font-size: 13px;
+.album__upload{
+  font-size: 15px;
   line-height: 3px;
-  padding: 7px 14px;
+  padding: 4px 12px;
 
   border: 2px solid rgb(194, 190, 190);
   border-radius: 18px;

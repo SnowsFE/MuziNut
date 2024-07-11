@@ -3,14 +3,13 @@ import { useState } from "react";
 import styles from "../HeaderAndSide/css/Navbar.module.css";
 import Image from "next/image";
 import search from "@/../public/svgs/search.svg";
-import downarrow from "@/../public/svgs/downarrow.svg";
 import addalbum from "@/../public/svgs/addalbum.svg";
 import chat from "@/../public/svgs/chat.svg";
 import alarm from "@/../public/svgs/alarm.svg";
 import menuBar from "@/../public/svgs/menu.svg";
-import profile from "@/../public/svgs/profile.svg";
 import DarkMode from "../darkmode/globalstyle";
 import Link from "next/link";
+import LoginBtn from "./loginButton/loginBtn";
 
 interface NavbarProps {
   toggleSidebar: () => void;
@@ -56,7 +55,7 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
       {/* 오른쪽 nav 메뉴 */}
       <div className={styles.right__section}>
         <div className={styles.album__upload}>
-        <Link href="/add-album/[step]" as="/add-album/1">
+          <Link href="/add-album/[step]" as="/add-album/1">
             <Image src={addalbum} alt="addalbum" width={40} height={40} />
           </Link>
           <span>업로드</span>
@@ -67,7 +66,7 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
 
         <div className={styles.divided__line}></div>
 
-        <a href="#">
+        <a href="/friends-list/chat">
           <Image src={chat} alt="chat" width={40} height={40} />
         </a>
 
@@ -76,8 +75,11 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
         </a>
 
         <a href="#">
-          <Image src={profile} alt="profile" width={40} height={40} />
-          <Image src={downarrow} alt="downarrow" width={24} height={40} />
+          <div className={styles.login__btn}>
+            <LoginBtn />
+          </div>
+          {/* <Image src={profile} alt="profile" width={40} height={40} />
+          <Image src={downarrow} alt="downarrow" width={24} height={40} /> */}
         </a>
       </div>
     </div>
