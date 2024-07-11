@@ -1,30 +1,26 @@
 // 댓글 데이터 -------------------------------------------------
-interface CommentProps {
-  commentdata: {
+interface LoungePostProps {
+  loungepostdata: {
+    profile: string;
+    name: string;
     write: string;
     img: string;
     like: number;
     comment: number;
   };
 }
-export type CommentPropsOmit = Omit<CommentProps["commentdata"], "img">;
+export type LoungePostPropsOmit = Omit<
+  LoungePostProps["loungepostdata"],
+  "img"
+>;
 
-export const CommentData: CommentPropsOmit[] = [
+export const LoungePostData: LoungePostPropsOmit[] = [
   {
-    write: "안녕하세요",
-    like: 3,
-    comment: 4,
-  },
-  {
-    write:
-      "반갑습니다 저는 지금 일단 밥을 좀 먹어야겠어요 방구뿡 방구뿡 방구방구 뿡뿡, 반갑습니다 저는 지금 일단 밥을 좀 먹어야겠어요 방구뿡 방구뿡 방구방구 뿡뿡, 반갑습니다 저는 지금 일단 밥을 좀 먹어야겠어요 방구뿡 방구뿡 방구방구 뿡뿡",
-    like: 5,
-    comment: 7,
-  },
-  {
-    write: "안녕하세요",
-    like: 3124,
-    comment: 4112,
+    profile: "",
+    name: "",
+    write: "",
+    like: 0,
+    comment: 0,
   },
 ];
 
@@ -40,16 +36,16 @@ export const BoardData: BoardsData[] = [
     board: "다리 짧은 민서에 대해서 신고합니다",
   },
   {
-    board: "항녕",
+    board: "민서",
   },
   {
-    board: "왕녕",
+    board: "정말",
   },
   {
-    board: "앙녕",
+    board: "너무",
   },
   {
-    board: "앙냥",
+    board: "귀엽다",
   },
   {
     board: "안녕",

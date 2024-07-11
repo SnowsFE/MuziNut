@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
-import { NoticeEvent } from "./notice-event";
+import NoticeEvent from "./notice-event";
 import { Headers } from "./header";
 
 const Main: React.FC = () => {
@@ -17,22 +17,14 @@ const Main: React.FC = () => {
             href={"/community"}
             onClick={() => setSelectedTab("community")}
           >
-            <SelectItem selected={selectedTab === "community"}>Home</SelectItem>
+            <SelectItem selected={selectedTab === "community"}>메인</SelectItem>
           </StyledLink>
           <StyledLink
             href={"/community/free-boards"}
             onClick={() => setSelectedTab("free-boards")}
           >
             <SelectItem selected={selectedTab === "free-boards"}>
-              자유 게시판
-            </SelectItem>
-          </StyledLink>
-          <StyledLink
-            href={"/community/request-boards"}
-            onClick={() => setSelectedTab("request-boards")}
-          >
-            <SelectItem selected={selectedTab === "request-boards"}>
-              게시판 요청
+              자유
             </SelectItem>
           </StyledLink>
           <StyledLink
@@ -41,6 +33,14 @@ const Main: React.FC = () => {
           >
             <SelectItem selected={selectedTab === "recruit-boards"}>
               모집
+            </SelectItem>
+          </StyledLink>
+          <StyledLink
+            href={"/community/request-boards"}
+            onClick={() => setSelectedTab("request-boards")}
+          >
+            <SelectItem selected={selectedTab === "request-boards"}>
+              게시판 요청
             </SelectItem>
           </StyledLink>
         </SelectContainer>

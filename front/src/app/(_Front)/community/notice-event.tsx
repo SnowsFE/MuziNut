@@ -1,130 +1,58 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import Banner2 from "../../../../public/images/banner2.png";
-import ProfileImages from "../../../../public/images/artist3.png";
+import BaseBanner from "../../../../public/images/BaseBanner.png";
+import ProfileImages from "../../../../public/images/BaseImg.png";
+import Link from "next/link";
+import { LikeIcon, ViewIcon } from "@/app/components/icon/icon";
+import axios from "axios";
 
-const eventData = [
-  {
-    name: "이미지",
-    title: "너의 뮤즈에게 투표해봐, 너의 뮤즈에게 투표해봐",
-  },
-  {
-    name: "이미지",
-    title:
-      "넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!",
-  },
-  {
-    name: "이미지",
-    title: "한정판 칭호 이벤트!!",
-  },
-  {
-    name: "이미지라 서버에 저장할 필요있나?",
-    title: "첫 가입 이벤트",
-  },
-  {
-    name: "이미지",
-    title: "너의 뮤즈에게 투표해봐, 너의 뮤즈에게 투표해봐",
-  },
-  {
-    name: "이미지",
-    title:
-      "넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!, 넛츠 충전 시 2배?!",
-  },
-  {
-    name: "이미지",
-    title: "한정판 칭호 이벤트!!",
-  },
-  {
-    name: "이미지라 서버에 저장할 필요있나?",
-    title: "첫 가입 이벤트",
-  },
-];
+interface NoticeEventDataProps {
+  title: string;
+  eventImage: string;
+  profileImage: string;
+  profileName: string;
+  likes: number;
+  views: number;
+  isNew?: boolean;
+}
 
-const noticeData = [
-  {
-    title: "새로운 기능 업데이트 안내",
-    isNew: true,
-    profileName: "관리자",
-    likes: 25,
-    views: 120,
-  },
-  {
-    title: "서버 점검 안내",
-    isNew: false,
-    profileName: "운영팀",
-    likes: 10,
-    views: 200,
-  },
-  {
-    title: "서버 점검 안내",
-    isNew: false,
-    profileName: "운영팀",
-    likes: 10,
-    views: 200,
-  },
-  {
-    title: "새로운 이벤트 시작",
-    isNew: true,
-    profileName: "관리자",
-    likes: 15,
-    views: 180,
-  },
-  {
-    title: "앱 업데이트 공지",
-    isNew: false,
-    profileName: "운영팀",
-    likes: 20,
-    views: 250,
-  },
-  {
-    title: "유저 인터뷰",
-    isNew: true,
-    profileName: "관리자",
-    likes: 30,
-    views: 300,
-  },
-  {
-    title: "서비스 이용 안내",
-    isNew: false,
-    profileName: "운영팀",
-    likes: 5,
-    views: 100,
-  },
-  {
-    title: "시스템 점검 예정",
-    isNew: true,
-    profileName: "관리자",
-    likes: 12,
-    views: 220,
-  },
-  {
-    title: "새로운 기능 안내",
-    isNew: false,
-    profileName: "운영팀",
-    likes: 8,
-    views: 160,
-  },
-  {
-    title: "버그 수정 안내",
-    isNew: true,
-    profileName: "관리자",
-    likes: 18,
-    views: 210,
-  },
-];
+{
+  /* <Image src={`data:image/;base64,${BaseBanner}`} alt="banner-image" /> */
+}
 
-export const NoticeEvent: React.FC = () => {
+const NoticeEvent: React.FC = () => {
   const [eventToShow, setEventToShow] = useState(4);
+  const [NoticeEventData, setNoticeEventData] = useState<
+    NoticeEventDataProps[]
+  >([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/community/event-boards"
+        );
+
+        const data = response.data;
+
+        setNoticeEventData(data);
+      } catch (error) {
+        console.error("데이터를 가져오지 못했습니다:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // 더 많은 이벤트를 보여주기 위한 함수입니다.
   const handleShowMoreEvents = () => {
     // 현재 보여주는 이벤트 수가 전체 이벤트 수보다 크거나 같으면, 초기값으로 다시 설정합니다.
-    if (eventToShow >= eventData.length) {
+    if (eventToShow >= NoticeEventData.length) {
       setEventToShow(4);
     } else {
       // 남은 이벤트 수를 계산합니다.
-      const remainingEvents = eventData.length - eventToShow;
+      const remainingEvents = NoticeEventData.length - eventToShow;
       // 한 번에 추가로 보여줄 이벤트 수를 계산합니다. (최대 4개 또는 남은 이벤트 수 중 작은 값)
       const increment = Math.min(4, remainingEvents);
 
@@ -136,20 +64,24 @@ export const NoticeEvent: React.FC = () => {
   return (
     <Container>
       <Banner>
-        <Image src={Banner2} alt="banner-image" />
+        <Image src={BaseBanner} alt="banner-image" />
       </Banner>
       <Event>
         <Title>
           <ul>
-            <li>이벤트</li>
+            <Link href={"/event"}>
+              <li>이벤트</li>
+            </Link>
             <li onClick={handleShowMoreEvents}>더보기</li>
           </ul>
         </Title>
         <EventData>
-          {eventData.slice(0, eventToShow).map((data, i) => (
+          {NoticeEventData.slice(0, eventToShow).map((event, i) => (
             <Content key={i}>
-              <EventName>{data.name}</EventName>
-              <EventTitle>{data.title}</EventTitle>
+              <Link href={`/event/${i}`}>
+                <EventImage>{event.eventImage}</EventImage>
+                <EventTitle>{event.title}</EventTitle>
+              </Link>
             </Content>
           ))}
         </EventData>
@@ -157,27 +89,42 @@ export const NoticeEvent: React.FC = () => {
       <Notice>
         <Title>공지사항</Title>
         <NoticeData>
-          {noticeData.map((notice, i) => (
-            <NoticeContent key={i}>
-              <NoticeTitle>
-                {notice.title}
-                {notice.isNew && <NewBadge></NewBadge>}
-              </NoticeTitle>
-              <ProfileSection>
-                <ProfileImage src={ProfileImages} alt="profile-image" />
-                <ProfileName>{notice.profileName}</ProfileName>
-                <Stats>
-                  <Likes>좋아요: {notice.likes}</Likes>
-                  <Views>조회수: {notice.views}</Views>
-                </Stats>
-              </ProfileSection>
-            </NoticeContent>
-          ))}
+          {NoticeEventData.length > 0 ? (
+            NoticeEventData.map((notice, i) => (
+              <NoticeContent key={i}>
+                <Link href={`/notice/${i}`}>
+                  <NoticeTitle>
+                    {notice.title}
+                    {notice.isNew && <NewBadge />}
+                  </NoticeTitle>
+                </Link>
+                <ProfileSection>
+                  <ProfileImage
+                    src={`data:image/;base64,${ProfileImages}`}
+                    alt="profile-image"
+                  />
+                  <ProfileName>{notice.profileName}</ProfileName>
+                  <Stats>
+                    <Likes>
+                      <LikeIcon /> {notice.likes}
+                    </Likes>
+                    <Views>
+                      <ViewIcon /> {notice.views}
+                    </Views>
+                  </Stats>
+                </ProfileSection>
+              </NoticeContent>
+            ))
+          ) : (
+            <div>공지사항 데이터 입니다</div>
+          )}
         </NoticeData>
       </Notice>
     </Container>
   );
 };
+
+export default NoticeEvent;
 
 // 넓이를 지정하는 바깥 테두리
 const Container = styled.div`
@@ -205,6 +152,8 @@ const Event = styled.div`
 // 이벤트 타이틀
 const Title = styled.div`
   font-size: 24px;
+  cursor: pointer;
+
   ul {
     display: flex;
     align-items: flex-end;
@@ -212,6 +161,14 @@ const Title = styled.div`
     list-style-type: none;
     padding: 0;
     margin: 0;
+
+    :link {
+      text-decoration: none;
+    }
+  }
+
+  li {
+    color: var(--text-color);
   }
 
   li:nth-child(2) {
@@ -226,7 +183,7 @@ const EventData = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 20px;
+  gap: 15px;
 `;
 
 // 이벤트 데이터
@@ -235,10 +192,19 @@ const Content = styled.div`
   flex-direction: column;
   width: calc(25% - 22.5px); // 4개의 아이템이 한 줄에 들어가도록 너비 조정
   cursor: pointer;
+
+  :link {
+    text-decoration: none;
+    color: var(--text-color);
+
+    &:hover {
+      transform: scale(1.01);
+    }
+  }
 `;
 
 // 이벤트 데이터 이름
-const EventName = styled.div`
+const EventImage = styled.div`
   height: 160px;
   border: 1px solid #ccc;
   border-radius: 12px;
@@ -279,6 +245,15 @@ const NoticeContent = styled.div`
   width: calc(50% - 10px); // 50% 너비에서 간격을 뺀 값
   box-sizing: border-box;
   cursor: pointer;
+
+  &:hover {
+    transform: scale(1.01);
+  }
+
+  :link {
+    text-decoration: none;
+    color: var(--text-color);
+  }
 `;
 
 // 공지사항 제목
@@ -323,17 +298,24 @@ const ProfileName = styled.div`
 
 // 좋아요 및 조회수 섹션
 const Stats = styled.div`
-  margin-left: auto;
   display: flex;
+  align-items: center;
+  margin-left: auto;
   gap: 10px;
 `;
 
 // 좋아요
 const Likes = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
   font-size: 14px;
 `;
 
 // 조회수
 const Views = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
   font-size: 14px;
 `;

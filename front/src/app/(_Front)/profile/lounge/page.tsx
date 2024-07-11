@@ -2,12 +2,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import Login from "../../../../../public/images/login.png";
-import banner from "../../../../../public/images/banner.png";
+import BaseImg from "../../../../../public/images/BaseImg.png";
+import BaseBanner from "../../../../../public/images/BaseBanner.png";
 import threedot from "../../../../../public/svgs/threedot.svg";
 import Link from "next/link";
 import { LikeIcon, CommentIcon } from "../../../components/icon/icon";
-import { CommentData } from "../userdata";
+import { LoungePostData } from "../userdata";
 import { OpenComment } from "./comment";
 import WriteEditor from "./WriteEditor";
 import {
@@ -15,21 +15,34 @@ import {
   ProfileData,
   useFileState,
   ProfileEditForm,
-} from "../../../components/multi-part-form-data/multi-part-form-data";
+} from "./loungeEditor";
+import useAuth from "@/app/security/user-authentication";
 
-// UseridProps를 props로 받습니다.
 const UseridProfile: React.FC = () => {
+  // // 유저 토큰 인증 ---------------------------------------------------------------------------
+  // useAuth();
+  // // 유저 토큰 인증 ---------------------------------------------------------------------------
+
   const [selectedTab, setSelectedTab] = useState("lounge");
   const [threedotopen, setThreeDotOpen] = useState(
-    Array(CommentData.length).fill(false)
-  ); // 배열로 상태 관리
+    Array(LoungePostData.length).fill(false)
+  );
+  const [openComments, setOpenComments] = useState(
+    Array(LoungePostData.length).fill(false)
+  );
+  const [writeVisible, setWriteVisible] = useState(false);
+  const [bannerUrl, setBannerUrl] = useState<string>(BaseBanner.src);
+  const [profileUrl, setProfileUrl] = useState<string>(BaseImg.src);
+  const [editFormVisible, setEditFormVisible] = useState(false);
+  const [publishedContent, setPublishedContent] = useState<string[]>([]);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
-  const threedotRef = useRef<HTMLDivElement | null>(null);
+  const threedotRef = useRef<HTMLDivElement>(null);
 
   const handleThreeDotClick = (index: number) => {
-    const newThreeDotOpen = [...threedotopen];
-    newThreeDotOpen[index] = !newThreeDotOpen[index];
-    setThreeDotOpen(newThreeDotOpen);
+    setThreeDotOpen((prev) =>
+      prev.map((item, i) => (i === index ? !item : item))
+    );
   };
 
   useEffect(() => {
@@ -38,7 +51,7 @@ const UseridProfile: React.FC = () => {
         threedotRef.current &&
         !threedotRef.current.contains(event.target as Node)
       ) {
-        setThreeDotOpen(Array(CommentData.length).fill(false));
+        setThreeDotOpen(Array(LoungePostData.length).fill(false));
       }
     };
 
@@ -49,50 +62,82 @@ const UseridProfile: React.FC = () => {
     };
   }, []);
 
-  const [openComments, setOpenComments] = useState(
-    Array(CommentData.length).fill(false)
-  ); // 댓글 열기 상태 관리
-
   const handleCommentToggle = (index: number) => {
-    const newOpenComments = [...openComments];
-    newOpenComments[index] = !newOpenComments[index];
-    setOpenComments(newOpenComments);
+    setOpenComments((prev) =>
+      prev.map((item, i) => (i === index ? !item : item))
+    );
   };
-
-  const [writeVisible, setWriteVisible] = useState(false);
 
   const handleWriteClick = () => {
-    setWriteVisible(!writeVisible);
+    setWriteVisible(true);
+    setEditingIndex(null);
   };
 
-  const [bannerUrl, setBannerUrl] = useState<string>(banner.src);
-  const [profileUrl, setProfileUrl] = useState<string>(Login.src);
-  const [editFormVisible, setEditFormVisible] = useState(false);
-
-  // onUpload 함수 정의
   const onUpload = (data: { bannerUrl?: string; profileUrl?: string }) => {
     if (data.bannerUrl) {
-      console.log("배너 이미지가 변경되었습니다:", data.bannerUrl);
       setBannerUrl(data.bannerUrl);
     }
     if (data.profileUrl) {
-      console.log("프로필 이미지가 변경되었습니다:", data.profileUrl);
       setProfileUrl(data.profileUrl);
     }
   };
 
-  // useFileState 훅을 이용하여 상태와 함수들을 가져옵니다.
-  const { profileInfo, handleProfileInfoChange, handleSubmit } =
-    useFileState(onUpload);
-
-  // 프로필 정보 수정 폼 열기
   const openEditForm = () => {
     setEditFormVisible(true);
   };
 
-  // 프로필 정보 수정 폼 닫기
   const closeEditForm = () => {
     setEditFormVisible(false);
+  };
+
+  const { profileInfo, handleProfileInfoChange, handleSubmit } =
+    useFileState(onUpload);
+
+  // 임시 데이터 - 실제 백엔드 API로 데이터를 받아오는 것으로 대체해야 합니다.
+  const tempLoungePostData = [
+    {
+      profileImage: profileUrl,
+      profileName: "사용자 이름",
+      uploadTime: new Date().toLocaleDateString(),
+      content: "임시 데이터 내용입니다.",
+      bannerImage: BaseBanner.src,
+      like: 0,
+      comment: 0,
+    },
+    // 추가적인 임시 데이터를 필요에 따라 추가할 수 있습니다.
+  ];
+
+  // 컴포넌트가 처음 렌더링될 때 임시 데이터를 설정합니다.
+  useEffect(() => {
+    setPublishedContent(tempLoungePostData.map((post) => post.content));
+  }, []);
+
+  // 글 등록 콜백 함수
+  const handlePublish = (content: string) => {
+    if (editingIndex !== null) {
+      // 글 수정
+      const updatedContent = [...publishedContent];
+      updatedContent[editingIndex] = content;
+      setPublishedContent(updatedContent);
+      setEditingIndex(null);
+    } else {
+      // 새 글 등록
+      setPublishedContent((prev) => [...prev, content]);
+    }
+    setWriteVisible(false);
+  };
+
+  // 글 수정 콜백 함수
+  const handleEdit = (index: number) => {
+    setEditingIndex(index);
+    setWriteVisible(true);
+  };
+
+  // 글 삭제 콜백 함수
+  const handleDelete = (index: number) => {
+    const updatedContent = [...publishedContent];
+    updatedContent.splice(index, 1);
+    setPublishedContent(updatedContent);
   };
 
   return (
@@ -106,11 +151,12 @@ const UseridProfile: React.FC = () => {
         <Image src={profileUrl} alt="profile-image" width={160} height={160} />
         <ProfileData onUpload={onUpload} />
         <ProfileInfo>
-          <ProfileName>{profileInfo.name}</ProfileName>
+          <ProfileName>{profileInfo.nickname}</ProfileName>
           <FollowInfo>
-            팔로잉 {profileInfo.follow} &nbsp; 팔로워 {profileInfo.follower}
+            팔로잉 {profileInfo.followingCount} &nbsp; 팔로워{" "}
+            {profileInfo.followersCount}
           </FollowInfo>
-          <ProfileDescription>{profileInfo.introduce}</ProfileDescription>
+          <ProfileDescription>{profileInfo.intro}</ProfileDescription>
         </ProfileInfo>
       </Profile>
       <SelectBar>
@@ -146,84 +192,92 @@ const UseridProfile: React.FC = () => {
           <Write onClick={handleWriteClick}>Talk</Write>
         </SelectContainer>
       </SelectBar>
-      {/* 라운지 큰 컨테이너 */}
       <Lounge>
-        {/* 라운지 Border 컨테이너 */}
-        {CommentData.map((commentdata, index) => (
-          <React.Fragment key={index}>
-            <LoungeContainer>
-              {/* 라운지 프로필 */}
-              <LoungeProfileInfo>
-                {/* 라운지 프로필 이미지 */}
-                <LoungeProfileImage>
+        {publishedContent.map((content, index) => (
+          <LoungeContainer key={index}>
+            <LoungeProfileInfo>
+              <LoungeProfileImage>
+                {profileInfo.profileImg ? (
                   <Image
-                    src={Login}
-                    alt="프로필 이미지"
-                    width={50}
-                    height={50}
-                  ></Image>
-                </LoungeProfileImage>
-                {/* 라운지 프로필 닉네임 */}
-                <LoungeProfileName>코딩</LoungeProfileName>
-                {/* 라운지 프로필 업로드 시간 ~ 기간 */}
-                <LoungeProfileUploadTime>3일전</LoungeProfileUploadTime>
-                {/* 라운지 (공유하기, 신고하기 기능) */}
-                <LoungeProfileDetail
-                  ref={threedotRef}
-                  onClick={() => handleThreeDotClick(index)}
-                >
-                  <Image
-                    src={threedot}
-                    alt="공유하기, 신고하기 기능"
-                    width={24}
-                    height={24}
+                    src={`data:image/;base64,${profileInfo.profileImg}`}
+                    alt="profile-image"
+                    width={40}
+                    height={40}
                   />
-                  {threedotopen[index] && (
-                    <ThreeDotOpen>
-                      <label>공유</label>|<label>신고</label>
-                    </ThreeDotOpen>
-                  )}
-                </LoungeProfileDetail>
-              </LoungeProfileInfo>
-              {/* 라운지 글작성 컨테이너 */}
-              <LoungeWriteContainer>
-                {/* 라운지 글작성 */}
-                <LoungeWrite>{commentdata.write}</LoungeWrite>
-                {/* 라운지 글작성 이미지 */}
-                <LoungeImage>
-                  {" "}
+                ) : (
                   <Image
-                    src={banner}
-                    alt="프로필 이미지"
-                    width={1280}
-                    height={256}
-                  ></Image>
-                </LoungeImage>
-              </LoungeWriteContainer>
-              {/* 라운지 좋아요 댓글 컨테이너 */}
-              <LoungeLikeCommentContainer>
-                <LoungeLike>
-                  <LikeIcon />
-                  {commentdata.like}
-                </LoungeLike>
-                <LoungeComment onClick={() => handleCommentToggle(index)}>
-                  <CommentIcon />
-                  {commentdata.comment}
-                </LoungeComment>
-              </LoungeLikeCommentContainer>
-              {openComments[index] && <OpenComment />}
-              <ProfileEditForm
-                profileInfo={profileInfo}
-                onChange={handleProfileInfoChange}
-                onSubmit={handleSubmit}
-                onCancel={closeEditForm}
-                visible={editFormVisible}
-              />
-            </LoungeContainer>
-          </React.Fragment>
+                    src={BaseImg}
+                    alt="base-profile-image"
+                    width={40}
+                    height={40}
+                  />
+                )}
+              </LoungeProfileImage>
+              <LoungeProfileName>{profileInfo.nickname}</LoungeProfileName>
+              <LoungeProfileUploadTime>
+                {new Date().toLocaleDateString()}
+              </LoungeProfileUploadTime>
+              <LoungeProfileDetail
+                ref={threedotRef}
+                onClick={() => handleThreeDotClick(index)}
+              >
+                <Image
+                  src={threedot}
+                  alt="공유하기, 신고하기 기능"
+                  width={24}
+                  height={24}
+                />
+                {threedotopen[index] && (
+                  <ThreeDotOpen>
+                    <label onClick={() => handleEdit(index)}>수정</label>|
+                    <label onClick={() => handleDelete(index)}>삭제</label>
+                  </ThreeDotOpen>
+                )}
+              </LoungeProfileDetail>
+            </LoungeProfileInfo>
+            <LoungeWriteContainer>
+              <LoungeWrite>{content}</LoungeWrite>
+              <LoungeImage>
+                <Image
+                  src={BaseBanner}
+                  alt="배너 이미지"
+                  width={1280}
+                  height={256}
+                />
+              </LoungeImage>
+            </LoungeWriteContainer>
+            <LoungeLikeCommentContainer>
+              <LoungeLike>
+                <LikeIcon />
+                {LoungePostData[index].like}
+              </LoungeLike>
+              <LoungeComment onClick={() => handleCommentToggle(index)}>
+                <CommentIcon />
+                {LoungePostData[index].comment}
+              </LoungeComment>
+            </LoungeLikeCommentContainer>
+            {openComments[index] && <OpenComment />}
+          </LoungeContainer>
         ))}
       </Lounge>
-      {writeVisible && <WriteEditor />}
+      {writeVisible && (
+        <WriteEditor
+          onPublish={handlePublish}
+          onClose={() => setWriteVisible(false)}
+          initialContent={
+            editingIndex !== null ? publishedContent[editingIndex] : undefined
+          }
+        />
+      )}
+      {editFormVisible && (
+        <ProfileEditForm
+          profileInfo={profileInfo}
+          onChange={handleProfileInfoChange}
+          onSubmit={handleSubmit}
+          onCancel={closeEditForm}
+          visible={editFormVisible}
+        />
+      )}
     </ProfileContainer>
   );
 };
@@ -357,7 +411,7 @@ const StyledLink = styled(Link)`
 const Lounge = styled.div`
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
-  padding-top: 24px;
+  padding: 24px 0;
 `;
 
 // 라운지 Border 컨테이너
@@ -373,10 +427,12 @@ const LoungeContainer = styled.div`
 const LoungeProfileInfo = styled.div`
   display: flex;
   padding: 15px 15px 15px 15px;
-  gap: 10px;
+  gap: 7px;
+  font-size: 13px;
   align-items: center;
+
   :first-child {
-    margin-right: 1px;
+    margin-right: 2px;
   }
 `;
 
@@ -384,14 +440,19 @@ const LoungeProfileInfo = styled.div`
 const LoungeProfileImage = styled.div`
   img {
     border-radius: 32px;
+    margin-top: 2px;
   }
 `;
 
 // 라운지 프로필 닉네임
-const LoungeProfileName = styled.div``;
+const LoungeProfileName = styled.div`
+  margin-bottom: 2px;
+`;
 
 // 라운지 프로필 업로드 시간 ~ 기간
-const LoungeProfileUploadTime = styled.div``;
+const LoungeProfileUploadTime = styled.div`
+  margin-bottom: 2px;
+`;
 
 // 라운지 프로필 삼각점바 (공유하기, 신고하기 기능)
 const LoungeProfileDetail = styled.div`
@@ -443,20 +504,21 @@ const LoungeLikeCommentContainer = styled.div`
   align-items: center;
   padding: 0px 15px 10px 15px;
   gap: 20px;
+  font-size: 14px;
 `;
 
 // 라운지 좋아요
 const LoungeLike = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 7px;
 `;
 
 // 라운지 댓글
 const LoungeComment = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   cursor: pointer;
 `;
 
@@ -466,7 +528,7 @@ const ThreeDotOpen = styled.div`
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 15px;
-  bottom: -18px;
+  bottom: -17px;
   left: 50px;
   z-index: 1;
   display: flex;

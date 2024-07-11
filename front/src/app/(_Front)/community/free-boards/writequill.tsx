@@ -35,7 +35,7 @@ const WriteQuill: React.FC<{
       toolbar: {
         container: "#toolbar",
         handlers: {
-          image: QuillImageUpload,
+          image: handleImageUpload,
         },
       },
     };
@@ -54,25 +54,25 @@ const WriteQuill: React.FC<{
     console.log("글 변경", content);
   };
 
-  const QuillImageUpload = () => {
+  const handleImageUpload = () => {
     const input = document.createElement("input");
     input.setAttribute("type", "file");
     input.setAttribute("accept", "image/*");
     input.onchange = async () => {
       const file = input.files?.[0];
       if (file) {
-        await QuillSubmit(file);
+        await handleSubmit(file);
       }
     };
     input.click();
   };
 
-  const QuillSubmit = async (file?: File) => {
+  const handleSubmit = async (file?: File) => {
     const formData = new FormData();
     formData.append("content", content);
 
     try {
-      const response = await fetch("http://localhost:8080", {
+      const response = await fetch("http://localhost:8080/free-boards", {
         method: "POST",
         body: formData,
       });
@@ -105,7 +105,10 @@ const WriteQuill: React.FC<{
     <>
       <Overlay visible={visible} />
       <EditorContainer visible={visible}>
-        <QuillTitle>라운지 Talk</QuillTitle>
+        <Title>글쓰기</Title>
+        <MainTitle>
+          <MainTitleInput type="text" placeholder="제목" />
+        </MainTitle>
         <QuillToolbar />
         <CustomReactQuill
           placeholder="자유롭게 여러분의 생각을 나눠보세요."
@@ -115,19 +118,19 @@ const WriteQuill: React.FC<{
           onChange={handleChange}
           modules={modules}
         />
-        <QuillButtonContainer>
-          <QuillCancelButton
+        <ButtonContainer>
+          <CancelButton
             onClick={() => {
               setVisible(false);
               onClose();
             }}
           >
             취소
-          </QuillCancelButton>
-          <StyledButton onClick={() => QuillSubmit()}>
+          </CancelButton>
+          <StyledButton onClick={() => handleSubmit()}>
             {initialContent ? "글 수정" : "글 등록"}
           </StyledButton>
-        </QuillButtonContainer>
+        </ButtonContainer>
       </EditorContainer>
     </>
   );
@@ -174,7 +177,7 @@ const EditorContainer = styled.div<{ visible: boolean }>`
   left: 50%;
   transform: translate(-50%, -50%);
   width: 700px;
-  height: 635px;
+  height: 695px;
   padding: 15px 40px;
   border-radius: 15px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -188,10 +191,29 @@ const EditorContainer = styled.div<{ visible: boolean }>`
         `};
 `;
 
-const QuillTitle = styled.h2`
+const Title = styled.h2`
   text-align: center;
   margin-bottom: 20px;
   color: black;
+`;
+
+const MainTitle = styled.div`
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  padding: 10px;
+`;
+
+const MainTitleInput = styled.input`
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  font-family: "esamanru Medium";
+
+  &::placeholder {
+    color: #999;
+  }
 `;
 
 const CustomReactQuill = styled(ReactQuill)`
@@ -225,7 +247,7 @@ const CustomReactQuill = styled(ReactQuill)`
   }
 `;
 
-const QuillButtonContainer = styled.div`
+const ButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   margin: 13px 0;
@@ -244,7 +266,7 @@ const StyledButton = styled.button`
   }
 `;
 
-const QuillCancelButton = styled.button`
+const CancelButton = styled.button`
   background-color: #ccc;
   color: black;
   border: none;

@@ -11,7 +11,7 @@ import {
   ProfileData,
   useFileState,
   ProfileEditForm,
-} from "../../../components/multi-part-form-data/multi-part-form-data";
+} from "./boardsEdit";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("boards");
@@ -76,11 +76,12 @@ const UseridProfile: React.FC = () => {
         <Image src={profileUrl} alt="profile-image" width={160} height={160} />
         <ProfileData onUpload={onUpload} />
         <ProfileInfo>
-          <ProfileName>{profileInfo.name}</ProfileName>
+          <ProfileName>{profileInfo.nickname}</ProfileName>
           <FollowInfo>
-            팔로잉 {profileInfo.follow} &nbsp; 팔로워 {profileInfo.follower}
+            팔로잉 {profileInfo.followingCount} &nbsp; 팔로워{" "}
+            {profileInfo.followersCount}
           </FollowInfo>
-          <ProfileDescription>{profileInfo.introduce}</ProfileDescription>
+          <ProfileDescription>{profileInfo.intro}</ProfileDescription>
         </ProfileInfo>
       </Profile>
       <SelectBar>
@@ -302,7 +303,7 @@ const BoardsAdd = styled.div`
 
 // 섹션 타이틀
 const BoardsTitle = styled.h2`
-  font-size: 24px;
+  font-size: 20px;
 `;
 
 // 박스를 감싸는 컨테이너
@@ -311,6 +312,7 @@ const BoardsContainer = styled.div`
   grid-template-columns: repeat(5, 1fr);
   gap: 20px;
   box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.06);
+  font-size: 14px;
 `;
 
 // 박스 스타일

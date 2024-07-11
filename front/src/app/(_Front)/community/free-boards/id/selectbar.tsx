@@ -2,14 +2,13 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
-import { Headers } from "../header";
-import RequestBoardsBody from "./request-boards-body";
+import { Headers } from "../../header";
 
-const RequestBoards: React.FC = () => {
-  const [selectedTab, setSelectedTab] = useState("request-boards");
+const HeaderBar: React.FC = () => {
+  const [selectedTab, setSelectedTab] = useState("free-boards");
 
   return (
-    <RequestBoardsContainer>
+    <FreeBoardsContainer>
       <Headers />
       <SelectBar>
         <SelectContainer>
@@ -45,15 +44,14 @@ const RequestBoards: React.FC = () => {
           </StyledLink>
         </SelectContainer>
       </SelectBar>
-      <RequestBoardsBody />
-    </RequestBoardsContainer>
+    </FreeBoardsContainer>
   );
 };
 
-export default RequestBoards;
+export default HeaderBar;
 
 // 마이페이지 전체를 감싸는 컨테이너
-const RequestBoardsContainer = styled.div``;
+const FreeBoardsContainer = styled.div``;
 
 // -------------------------------------------------------------------------------------------------------
 // 메인, 라운지 선택바

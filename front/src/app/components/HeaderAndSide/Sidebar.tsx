@@ -140,34 +140,6 @@ export default function Sidebar({ isSidebarOpen }: SidebarProps) {
               </div>
             </li>
 
-            {/* 앨범 꾸미기 부분 */}
-            <li>
-              <div className={styles.service__btn}>
-                <a href="#" className={styles.wrap__icon}>
-                  <Image
-                    src="/svgs/album_styling.svg"
-                    alt="Services"
-                    width={30}
-                    height={30}
-                  />
-                  <span className={styles.close__text}>
-                    앨범
-                    <br />
-                    꾸미기
-                  </span>
-                </a>
-                {isSidebarOpen && (
-                  <ul>
-                    <li>
-                      <a href="#">
-                        <span>앨범 꾸미기</span>
-                      </a>
-                    </li>
-                  </ul>
-                )}
-              </div>
-            </li>
-
             {/* 구역 나누기 */}
 
             <div className={styles.divided__line}></div>
@@ -206,15 +178,15 @@ export default function Sidebar({ isSidebarOpen }: SidebarProps) {
                     width={30}
                     height={30}
                   />
-                  <span className={styles.close__text}>이벤트</span>
+                  <span className={styles.close__text}>뮤지넛 소식</span>
                 </a>
                 {isSidebarOpen && (
                   <ul>
                     <li>
-                      <span>이벤트</span>
+                      <span>뮤지넛 소식</span>
                     </li>
                     <li>
-                      <a href="/event-notice">
+                      <a href="/notice">
                         <span>공지사항</span>
                       </a>
                     </li>

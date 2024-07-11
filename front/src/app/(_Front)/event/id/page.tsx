@@ -2,10 +2,10 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
-import { EventHeader } from "./eventheader";
-import EventBody from "./eventbody";
+import { EventHeader } from "../eventheader";
+import PostBox from "./postbox";
 
-const Event: React.FC = () => {
+const EventPostID: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("event");
 
   return (
@@ -23,12 +23,12 @@ const Event: React.FC = () => {
           </StyledLink>
         </SelectContainer>
       </SelectBar>
-      <EventBody />
+      <PostBox />
     </MainContainer>
   );
 };
 
-export default Event;
+export default EventPostID;
 
 // 메인 전체를 감싸는 컨테이너
 const MainContainer = styled.div``;

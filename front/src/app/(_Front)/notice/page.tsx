@@ -2,15 +2,15 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
-import { EventHeader } from "./eventheader";
-import EventBody from "./eventbody";
+import { NoticeHeader } from "./noticeheader";
+import NoticeBody from "./noticebody";
 
-const Event: React.FC = () => {
-  const [selectedTab, setSelectedTab] = useState("event");
+const Notice: React.FC = () => {
+  const [selectedTab, setSelectedTab] = useState("notice");
 
   return (
     <MainContainer>
-      <EventHeader />
+      <NoticeHeader />
       <SelectBar>
         <SelectContainer>
           <StyledLink href={"/event"} onClick={() => setSelectedTab("event")}>
@@ -23,12 +23,12 @@ const Event: React.FC = () => {
           </StyledLink>
         </SelectContainer>
       </SelectBar>
-      <EventBody />
+      <NoticeBody />
     </MainContainer>
   );
 };
 
-export default Event;
+export default Notice;
 
 // 메인 전체를 감싸는 컨테이너
 const MainContainer = styled.div``;
