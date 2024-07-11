@@ -15,9 +15,10 @@ const listItems = [
 
 export default function BasicCommunity() {
   const [listItems, setListItems] = useState([]);
+  const [category, setCategory] = useState('free'); // 초기 카테고리 설정
 
   useEffect(() => {
-    fetch("http://localhost:9999/newCommunity")
+    fetch(`http://localhost:9999/${category}`)
       .then((response) => response.json())
       .then((data) => {
         console.log("JSON Server로 온 데이터:", data);
@@ -26,14 +27,18 @@ export default function BasicCommunity() {
       .catch((error) => {
         console.error("fetching ERROR!!:", error);
       });
-  }, []); // 빈 배열을 전달 -> 컴포넌트가 마운트될 때 1회만 실행
+  }, [category]); // 카테고리가 변경될 때마다 실행
+
+  const handleCategoryClick = (newCategory: string) => {
+    setCategory(newCategory); // 카테고리 변경
+  };
 
   return (
     <div className={styles.container}>
       <div className={styles.title}>
-        <h2>자유</h2>
-        <h2>인기</h2>
-        <h2>홍보</h2>
+        <h2 onClick={() => handleCategoryClick("free")}>자유</h2>
+        <h2 onClick={() => handleCategoryClick("music")}>음악</h2>
+        <h2 onClick={() => handleCategoryClick("recruit")}>모집</h2>
       </div>
 
       <div className={styles.communityList__container}>
