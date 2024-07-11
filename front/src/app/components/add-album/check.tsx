@@ -3,8 +3,17 @@ import Image from "next/image";
 import albumThumb from "@/../public/svgs/album_thumb.png";
 import peanut from "@/../public/images/sproutPeanut.png";
 import nuts from "@/../public/images/Nuts.png";
+import { Song } from "./song";
 
-export default function StepForCheck() {
+interface AlbumInfoProps {
+  title: string;
+  songs: Song[]; 
+}
+
+ const StepForCheck: React.FC<AlbumInfoProps> = ({
+  title,
+  songs,
+}) => {
   return (
     <div className={styles.step__for__check}>
       {/* 왼쪽 섹션 */}
@@ -12,10 +21,10 @@ export default function StepForCheck() {
         <Image src={albumThumb} alt="album" width={400} height={400} />
 
         <div className={styles.album__title}>
-          <span>Title: 안녕하세요</span>
+          <span>Title: {title}</span>
         </div>
         <div className={styles.album__songs}>
-          수록곡: 총 <strong>6곡</strong>
+          수록곡: 총 <strong>{songs.length} 곡</strong>
         </div>
       </section>
 
@@ -62,3 +71,6 @@ export default function StepForCheck() {
     </div>
   );
 }
+
+
+export default StepForCheck;

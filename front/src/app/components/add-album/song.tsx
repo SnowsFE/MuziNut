@@ -7,7 +7,21 @@ import closeBtn from "@/../../public/svgs/close_btn.svg";
 import deleteBtn from "@/../../public/svgs/delete_btn.svg";
 import musicIcon from "@/../../public/svgs/music_note.svg";
 
-export default function SongForm() {
+// modal에 들어갈 내용
+export type Song = {
+  title: string;
+  lyricist: string; //작사가
+  songwriter: string; //작곡가
+  lyrics: string;
+  genres: string[]; //최대 3개까지
+  mp3File: File | null;
+};
+interface SongFormProps {
+  onSongsChange: (songs: Song[]) => void; // 콜백 함수 prop 추가
+}
+
+//________ SongForm Component ________
+export default function SongForm({ onSongsChange }: SongFormProps) {
   // 모달 상태 변경 (초기에는 안 보임 클릭했을 때만 나오게)
   const [showModal, setShowModal] = useState(false);
   const openModal = () => {
@@ -21,16 +35,6 @@ export default function SongForm() {
   // 모달 창 닫기
   const closeModal = () => {
     setShowModal(false);
-  };
-
-  // modal에 들어갈 내용
-  type Song = {
-    title: string;
-    lyricist: string; //작사가
-    songwriter: string; //작곡가
-    lyrics: string;
-    genres: string[]; //최대 3개까지
-    mp3File: File | null;
   };
 
   const [title, setTitle] = useState("");
@@ -113,7 +117,10 @@ export default function SongForm() {
       genres,
       mp3File,
     };
-    setSongs([...songs, sendSong]);
+    const updatedSongs = [...songs, sendSong];
+    // setSongs([...songs, sendSong]);
+    setSongs(updatedSongs);
+    onSongsChange(updatedSongs); // 부모 컴포넌트로 데이터 전달
 
     setTitle("");
     setLyricist("");
@@ -133,6 +140,8 @@ export default function SongForm() {
     const updatedSongs = songs.filter((song, idx) => idx !== index);
     setSongs(updatedSongs);
     console.log("업데이트 된 송 리스트", updatedSongs);
+
+    onSongsChange(updatedSongs); // 부모 컴포넌트로 데이터 전달
   };
 
   /* ___________________________________________________________________________ */
@@ -161,7 +170,9 @@ export default function SongForm() {
                 {/* &times; */}
                 <Image src={closeBtn} alt="album" width={30} height={30} />
               </div>
-              <div><h3>음원 추가하기</h3></div>
+              <div>
+                <h3>음원 추가하기</h3>
+              </div>
               <div className={styles.modal__close__btn} onClick={closeModal}>
                 {/* &times; */}
                 <Image src={closeBtn} alt="album" width={30} height={30} />
@@ -198,8 +209,7 @@ export default function SongForm() {
                             value={lyricist}
                             onChange={(e) => setLyricist(e.target.value)}
                             className={styles.text__input}
-
-                            // required
+                            required
                           />
                         </label>
                       </div>
@@ -211,7 +221,7 @@ export default function SongForm() {
                             value={songwriter}
                             onChange={(e) => setSongwriter(e.target.value)}
                             className={styles.text__input}
-                            // required
+                            required
                           />
                         </label>
                       </div>
@@ -270,8 +280,7 @@ export default function SongForm() {
                           accept="audio/*"
                           onChange={onChangeFile}
                           className={styles.file__input}
-
-                          // required
+                          required
                         />
                       </label>
                     </div>
@@ -282,8 +291,7 @@ export default function SongForm() {
                           value={lyrics}
                           onChange={(e) => setLyrics(e.target.value)}
                           className={styles.textarea__input}
-
-                          // required
+                          required
                         />
                       </label>
                     </div>
@@ -338,31 +346,6 @@ export default function SongForm() {
           </div>
         ))}
       </div>
-
-      {/* <ul >
-            {songs.slice(0, 5).map((song, index) => (
-              <li key={index}>
-                <strong>곡 이름:</strong> {song.title}, <strong>장르:</strong>{" "}
-                {song.genres.join(", ")}
-                <button onClick={() => onClickSongDeleteBtn(index)}>
-                <Image src={deleteBtn} alt="album" width={30} height={30} />
-
-                </button>
-              </li>
-            ))}
-          </ul>
-          <ul>
-            {songs.slice(5).map((song, index) => (
-              <li key={index + 5}>
-                <strong>곡 이름:</strong> {song.title}, <strong>장르:</strong>{" "}
-                {song.genres.join(", ")}
-                <button onClick={() => onClickSongDeleteBtn(index + 5)}>
-                <Image src={deleteBtn} alt="album" width={30} height={30} />
-
-                </button>
-              </li>
-            ))}
-          </ul> */}
     </div>
   );
 }
