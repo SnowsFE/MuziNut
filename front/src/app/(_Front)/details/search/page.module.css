@@ -1,66 +1,119 @@
 .container {
-  border: 1px solid orange;
-  width: 80%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 60px;
 
-  margin: 0 auto; /*가운데 정렬*/
-  /* padding: 50px; */
+  margin: 0 auto;
+  padding: 20px;
+  /* border: 1px solid orange; */
+}
+
+/*SELECTED TAB*/
+.play__option .selected {
+  background-color: rgb(51, 135, 51);
+  color: #fff;
 }
 
 /* artist 컨테이너 */
-.artist__conatiner {
+.artist__container, .music__container {
   width: 100%;
-  border: 1px solid black;
+  margin-top: 20px;
+  /* border: 1px solid black; */
 }
 
 /* 음악 정보 */
 .artist__wrapper,
-.music__wrapper,
-.album__wrapper {
+.music__wrapper {
   /* border: 3px solid red; */
-  border: none;
   border-radius: 10px;
-  background-color: rgb(240, 240, 240);
-  padding: 20px;
+  padding: 50px;
+  border: 2px solid #eee;
+  box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.06)
 }
 
+/* INFO TEXT
+~~~에 대한 검색 결과 입니다. */
+.info__text {
+  font-size: 18px;
+}
 .info__text a {
   color: green;
+  font-size: 22px;
   text-decoration: none;
 }
 .info__text a:hover {
-  text-decoration: double;
-  color: black;
-}
-
-.artist__list,
-.music__list,
-.album__list {
-  display: flex;
-  margin-top: 40px;
-}
-
-.album__list {
-  justify-content: space-around;
-  align-items: center;
+  text-decoration: underline;
 }
 
 /* 앨범 선택재생/선택재생 부분 */
 .play__option__wrapper {
   margin-top: 25px;
 }
-
 .play__option {
   display: flex;
   flex-direction: row;
-  gap: 20px;
+  gap: 40px;
+}
+.play__option button {
+  padding: 10px 20px;
+  border: 1px solid rgb(51, 135, 51);
+  border-radius: 18px;
+  font-size: 16px;
+  font-weight: 600;
+  background-color: #fff;
+}
+.play__option button:hover {
+  background-color: rgb(51, 135, 51);
+  color: white;
+  cursor: pointer;
 }
 
-.play__option button {
+
+/* Tables */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+.table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+
+/* 페이지네이션 */
+.divider {
+  margin: 70px 0 30px 0;
+  border: 1px solid #eee;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination button {
   border: none;
-  background-color: aliceblue;
-  border-radius: 18px;
-  padding: 0 10px 0;
+  background-color: #008cba;
+  color: #fff;
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin: 0 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #005f7a;
+}
+
+.pagination .active {
+  background-color: #005f7a;
+  cursor: default;
 }
