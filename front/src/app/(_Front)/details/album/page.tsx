@@ -1,105 +1,157 @@
 import React from "react";
 import styles from "./page.module.css";
 import Image from "next/image";
+import MusicContentInfo from "@/app/components/music-content/MusicContentInfo";
+import Link from "next/link";
+import { HeartButton } from "@/app/components/button/commonButton";
 
 const album = () => {
+  const introduction = {
+    title: "소개글",
+    text: `aespa, 첫 정규 앨범 ‘Armageddon’ 발매! 힙한 무드 ‘Supernova’→힙합
+    댄스곡 ‘Armageddon’으로 강렬한 질주! 세계관 시즌 2 서사 담은 역대급
+    스케일 음악+비주얼! ‘글로벌 히트메이커’ aespa가 첫 정규 앨범
+    ‘Armageddon’을 발매했다.`,
+  };
+
+  const lyrics = {
+    title: "가사",
+    text: `  like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
+          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
+          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
+          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
+          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
+          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
+          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
+          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
+          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
+          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
+          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
+          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
+          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
+          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
+          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
+          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
+          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
+          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
+          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
+          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
+          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
+          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
+          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
+          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
+          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
+          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
+          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
+          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
+          너 누구야`,
+  };
+
+  const songInfo = {
+    title: "좋은 날",
+    artist: "아이유",
+    genre: "발라드, 케이팝",
+  };
+
+  const likeNum = 30;
+
   return (
     <div className={styles.container}>
       음악 사진 눌렀을 때 나오는 상세 페이지 입니다.
-      <div className={styles.music__info__wrapper}>
+      <section className={styles.music__info__section}>
         <h2>음악 정보</h2>
-        <div className={styles.wrapper__inner}>
-          <div className={styles.info__inner__left}>
-            <Image
-              src="/images/addMusic.png"
-              alt="Services"
-              width={130}
-              height={130}
-            />
-          </div>
-          <div className={styles.info__inner__middle}>
-            <div>음악 이름</div>
-            <div>가수 이름</div>
-            <div>
-              <span>발매일</span>
-              <span>2024.02.20</span>
-            </div>
-            <div>
-              <span>장르</span>
-              <span>발라드</span>
-            </div>
-          </div>
-          <div className={styles.info__inner__right}>
-            <div>
+
+        <div className={styles.music__info__wrap}>
+          <div className={styles.album__info__container}>
+            <div className={styles.album__img}>
               <Image
-                src="/images/addMusic.png"
+                src="/svgs/album_thumb.png"
                 alt="Services"
-                width={30}
-                height={30}
+                width={400}
+                height={400}
               />
-              <span>123</span>
             </div>
-            <div>
+            <div className={styles.song__info}>
+              <div className={styles.title__artist}>
+                <h1>{songInfo.title}</h1>
+                <h2>
+                  <Link href="./">{songInfo.artist}</Link>
+                </h2>
+              </div>
+
+              <div className={styles.song__info__details}>
+                <ul>
+                  <li>
+                    <span>장르:</span> {songInfo.genre}
+                  </li>
+                  <li>
+                    <span>작사:</span> {songInfo.artist}
+                  </li>
+                  <li>
+                    <span>작곡:</span> {songInfo.artist}
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <button className={styles.play__btn}>
               <Image
-                src="/images/addMusic.png"
+                src="/svgs/play_btn.svg"
                 alt="Services"
-                width={30}
-                height={30}
+                width={60}
+                height={60}
               />
-              <a href="#">
-                {" "}
-                <Image
-                  src="/images/addMusic.png"
-                  alt="Services"
-                  width={30}
-                  height={30}
-                />{" "}
-                <Image
-                  src="/images/addMusic.png"
-                  alt="Services"
-                  width={30}
-                  height={30}
-                />{" "}
-                <Image
-                  src="/images/addMusic.png"
-                  alt="Services"
-                  width={30}
-                  height={30}
-                />{" "}
-                <Image
-                  src="/images/addMusic.png"
-                  alt="Services"
-                  width={30}
-                  height={30}
-                />
-              </a>
+            </button>
+          </div>
+
+          <div className={styles.divider}> </div>
+
+          <div className={styles.btn__container}>
+            <div className={styles.btn__heart}>
+              <HeartButton /> <span>{likeNum}</span>
+            </div>
+            <div className={styles.btn__add}>
+              <span>플리넛에 추가하기</span>
+              <span>
+                <a href="#">
+                  <Image
+                    src="/social/kakao.png"
+                    alt="Services"
+                    width={30}
+                    height={30}
+                  />
+                </a>
+              </span>
+            </div>
+
+            <div className={styles.btn__share}>
+              <span>공유</span>
+              <span>
+                <a href="#">
+                  <Image
+                    src="/social/kakao.png"
+                    alt="Services"
+                    width={40}
+                    height={40}
+                  />
+                </a>
+                <a href="#">
+                  <Image
+                    src="/social/instagram.png"
+                    alt="Services"
+                    width={40}
+                    height={40}
+                  />
+                </a>
+              </span>
             </div>
           </div>
         </div>
-      </div>
-      <div className={styles.music__introduce__wrapper}>
-        <h2>음악 소개</h2>
-        <div className={styles.wrapper__inner}>
-          aespa, 첫 정규 앨범 ‘Armageddon’ 발매! 힙한 무드 ‘Supernova’→힙합
-          댄스곡 ‘Armageddon’으로 강렬한 질주! 세계관 시즌 2 서사 담은 역대급
-          스케일 음악+비주얼! ‘글로벌 히트메이커’ aespa가 첫 정규 앨범
-          ‘Armageddon’을 발매했다.
-        </div>
-        <button>
-          <span>펼치기</span>
-        </button>
-      </div>
-      <div className={styles.lyrics__wrapper}>
-        <h2>가사</h2>
-        <div className={styles.wrapper__inner}>
-          like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
-          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
-          너 누구야
-        </div>
-        <button>
-          <span>펼치기</span>
-        </button>
-      </div>
+      </section>
+      <section className={styles.lyrics__section}>
+        {/* <MusicContentInfo title={introduction.title} text={introduction.text} /> */}
+        <MusicContentInfo title={lyrics.title} text={lyrics.text} />
+      </section>
     </div>
   );
 };
