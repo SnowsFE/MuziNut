@@ -38,18 +38,22 @@ const UseridProfile: React.FC = () => {
     }
   };
 
-  const { profileInfo, albumInfo, handleProfileInfoChange, handleSubmit } =
-    useFileState((data) => {
-      setMainSongAlbumImageUrl(data.mainSongAlbumImageURL);
-      setAlbumImageUrl(data.albumImageURL);
+  const {
+    profileInfo,
+    albumInfo,
+    handleProfileInfoChange,
+    handleProfileEditSubmit,
+  } = useFileState((data) => {
+    setMainSongAlbumImageUrl(data.mainSongAlbumImageURL);
+    setAlbumImageUrl(data.albumImageURL);
 
-      // albumImageURL 배열에 이미지 URL 추가
-      if (data.albumImageURL) {
-        setAlbumImageURLs([...albumImageURLs, data.albumImageURL]);
-      }
+    // albumImageURL 배열에 이미지 URL 추가
+    if (data.albumImageURL) {
+      setAlbumImageURLs([...albumImageURLs, data.albumImageURL]);
+    }
 
-      onUpload({ bannerUrl: data.bannerUrl, profileUrl: data.profileUrl });
-    });
+    onUpload({ bannerUrl: data.bannerUrl, profileUrl: data.profileUrl });
+  });
 
   // 프로필 정보 수정 폼 열기
   const openEditForm = () => {
@@ -64,40 +68,22 @@ const UseridProfile: React.FC = () => {
   return (
     <ProfileContainer>
       <Banner>
-        {profileInfo.profileBannerImgName ? (
-          <Image
-            src={`data:image/;base64,${profileInfo.profileBannerImgName}`}
-            alt="banner-image"
-            width={1280}
-            height={210}
-          />
-        ) : (
-          <Image
-            src={BaseBanner}
-            alt="base-banner-image"
-            width={1280}
-            height={210}
-          />
-        )}
+        <Image
+          src={`data:image/png;base64,${profileInfo.profileBannerImgName}`}
+          alt="profileBannerImgName"
+          width={1280}
+          height={210}
+        />
         <BannerData onUpload={onUpload} />
       </Banner>
       <Profile>
         <EditForm onClick={openEditForm}>⚙️</EditForm>
-        {profileInfo.profileImgName ? (
-          <Image
-            src={`data:image/;base64,${profileInfo.profileImgName}`}
-            alt="profile-image"
-            width={160}
-            height={160}
-          />
-        ) : (
-          <Image
-            src={BaseImg}
-            alt="base-profile-image"
-            width={160}
-            height={160}
-          />
-        )}
+        <Image
+          src={`data:image/png;base64,${profileInfo.profileImgName}`}
+          alt="profileImgName"
+          width={160}
+          height={160}
+        />
         <ProfileData onUpload={onUpload} />
         <ProfileInfo>
           <ProfileName>{profileInfo.nickname}</ProfileName>
@@ -105,7 +91,11 @@ const UseridProfile: React.FC = () => {
             팔로잉 {profileInfo.followingCount} &nbsp; 팔로워{" "}
             {profileInfo.followersCount}
           </FollowInfo>
-          <ProfileDescription>{profileInfo.intro}</ProfileDescription>
+          {profileInfo.intro ? (
+            <ProfileDescription>{profileInfo.intro}</ProfileDescription>
+          ) : (
+            <ProfileDescription>자기소개를 입력하세요</ProfileDescription>
+          )}
         </ProfileInfo>
       </Profile>
       <SelectBar>
@@ -171,24 +161,25 @@ const UseridProfile: React.FC = () => {
       <BodyAlbum>
         {albumImageURLs.length > 0 ? (
           <AlbumList>
-            {albumImageURLs.map((url, index) => (
-              <AlbumItem key={index}>
-                <Image
-                  src={`data:image/;base64,${url}`}
-                  alt={`albumImage${index}`}
-                  width={200}
-                  height={200}
-                />
-                <AlbumTitle>Album Title</AlbumTitle>
-              </AlbumItem>
-            ))}
+            {albumImageURLs &&
+              albumImageURLs.map((url, index) => (
+                <AlbumItem key={index}>
+                  <Image
+                    src={`data:image/;base64,${url}`}
+                    alt={`albumImage${index}`}
+                    width={200}
+                    height={200}
+                  />
+                  <AlbumTitle>Album Title</AlbumTitle>
+                </AlbumItem>
+              ))}
           </AlbumList>
         ) : null}
       </BodyAlbum>
       <ProfileEditForm
         profileInfo={profileInfo}
         onChange={handleProfileInfoChange}
-        onSubmit={handleSubmit}
+        onSubmit={handleProfileEditSubmit}
         onCancel={closeEditForm}
         visible={editFormVisible}
       />
