@@ -119,7 +119,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
   };
 
   const authToken =
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjA2ODg5Mzh9.PqEWeY5aJE6T1cOGfiKgmLXUIaek2t1Gf8qiklJw5SUeK0YfEaH3KOxGXOH-sOAqXW3HtaJCySbY8Ih1YgxVkA";
+    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjA3NDc5MjV9.kPuHd36uUiH5-zYBeDI4EIy7-QNrTXo-bML4R93f9AcJJNdNDaH55Q4Ek3oBcLpaNr9DbfPXr9Yqnm9qN-F7mg";
 
   // 배너 이미지 데이터
   const handleBannerSubmit = async () => {

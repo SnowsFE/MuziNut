@@ -38,7 +38,7 @@ const UserProfile = ({ userInfo }: UserProfileProps) => {
         <div className={styles.user__detail__box}>
           <div className={styles.my__and__book}>
             <Link
-              href="/test"
+              href="/profile"
               className={styles.my__page}
               onClick={handleLinkClick}
             >

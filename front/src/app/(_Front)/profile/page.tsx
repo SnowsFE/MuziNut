@@ -70,7 +70,8 @@ const UseridProfile: React.FC = () => {
       <Banner>
         <Image
           src={`data:image/png;base64,${profileInfo.profileBannerImgName}`}
-          alt="profileBannerImgName"
+          alt="이곳은 뮤지넛에서 여러분의 고유한 배너 이미지를 사용할 수 있도록 만든 공간입니다
+           배너 이미지는 1280 x 210 으로 설정해주세요"
           width={1280}
           height={210}
         />
@@ -199,7 +200,7 @@ const Banner = styled.div`
   position: relative;
 
   img {
-    background-color: var(--text-color);
+    font-size: 60px;
     border-radius: 20px;
     overflow: hidden;
   }
