@@ -15,8 +15,10 @@ import { BaseImgBox } from "@/app/components/icon/icon";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("main");
-  const [bannerUrl, setBannerUrl] = useState<string>(BaseBanner.src);
-  const [profileUrl, setProfileUrl] = useState<string>(BaseImg.src);
+  const [profileBannerImgName, setprofileBannerImgName] = useState<string>(
+    BaseBanner.src
+  );
+  const [profileImgName, setprofileImgName] = useState<string>(BaseImg.src);
   const [editFormVisible, setEditFormVisible] = useState(false);
   const [albumImageURLs, setAlbumImageURLs] = useState<string[]>([]);
 
@@ -27,14 +29,17 @@ const UseridProfile: React.FC = () => {
   const [albumImageUrl, setAlbumImageUrl] = useState<string | null>(null);
 
   // 업로드 하는 함수
-  const onUpload = (data: { bannerUrl?: string; profileUrl?: string }) => {
-    if (data.bannerUrl) {
-      console.log("배너 이미지가 변경되었습니다:", data.bannerUrl);
-      setBannerUrl(data.bannerUrl);
+  const onUpload = (data: {
+    profileBannerImgName?: string;
+    profileImgName?: string;
+  }) => {
+    if (data.profileBannerImgName) {
+      console.log("배너 이미지가 변경되었습니다:", data.profileBannerImgName);
+      setprofileBannerImgName(data.profileBannerImgName);
     }
-    if (data.profileUrl) {
-      console.log("프로필 이미지가 변경되었습니다:", data.profileUrl);
-      setProfileUrl(data.profileUrl);
+    if (data.profileImgName) {
+      console.log("프로필 이미지가 변경되었습니다:", data.profileImgName);
+      setprofileImgName(data.profileImgName);
     }
   };
 
@@ -52,7 +57,10 @@ const UseridProfile: React.FC = () => {
       setAlbumImageURLs([...albumImageURLs, data.albumImageURL]);
     }
 
-    onUpload({ bannerUrl: data.bannerUrl, profileUrl: data.profileUrl });
+    onUpload({
+      profileBannerImgName: data.profileBannerImgName,
+      profileImgName: data.profileImgName,
+    });
   });
 
   // 프로필 정보 수정 폼 열기
@@ -136,7 +144,7 @@ const UseridProfile: React.FC = () => {
           <>
             <QuestionContainer>
               <Image
-                src={`data:image/;base64,${mainSongAlbumImageUrl}`}
+                src={`data:image/png;base64,${mainSongAlbumImageUrl}`}
                 alt="main-song"
               />
             </QuestionContainer>
@@ -166,7 +174,7 @@ const UseridProfile: React.FC = () => {
               albumImageURLs.map((url, index) => (
                 <AlbumItem key={index}>
                   <Image
-                    src={`data:image/;base64,${url}`}
+                    src={`data:image/png;base64,${url}`}
                     alt={`albumImage${index}`}
                     width={200}
                     height={200}
@@ -200,6 +208,7 @@ const Banner = styled.div`
   position: relative;
 
   img {
+    background-color: white;
     font-size: 60px;
     border-radius: 20px;
     overflow: hidden;
@@ -223,6 +232,7 @@ const Profile = styled.div`
 
   // 프로필 이미지
   img {
+    background-color: white;
     border-radius: 100px;
     overflow: hidden;
   }

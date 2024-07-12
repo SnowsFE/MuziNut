@@ -95,31 +95,32 @@ export const useFileState = (onUpload: (data: any) => void) => {
         return;
       }
 
-      let isValid = true;
-      if (key === "profileBannerImgName") {
-        isValid = await checkImageDimensions(file, 600, 210);
-        if (!isValid) {
-          alert("배너 이미지는 최소 600x210 크기여야 합니다.");
-          // 유효하지 않은 파일이 선택된 경우 파일 상태를 초기화
-          setFiles((prevFiles) => ({ ...prevFiles, [key]: null }));
-          e.target.value = ""; // 선택된 파일 초기화
-          return;
-        }
-      } else if (key === "profileImgName") {
-        isValid = await checkImageDimensions(file, 160, 160);
-        if (!isValid) {
-          alert("프로필 이미지는 최소 160x160 크기여야 합니다.");
-          // 유효하지 않은 파일이 선택된 경우 파일 상태를 초기화
-          setFiles((prevFiles) => ({ ...prevFiles, [key]: null }));
-          return;
-        }
-      }
+      // let isValid = true;
+      // if (key === "profileBannerImgName") {
+      //   isValid = await checkImageDimensions(file, 600, 210);
+      //   if (!isValid) {
+      //     alert("배너 이미지는 최소 600x210 크기여야 합니다.");
+      //     // 유효하지 않은 파일이 선택된 경우 파일 상태를 초기화
+      //     setFiles((prevFiles) => ({ ...prevFiles, [key]: null }));
+      //     e.target.value = ""; // 선택된 파일 초기화
+      //     return;
+      //   }
+      // } else if (key === "profileImgName") {
+      //   isValid = await checkImageDimensions(file, 160, 160);
+      //   if (!isValid) {
+      //     alert("프로필 이미지는 최소 160x160 크기여야 합니다.");
+      //     // 유효하지 않은 파일이 선택된 경우 파일 상태를 초기화
+      //     setFiles((prevFiles) => ({ ...prevFiles, [key]: null }));
+      //     return;
+      //   }
+      // }
+
       setFiles((prevFiles) => ({ ...prevFiles, [key]: file }));
     }
   };
 
   const authToken =
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjA3NDc5MjV9.kPuHd36uUiH5-zYBeDI4EIy7-QNrTXo-bML4R93f9AcJJNdNDaH55Q4Ek3oBcLpaNr9DbfPXr9Yqnm9qN-F7mg";
+    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjQzNjI4MDh9.-NRuorsHMlb3vmIHjuI77Lh_5vdH9nGrlkDkywRlGPE8fJ9pbx21MTOKKrha-5aOn_aK5JJvfJ32Um2zodolMQ";
 
   // 배너 이미지 데이터
   const handleBannerSubmit = async () => {
@@ -142,7 +143,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
       );
       if (res.status === 200 && res.data.success) {
         console.log("배너 이미지 업로드 성공:", res.data);
-        onUpload({ bannerUrl: res.data.imageUrl });
+        onUpload({ profileBannerImgName: res.data });
       } else {
         console.error("배너 이미지 업로드 실패:", res.data);
       }
@@ -170,7 +171,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
       );
       if (res.status === 200 && res.data.success) {
         console.log("프로필 이미지 업로드 성공:", res.data);
-        onUpload({ profileUrl: res.data.imageUrl });
+        onUpload({ profileImgName: res.data });
       } else {
         console.error("프로필 이미지 업로드 실패:", res.data);
       }
@@ -181,13 +182,13 @@ export const useFileState = (onUpload: (data: any) => void) => {
 
   // 프로필 수정 데이터
   const handleProfileEditSubmit = async () => {
-    const profileEditData = JSON.stringify({
+    const profileEditData = {
       nickname: profileInfo.nickname,
       intro: profileInfo.intro,
-    });
+    };
 
     try {
-      const profileEdit = await axios.post(
+      const profileEdit = await axios.put(
         `${AxiosUrl}/users/set-profile-nickname-intro`,
         profileEditData,
         {
@@ -226,9 +227,6 @@ export const useFileState = (onUpload: (data: any) => void) => {
 
         setProfileInfo(data);
         setAlbumInfo(data);
-
-        // 여기서 console.log로 확인
-        console.log("프로필 데이터 가져옴:", data);
       } catch (error) {
         console.error("프로필 데이터를 가져오는데 실패했습니다.", error);
       }
@@ -284,9 +282,9 @@ const BannerData: React.FC<{ onUpload: (data: any) => void }> = ({
         <HiddenInput
           type="file"
           onChange={handleFileInputChange}
-          id="banner-file"
+          id="profileBannerImgName"
         />
-        <CustomButton htmlFor="banner-file">⚙️</CustomButton>
+        <CustomButton htmlFor="profileBannerImgName">⚙️</CustomButton>
       </Label>
     </UploadForm>
   );
@@ -322,9 +320,9 @@ const ProfileData: React.FC<{ onUpload: (data: any) => void }> = ({
           <HiddenInput
             type="file"
             onChange={handleFileInputChange}
-            id="profile-file"
+            id="profileImgName"
           />
-          <CustomButton2 htmlFor="profile-file">⚙️</CustomButton2>
+          <CustomButton2 htmlFor="profileImgName">⚙️</CustomButton2>
         </Label>
       </UploadForm>
       <ProfileEditForm
