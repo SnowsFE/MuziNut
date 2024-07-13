@@ -1,111 +1,89 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import axios from "axios";
+import AxiosURL from "@/app/axios/url";
 
-const NoticePost: React.FC = () => {
-  const posts = [
-    {
-      id: 1,
-      title: "첫 번째 게시글",
-      author: "작성자1",
-      date: "2024-07-01",
-      views: 100,
-      likes: 10,
-    },
-    {
-      id: 2,
-      title: "두 번째 게시글",
-      author: "작성자2",
-      date: "2024-07-02",
-      views: 150,
-      likes: 20,
-    },
-    {
-      id: 3,
-      title: "세 번째 게시글",
-      author: "작성자3",
-      date: "2024-07-03",
-      views: 200,
-      likes: 30,
-    },
-    {
-      id: 4,
-      title: "네 번째 게시글",
-      author: "작성자4",
-      date: "2024-07-04",
-      views: 250,
-      likes: 40,
-    },
-    {
-      id: 5,
-      title: "다섯 번째 게시글",
-      author: "작성자5",
-      date: "2024-07-05",
-      views: 300,
-      likes: 50,
-    },
-    {
-      id: 6,
-      title: "여섯 번째 게시글",
-      author: "작성자6",
-      date: "2024-07-06",
-      views: 350,
-      likes: 60,
-    },
-    {
-      id: 7,
-      title: "일곱 번째 게시글",
-      author: "작성자7",
-      date: "2024-07-07",
-      views: 400,
-      likes: 70,
-    },
-    {
-      id: 8,
-      title: "여덟 번째 게시글",
-      author: "작성자8",
-      date: "2024-07-08",
-      views: 450,
-      likes: 80,
-    },
-    {
-      id: 9,
-      title: "아홉 번째 게시글",
-      author: "작성자9",
-      date: "2024-07-09",
-      views: 500,
-      likes: 90,
-    },
-    {
-      id: 10,
-      title: "열 번째 게시글",
-      author: "작성자10",
-      date: "2024-07-10",
-      views: 550,
-      likes: 100,
-    },
-    {
-      id: 11,
-      title: "열 번째 게시글",
-      author: "작성자10",
-      date: "2024-07-10",
-      views: 550,
-      likes: 100,
-    },
-  ];
+interface Post {
+  id: number;
+  title: string;
+  writer: string;
+  createdDt: string;
+  view: number;
+  like: number;
+}
+
+interface NoticePostProps {
+  selected: string;
+}
+
+const NoticePost: React.FC<NoticePostProps> = ({ selected }) => {
+  const posts: Post[] = [];
 
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 10;
+  const [sortedPosts, setSortedPosts] = useState<Post[]>(posts); // 초기값으로 모든 게시물을 포함한 상태를 설정
+  // 데이터를 저장할 상태를 useState를 이용해 초기화
+  const [getData, setgetData] = useState<Post[]>([]);
+
+  const authToken =
+    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9BRE1JTiIsImV4cCI6MTcyNDQ3ODE4OH0.3z2IGByLdk3Q-khCsRjdgK4BtMZs-h51If5vYgF45rgegl8WjUfXoIMDzMsqFLVOquamuJ57dMplJEGevon4PQ";
+
+  // PostData 함수를 useEffect 내에서 호출하여 데이터를 가져옴
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`${AxiosURL}/community/admin-boards`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+        setgetData(res.data); // 받아온 데이터를 상태에 업데이트
+      } catch (error) {
+        console.error("데이터를 불러오지 못했습니다", error);
+      }
+    };
+
+    fetchData(); // useEffect 내에서 fetchData 함수를 호출하여 데이터를 가져옴
+  }, []); // 빈 배열을 전달하여 컴포넌트가 마운트될 때 한 번만 호출되도록 설정
+
+  // 정렬 함수
+  const sortPosts = (criterion: string): Post[] => {
+    switch (criterion) {
+      case "인기순":
+        return [...posts].sort((a, b) => b.view - a.view);
+      case "최신순":
+        return [...posts].sort(
+          (a, b) =>
+            new Date(b.createdDt).getTime() - new Date(a.createdDt).getTime()
+        );
+      case "좋아요순":
+        return [...posts].sort((a, b) => b.like - a.like);
+      default:
+        return posts;
+    }
+  };
+
+  useEffect(() => {
+    // 선택된 정렬 기준에 따라 게시물을 정렬하여 상태 업데이트
+    const sorted = sortPosts(selected);
+    setSortedPosts(sorted);
+    setCurrentPage(1); // 페이지를 첫 번째 페이지로 초기화
+  }, [selected]); // selected 값이 변경될 때마다 호출
 
   // 현재 페이지에 해당하는 게시글을 계산
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+  const currentPosts = sortedPosts.slice(indexOfFirstPost, indexOfLastPost);
 
   // 페이지 번호를 계산
   const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(posts.length / postsPerPage); i++) {
+  for (let i = 1; i <= Math.ceil(sortedPosts.length / postsPerPage); i++) {
     pageNumbers.push(i);
   }
+
+  const handlePageClick = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <Container>
@@ -121,10 +99,10 @@ const NoticePost: React.FC = () => {
         {currentPosts.map((post) => (
           <Post key={post.id}>
             <PostItem>{post.title}</PostItem>
-            <PostItem>{post.author}</PostItem>
-            <PostItem>{post.date}</PostItem>
-            <PostItem>{post.views}</PostItem>
-            <PostItem>{post.likes}</PostItem>
+            <PostItem>{post.writer}</PostItem>
+            <PostItem>{post.createdDt}</PostItem>
+            <PostItem>{post.view}</PostItem>
+            <PostItem>{post.like}</PostItem>
           </Post>
         ))}
         <PageNation>
@@ -132,7 +110,7 @@ const NoticePost: React.FC = () => {
           {pageNumbers.map((number) => (
             <PageButton
               key={number}
-              onClick={() => setCurrentPage(number)}
+              onClick={() => handlePageClick(number)}
               isActive={number === currentPage}
             >
               {number}
@@ -164,7 +142,7 @@ const DarkBackground = styled.div`
   background-color: #fff;
   border-radius: 12px;
   z-index: 1;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
 const Content = styled.div`
@@ -219,10 +197,10 @@ const PageButton = styled.div<{ isActive?: boolean }>`
   font-size: 14px;
   font-family: "esamanru Medium";
   margin: 0 5px;
+  cursor: pointer;
   width: 20px;
   text-align: center;
   padding: 8.5px 7px;
-  cursor: pointer;
   border-radius: 5px;
   background-color: ${({ isActive }) => (isActive ? "#ddd" : "#f1f1f1")};
   &:hover {

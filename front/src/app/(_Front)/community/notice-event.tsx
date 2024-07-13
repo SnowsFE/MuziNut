@@ -6,6 +6,7 @@ import ProfileImages from "../../../../public/images/BaseImg.png";
 import Link from "next/link";
 import { LikeIcon, ViewIcon } from "@/app/components/icon/icon";
 import axios from "axios";
+import AxiosURL from "@/app/axios/url";
 
 interface NoticeEventDataProps {
   title: string;
@@ -17,10 +18,6 @@ interface NoticeEventDataProps {
   isNew?: boolean;
 }
 
-{
-  /* <Image src={`data:image/;base64,${BaseBanner}`} alt="banner-image" /> */
-}
-
 const NoticeEvent: React.FC = () => {
   const [eventToShow, setEventToShow] = useState(4);
   const [NoticeEventData, setNoticeEventData] = useState<
@@ -30,13 +27,15 @@ const NoticeEvent: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8080/community/event-boards"
-        );
-
+        const response = await axios.get(`${AxiosURL}/community/event-boards`);
         const data = response.data;
 
-        setNoticeEventData(data);
+        // 데이터가 배열인지 확인합니다.
+        if (Array.isArray(data)) {
+          setNoticeEventData(data);
+        } else {
+          console.error("응답 데이터가 배열이 아닙니다:", data);
+        }
       } catch (error) {
         console.error("데이터를 가져오지 못했습니다:", error);
       }
@@ -100,7 +99,7 @@ const NoticeEvent: React.FC = () => {
                 </Link>
                 <ProfileSection>
                   <ProfileImage
-                    src={`data:image/;base64,${ProfileImages}`}
+                    src={`data:image/png;base64,${ProfileImages}`}
                     alt="profile-image"
                   />
                   <ProfileName>{notice.profileName}</ProfileName>
@@ -116,7 +115,7 @@ const NoticeEvent: React.FC = () => {
               </NoticeContent>
             ))
           ) : (
-            <div>공지사항 데이터 입니다</div>
+            <div>공지사항 데이터가 없습니다</div>
           )}
         </NoticeData>
       </Notice>
