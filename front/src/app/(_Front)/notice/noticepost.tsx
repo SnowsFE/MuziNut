@@ -17,37 +17,39 @@ interface NoticePostProps {
 }
 
 const NoticePost: React.FC<NoticePostProps> = ({ selected }) => {
-  const posts: Post[] = [];
-
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 10;
-  const [sortedPosts, setSortedPosts] = useState<Post[]>(posts); // 초기값으로 모든 게시물을 포함한 상태를 설정
-  // 데이터를 저장할 상태를 useState를 이용해 초기화
-  const [getData, setgetData] = useState<Post[]>([]);
+  const [adminBoardsForms, setAdminBoardsForms] = useState<Post[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
 
   const authToken =
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9BRE1JTiIsImV4cCI6MTcyNDQ3ODE4OH0.3z2IGByLdk3Q-khCsRjdgK4BtMZs-h51If5vYgF45rgegl8WjUfXoIMDzMsqFLVOquamuJ57dMplJEGevon4PQ";
+    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9BRE1JTiIsImV4cCI6MTcyNDU2MzA5Mn0.jjHOaODsvIRqhefGtI5SJ9mBlQdBcouiiWqXVyB0tXh73S7V83e-bH4Wi6K-ImwMOMgPge7gXOcGpEqUxpVZsw";
 
-  // PostData 함수를 useEffect 내에서 호출하여 데이터를 가져옴
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (page: number, size: number) => {
       try {
         const res = await axios.get(`${AxiosURL}/community/admin-boards`, {
           headers: {
             Authorization: `Bearer ${authToken}`,
           },
+          params: {
+            page,
+            size,
+          },
         });
-        setgetData(res.data); // 받아온 데이터를 상태에 업데이트
+        const { adminBoardsForms, totalPage } = res.data;
+        setAdminBoardsForms(adminBoardsForms);
+        setTotalPages(totalPage);
+        console.log(res.data);
       } catch (error) {
-        console.error("데이터를 불러오지 못했습니다", error);
+        console.error("데이터가 불러와지지 않았습니다", error);
       }
     };
 
-    fetchData(); // useEffect 내에서 fetchData 함수를 호출하여 데이터를 가져옴
-  }, []); // 빈 배열을 전달하여 컴포넌트가 마운트될 때 한 번만 호출되도록 설정
+    fetchData(currentPage, postsPerPage);
+  }, [currentPage]);
 
-  // 정렬 함수
-  const sortPosts = (criterion: string): Post[] => {
+  const sortPosts = (criterion: string, posts: Post[]): Post[] => {
     switch (criterion) {
       case "인기순":
         return [...posts].sort((a, b) => b.view - a.view);
@@ -63,26 +65,24 @@ const NoticePost: React.FC<NoticePostProps> = ({ selected }) => {
     }
   };
 
-  useEffect(() => {
-    // 선택된 정렬 기준에 따라 게시물을 정렬하여 상태 업데이트
-    const sorted = sortPosts(selected);
-    setSortedPosts(sorted);
-    setCurrentPage(1); // 페이지를 첫 번째 페이지로 초기화
-  }, [selected]); // selected 값이 변경될 때마다 호출
-
-  // 현재 페이지에 해당하는 게시글을 계산
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = sortedPosts.slice(indexOfFirstPost, indexOfLastPost);
-
-  // 페이지 번호를 계산
-  const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(sortedPosts.length / postsPerPage); i++) {
-    pageNumbers.push(i);
-  }
+  const sortedPosts = sortPosts(selected, adminBoardsForms);
 
   const handlePageClick = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
   };
 
   return (
@@ -96,7 +96,7 @@ const NoticePost: React.FC<NoticePostProps> = ({ selected }) => {
           <HeaderItem>조회수</HeaderItem>
           <HeaderItem>좋아요</HeaderItem>
         </Header>
-        {currentPosts.map((post) => (
+        {sortedPosts.map((post) => (
           <Post key={post.id}>
             <PostItem>{post.title}</PostItem>
             <PostItem>{post.writer}</PostItem>
@@ -106,17 +106,19 @@ const NoticePost: React.FC<NoticePostProps> = ({ selected }) => {
           </Post>
         ))}
         <PageNation>
-          <PageButton onClick={() => setCurrentPage(1)}>{"<<"}</PageButton>
-          {pageNumbers.map((number) => (
+          <PageButton onClick={() => handlePageClick(1)}>{"<<"}</PageButton>
+          <PageButton onClick={handlePrevPage}>{"<"}</PageButton>
+          {Array.from({ length: totalPages }, (_, index) => (
             <PageButton
-              key={number}
-              onClick={() => handlePageClick(number)}
-              isActive={number === currentPage}
+              key={index + 1}
+              onClick={() => handlePageClick(index + 1)}
+              isActive={index + 1 === currentPage}
             >
-              {number}
+              {index + 1}
             </PageButton>
           ))}
-          <PageButton onClick={() => setCurrentPage(pageNumbers.length)}>
+          <PageButton onClick={handleNextPage}>{">"}</PageButton>
+          <PageButton onClick={() => handlePageClick(totalPages)}>
             {">>"}
           </PageButton>
         </PageNation>
@@ -165,6 +167,9 @@ const HeaderItem = styled.div`
   flex: 1;
   text-align: center;
   font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const Post = styled.div`
@@ -175,6 +180,7 @@ const Post = styled.div`
   background-color: #fff;
   border-bottom: 1px solid #ebedf3;
   color: black;
+  cursor: pointer;
 `;
 
 const PostItem = styled.div`
@@ -182,6 +188,9 @@ const PostItem = styled.div`
   text-align: center;
   font-size: 13px;
   font-family: "esamanru Medium";
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const PageNation = styled.div`

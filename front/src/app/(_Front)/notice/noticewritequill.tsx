@@ -123,6 +123,9 @@ const WriteQuill: React.FC<{
         // 에디터 닫기
         setVisible(false);
         onClose();
+
+        // 페이지 새로 고침
+        window.location.reload();
       } else {
         console.error("글 등록에 실패했습니다.");
       }
