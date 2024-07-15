@@ -9,6 +9,7 @@ import WriteQuill from "./noticewritequill";
 const NoticeBody: React.FC = () => {
   const [selected, setSelected] = useState<string>("최신순");
   const [writeVisible, setWriteVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const handleSelect = (option: string) => {
     setSelected(option);
@@ -16,6 +17,10 @@ const NoticeBody: React.FC = () => {
 
   const openWriteForm = () => {
     setWriteVisible(true);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
   };
 
   return (
@@ -42,11 +47,15 @@ const NoticeBody: React.FC = () => {
         </NoticeOptions>
         <SearchContainer>
           <Write onClick={openWriteForm}>글쓰기</Write>
-          <ControllerSearch placeholder="공지사항 검색" />
+          <ControllerSearch
+            placeholder="바로 검색"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
           <SearchIcon />
         </SearchContainer>
       </NoticeController>
-      <NoticePost selected={selected} />
+      <NoticePost selected={selected} searchQuery={searchQuery} />
       {writeVisible && (
         <WriteQuill
           onPublish={() => setWriteVisible(false)}
@@ -161,5 +170,4 @@ const SearchIcon = styled(FaSearch)`
   position: absolute;
   right: 10px;
   color: #888;
-  cursor: pointer;
 `;

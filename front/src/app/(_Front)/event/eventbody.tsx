@@ -4,11 +4,12 @@ import { FaSearch } from "react-icons/fa";
 import EventPost from "./eventpost";
 import Image from "next/image";
 import Eventbanner from "../../../../public/images/eventbanner.png";
-import WriteQuill from "./writequill";
+import WriteQuill from "./eventwritequill";
 
 const EventBody: React.FC = () => {
   const [selected, setSelected] = useState<string>("최신순");
   const [writeVisible, setWriteVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const handleSelect = (option: string) => {
     setSelected(option);
@@ -16,6 +17,10 @@ const EventBody: React.FC = () => {
 
   const openWriteForm = () => {
     setWriteVisible(true);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
   };
 
   return (
@@ -42,11 +47,15 @@ const EventBody: React.FC = () => {
         </EventOptions>
         <SearchContainer>
           <Write onClick={openWriteForm}>글쓰기</Write>
-          <ControllerSearch placeholder="이벤트 검색" />
+          <ControllerSearch
+            placeholder="바로 검색"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
           <SearchIcon />
         </SearchContainer>
       </EventController>
-      <EventPost selected={selected} />
+      <EventPost selected={selected} searchQuery={searchQuery} />
       {writeVisible && (
         <WriteQuill
           onPublish={() => setWriteVisible(false)}
@@ -59,10 +68,10 @@ const EventBody: React.FC = () => {
 
 export default EventBody;
 
-// 이벤트 페이지 가장 바깥을 감싸는 컨테이너
+// 공지사항 페이지 가장 바깥을 감싸는 컨테이너
 const EventContainer = styled.div``;
 
-// 이벤트 페이지 헤더 제목
+// 공지사항 페이지 헤더 제목
 const EventBanner = styled.div`
   margin-top: 24px;
 
@@ -73,7 +82,7 @@ const EventBanner = styled.div`
   }
 `;
 
-// 이벤트 선택바 인기순, 최신순, 좋아요순, 제목 [ 검색하기 부분 ]
+// 공지사항 선택바 인기순, 최신순, 좋아요순, 제목 [ 검색하기 부분 ]
 const EventController = styled.div`
   padding: 10px 0 15px;
   display: flex;
@@ -95,7 +104,7 @@ const EventOptions = styled.div`
   }
 `;
 
-// 이벤트 선택바 옵션
+// 공지사항 선택바 옵션
 const EventOption = styled.div<{ isSelected: boolean }>`
   cursor: pointer;
   color: ${(props) => (props.isSelected ? "#16be78" : "inherit")};
@@ -161,5 +170,4 @@ const SearchIcon = styled(FaSearch)`
   position: absolute;
   right: 10px;
   color: #888;
-  cursor: pointer;
 `;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import axios from "axios";
 import AxiosURL from "@/app/axios/url";
 
@@ -14,58 +14,82 @@ interface Post {
 
 interface NoticePostProps {
   selected: string;
+  searchQuery: string;
 }
 
-const NoticePost: React.FC<NoticePostProps> = ({ selected }) => {
+const NoticePost: React.FC<NoticePostProps> = ({ selected, searchQuery }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 10;
   const [adminBoardsForms, setAdminBoardsForms] = useState<Post[]>([]);
   const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
 
   const authToken =
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9BRE1JTiIsImV4cCI6MTcyNDU2MzA5Mn0.jjHOaODsvIRqhefGtI5SJ9mBlQdBcouiiWqXVyB0tXh73S7V83e-bH4Wi6K-ImwMOMgPge7gXOcGpEqUxpVZsw";
+    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9BRE1JTiIsImV4cCI6MTcyNDQ3ODE4OH0.3z2IGByLdk3Q-khCsRjdgK4BtMZs-h51If5vYgF45rgegl8WjUfXoIMDzMsqFLVOquamuJ57dMplJEGevon4PQ";
+
+  const fetchData = async (page: number) => {
+    setIsLoading(true);
+    try {
+      const res = await axios.get(`${AxiosURL}/community/admin-boards`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+        params: {
+          page: page - 1, // API가 0부터 시작하는 페이지 번호를 사용하는 경우
+          size: postsPerPage,
+        },
+      });
+
+      const { adminBoardsForms, totalPage } = res.data;
+
+      setAdminBoardsForms(adminBoardsForms || []);
+      setTotalPages(totalPage || 1);
+
+      console.log("totalPage:", totalPage);
+      console.log("adminBoardsForms:", adminBoardsForms);
+      console.log("res.data:", res.data);
+    } catch (error) {
+      console.error("데이터를 불러오는 중 오류가 발생했습니다", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async (page: number, size: number) => {
-      try {
-        const res = await axios.get(`${AxiosURL}/community/admin-boards`, {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-          params: {
-            page,
-            size,
-          },
-        });
-        const { adminBoardsForms, totalPage } = res.data;
-        setAdminBoardsForms(adminBoardsForms);
-        setTotalPages(totalPage);
-        console.log(res.data);
-      } catch (error) {
-        console.error("데이터가 불러와지지 않았습니다", error);
-      }
-    };
+    fetchData(currentPage);
+  }, [currentPage, selected]);
 
-    fetchData(currentPage, postsPerPage);
-  }, [currentPage]);
+  const sortPosts = (criterion: string, posts: Post[] | undefined): Post[] => {
+    if (!posts || !Array.isArray(posts)) {
+      return [];
+    }
 
-  const sortPosts = (criterion: string, posts: Post[]): Post[] => {
     switch (criterion) {
       case "인기순":
-        return [...posts].sort((a, b) => b.view - a.view);
+        return posts.slice().sort((a, b) => b.view - a.view);
       case "최신순":
-        return [...posts].sort(
-          (a, b) =>
-            new Date(b.createdDt).getTime() - new Date(a.createdDt).getTime()
-        );
+        return posts
+          .slice()
+          .sort(
+            (a, b) =>
+              new Date(b.createdDt).getTime() - new Date(a.createdDt).getTime()
+          );
       case "좋아요순":
-        return [...posts].sort((a, b) => b.like - a.like);
+        return posts.slice().sort((a, b) => b.like - a.like);
       default:
         return posts;
     }
   };
 
+  const filterPostsBySearchQuery = (posts: Post[], query: string): Post[] => {
+    if (!query) return posts;
+    return posts.filter((post) =>
+      post.title.toLowerCase().includes(query.toLowerCase())
+    );
+  };
+
   const sortedPosts = sortPosts(selected, adminBoardsForms);
+  const filteredPosts = filterPostsBySearchQuery(sortedPosts, searchQuery);
 
   const handlePageClick = (pageNumber: number) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
@@ -96,25 +120,33 @@ const NoticePost: React.FC<NoticePostProps> = ({ selected }) => {
           <HeaderItem>조회수</HeaderItem>
           <HeaderItem>좋아요</HeaderItem>
         </Header>
-        {sortedPosts.map((post) => (
-          <Post key={post.id}>
-            <PostItem>{post.title}</PostItem>
-            <PostItem>{post.writer}</PostItem>
-            <PostItem>{post.createdDt}</PostItem>
-            <PostItem>{post.view}</PostItem>
-            <PostItem>{post.like}</PostItem>
-          </Post>
-        ))}
+        {isLoading ? (
+          <LoadingMessage>로딩 중...</LoadingMessage>
+        ) : adminBoardsForms.length === 0 ? (
+          <NoDataMessage>공지사항이 없습니다!</NoDataMessage>
+        ) : filteredPosts.length === 0 ? (
+          <NoDataMessage>검색 결과가 없습니다!</NoDataMessage>
+        ) : (
+          filteredPosts.map((post) => (
+            <Post key={post.id}>
+              <PostItem>{post.title}</PostItem>
+              <PostItem>{post.writer}</PostItem>
+              <PostItem>{post.createdDt}</PostItem>
+              <PostItem>{post.view}</PostItem>
+              <PostItem>{post.like}</PostItem>
+            </Post>
+          ))
+        )}
         <PageNation>
           <PageButton onClick={() => handlePageClick(1)}>{"<<"}</PageButton>
           <PageButton onClick={handlePrevPage}>{"<"}</PageButton>
-          {Array.from({ length: totalPages }, (_, index) => (
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
             <PageButton
-              key={index + 1}
-              onClick={() => handlePageClick(index + 1)}
-              isActive={index + 1 === currentPage}
+              key={number}
+              onClick={() => handlePageClick(number)}
+              isActive={number === currentPage}
             >
-              {index + 1}
+              {number}
             </PageButton>
           ))}
           <PageButton onClick={handleNextPage}>{">"}</PageButton>
@@ -216,4 +248,20 @@ const PageButton = styled.div<{ isActive?: boolean }>`
     background-color: #ddd;
   }
   color: black;
+`;
+
+// 로딩 메시지
+const LoadingMessage = styled.div`
+  padding: 40px 0 5px 0;
+  text-align: center;
+  font-size: 20px;
+  color: #16be78;
+`;
+
+// 데이터 없음 메시지
+const NoDataMessage = styled.div`
+  padding: 40px 0 5px 0;
+  text-align: center;
+  font-size: 20px;
+  color: #16be78;
 `;

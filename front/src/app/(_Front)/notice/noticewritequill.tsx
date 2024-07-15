@@ -14,7 +14,7 @@ const Size = Quill.import("attributors/style/size");
 Size.whitelist = ["13px", "16px", "18px", "24px", "28px", "32px"];
 Quill.register(Size, true);
 
-const WriteQuill: React.FC<{
+const NoticeWriteQuill: React.FC<{
   onPublish: (content: string) => void;
   onClose: () => void;
   initialContent?: string;
@@ -91,6 +91,21 @@ const WriteQuill: React.FC<{
     "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9BRE1JTiIsImV4cCI6MTcyNDQ3ODE4OH0.3z2IGByLdk3Q-khCsRjdgK4BtMZs-h51If5vYgF45rgegl8WjUfXoIMDzMsqFLVOquamuJ57dMplJEGevon4PQ";
 
   const handleSubmit = async () => {
+    if ((title.trim() === "" || null) && (content.trim() === "" || null)) {
+      alert("작성하고 싶은 글을 작성해 주세요");
+      return;
+    }
+
+    if (title.trim() === "") {
+      alert("제목을 입력해주세요");
+      return;
+    }
+
+    if (content.trim() === "") {
+      alert("내용을 입력해주세요");
+      return;
+    }
+
     const formData = new FormData();
     formData.append(
       "form",
@@ -174,7 +189,7 @@ const WriteQuill: React.FC<{
   );
 };
 
-export default WriteQuill;
+export default NoticeWriteQuill;
 
 const fadeOut = keyframes`
   from {
