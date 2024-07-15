@@ -8,6 +8,7 @@ import {
 } from "@/app/components/icon/icon";
 import Image from "next/image";
 import threedot from "../../../../../public/svgs/threedot.svg";
+import Comments from "@/app/components/board/Comments";
 
 interface PostProps {
   title: string;
@@ -36,7 +37,8 @@ const Data: PostProps = {
 
 const PostBox: React.FC = () => {
   const { title, writer, createdDt, view, like, image, write } = Data;
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState(""); //댓글
+  const [reply, setReply] = useState(""); //대댓글
   const [commentLength, setCommentLength] = useState(0); // 댓글 길이 상태 추가
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
@@ -128,6 +130,8 @@ const PostBox: React.FC = () => {
         </LikeButton>
       </Footer>
       <CommentsSection>
+        {" "}
+        {/* 댓글 작성 폼 */}
         <CommentsCount>댓글 0개</CommentsCount>
         <CommentInputContainer>
           <CommentInput
@@ -142,12 +146,14 @@ const PostBox: React.FC = () => {
           <CommentLength>{commentLength}/500</CommentLength>
         </CommentInputContainer>
       </CommentsSection>
+      <Comments></Comments>
     </Container>
   );
 };
 
 export default PostBox;
 
+// ------------------------------------------ 스타일드 컴포넌트-------------------------------------------------------------
 // 감싸는 컨테이너
 const Container = styled.div`
   margin: 24px 0;
