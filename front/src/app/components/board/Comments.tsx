@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { redirect } from "next/navigation";
-import { MiniViewIcon, LikeIcon } from "@/app/components/icon/icon";
+import { LikeIcon, ReplyIcon } from "@/app/components/icon/icon";
 
 const Comments = () => {
   const [comment, setComment] = useState(""); //사용자가 작성하는 댓글
@@ -18,6 +18,7 @@ const Comments = () => {
           </TimeViewsContainer>
         </ProfileInfo>
         <Content>
+          <ReplyIcon />
           내용이다
           띄어쓰기------------------------------------------------------------------------------------
           ---------------------------------------------------------------------

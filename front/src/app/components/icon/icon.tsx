@@ -393,9 +393,9 @@ export const BaseImgBox = () => {
   );
 };
 
-export const Reply = () => {
+export const ReplyIcon = () => {
   return (
-    <ReplyIcon>
+    <Reply>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         version="1.1"
@@ -406,11 +406,14 @@ export const Reply = () => {
       >
         <path d="M50,47H18.243l21.878-21.879c1.172-1.171,1.172-3.071,0-4.242c-1.171-1.172-3.071-1.172-4.242,0l-27,26.999  c0,0.001,0,0.001-0.001,0.001L6.757,50l2.121,2.121c0,0,0,0,0.001,0.001l27,26.999C36.464,79.707,37.232,80,38,80  s1.536-0.293,2.121-0.879c1.172-1.171,1.172-3.071,0-4.242L18.243,53H50c19.851,0,36,15.477,36,34.5c0,1.657,1.343,3,3,3  s3-1.343,3-3C92,65.168,73.159,47,50,47z" />
       </svg>
-    </ReplyIcon>
+    </Reply>
   );
 };
 
-const ReplyIcon = styled.div`
+const Reply = styled.div`
+  width: 16px;
+  height: 16px;
+  opacity: 50%;
   transform: rotate(180deg);
 `;
 
