@@ -88,11 +88,11 @@ export const useFileState = (onUpload: (data: any) => void) => {
 
   // 프로필 이미지 데이터
   const handleProfileSubmit = async (
-    e: ChangeEvent<HTMLInputElement>,
+    e: ChangeEvent<HTMLInputElement> | null,
     key: string
   ) => {
     // 파일이 선택되었는지 확인
-    if (e.target.files && e.target.files.length > 0) {
+    if (e && e.target.files && e.target.files.length > 0) {
       // 선택된 파일
       const file = e.target.files[0];
       console.log(file);
@@ -241,8 +241,8 @@ const ProfileData: React.FC<{ onUpload: (data: any) => void }> = ({
 
   const [isEditVisible, setEditVisible] = useState(false);
 
-  const handleEditSubmit = async (e: ChangeEvent<HTMLInputElement>) => {
-    await handleProfileSubmit(e, "profileImgName");
+  const handleEditSubmit = async () => {
+    await handleProfileSubmit(null, "profileImgName");
     setEditVisible(false);
   };
 
