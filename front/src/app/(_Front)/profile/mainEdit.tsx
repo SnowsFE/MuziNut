@@ -6,16 +6,10 @@ import AxiosUrl from "@/app/axios/url";
 // useFileState 훅과 초기 데이터
 export const useFileState = (onUpload: (data: any) => void) => {
   const [files, setFiles] = useState<{ [key: string]: File | null }>({
-    profileBannerImgName: new File([], "default_banner_image.jpg", {
-      type: "image/jpeg",
-    }),
-    profileImgName: new File([], "default_profile_image.jpg", {
-      type: "image/jpeg",
-    }),
-    mainSongAlbumImage: new File([], "default_main_song_album_image.jpg", {
-      type: "image/jpeg",
-    }),
-    albumImage: new File([], "default_album_image.jpg", { type: "image/jpeg" }),
+    profileBannerImgName: null,
+    profileImgName: null,
+    mainSongAlbumImage: null,
+    albumImage: null,
   });
 
   interface profileInfoProps {
@@ -47,79 +41,86 @@ export const useFileState = (onUpload: (data: any) => void) => {
     likeCount: 0,
   });
 
-  // 파일 변경 핸들러 수정
-  const handleFileChange = async (
-    e: ChangeEvent<HTMLInputElement>, // 파일 선택 이벤트 객체
-    key: string // 파일을 저장할 키 (예: 'profileBannerImgName')
+  const authToken =
+    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjQ2MDczMzh9.BbvfPZE8fzZNQNJdyq0XQz7GaIUYhhLUhoup35KwlfC-92MHXOi3jkILH19lFdDVQkuwtFWRlyRbVZQW8a8QUA";
+
+  const handleBannerSubmit = async (
+    e: ChangeEvent<HTMLInputElement>,
+    key: string
   ) => {
     // 파일이 선택되었는지 확인
     if (e.target.files && e.target.files.length > 0) {
       // 선택된 파일
       const file = e.target.files[0];
+      console.log(file);
 
-      // 이전 파일 상태를 가져와서 새 파일로 업데이트
-      setFiles((prevFiles) => ({ ...prevFiles, [key]: file }));
-    }
-  };
+      // FormData에 파일 추가
+      const BannernewFiles = { ...files, [key]: file };
+      setFiles(BannernewFiles);
 
-  const authToken =
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjQ2MDczMzh9.BbvfPZE8fzZNQNJdyq0XQz7GaIUYhhLUhoup35KwlfC-92MHXOi3jkILH19lFdDVQkuwtFWRlyRbVZQW8a8QUA";
+      // key를 통해 FormData에 파일 추가
+      const formData = new FormData();
+      formData.append("bannerImg", file);
+      console.log(formData);
 
-  // 배너 이미지 데이터
-  const handleBannerSubmit = async () => {
-    const BannerData = new FormData();
-
-    if (files.profileBannerImgName) {
-      BannerData.append("bannerImg", files.profileBannerImgName);
-    }
-
-    try {
-      const res = await axios.post(
-        `${AxiosUrl}/users/set-profile-bannerImage`,
-        BannerData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
-      if (res.status === 200 && res.data.success) {
-        console.log("배너 이미지 업로드 성공:", res.data);
-        onUpload({ profileBannerImgName: res.data });
-      } else {
-        console.error("배너 이미지 업로드 실패:", res.data);
+      // 프로필 배너 이미지 업로드
+      try {
+        const res = await axios.post(
+          `${AxiosUrl}/users/set-profile-bannerImage`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        );
+        console.log(res.data);
+        onUpload({ [key]: res.data }); // 업로드 성공 시 데이터 처리
+        window.location.reload(); // 페이지 새로고침 (필요에 따라 변경)
+      } catch (error) {
+        console.error("배너 이미지 업로드 실패:", error);
       }
-    } catch {
-      console.error("데이터 자체가 보내지지 않았습니다");
+    } else {
+      console.error("업로드 파일이 존재하지 않음");
     }
   };
 
   // 프로필 이미지 데이터
-  const handleProfileSubmit = async () => {
-    const ProfileData = new FormData();
-    if (files.profileImgName) {
-      ProfileData.append("profileImg", files.profileImgName);
-    }
-    try {
-      const res = await axios.post(
-        `${AxiosUrl}/users/set-profile`,
-        ProfileData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
-      if (res.status === 200 && res.data.success) {
-        console.log("프로필 이미지 업로드 성공:", res.data);
-        onUpload({ profileImgName: res.data });
-      } else {
-        console.error("프로필 이미지 업로드 실패:", res.data);
+  const handleProfileSubmit = async (
+    e: ChangeEvent<HTMLInputElement>,
+    key: string
+  ) => {
+    // 파일이 선택되었는지 확인
+    if (e.target.files && e.target.files.length > 0) {
+      // 선택된 파일
+      const file = e.target.files[0];
+      console.log(file);
+
+      // FormData에 파일 추가
+      const profileFormData = new FormData();
+      profileFormData.append("profileImg", file);
+
+      try {
+        // 프로필 이미지 업로드
+        const res = await axios.post(
+          `${AxiosUrl}/users/set-profile`,
+          profileFormData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        );
+        console.log(res.data);
+        onUpload({ [key]: res.data }); // 업로드 성공 시 데이터 처리
+        window.location.reload(); // 페이지 새로고침 (필요에 따라 변경)
+      } catch (error) {
+        console.error("프로필 이미지 업로드 실패:", error);
       }
-    } catch {
-      console.error("데이터 자체가 보내지지 않았습니다");
+    } else {
+      console.error("업로드 파일이 존재하지 않음");
     }
   };
 
@@ -200,9 +201,8 @@ export const useFileState = (onUpload: (data: any) => void) => {
     profileInfo,
     albumInfo,
     setProfileInfo,
-    handleFileChange,
-    handleProfileInfoChange,
     handleBannerSubmit,
+    handleProfileInfoChange,
     handleProfileSubmit,
     handleProfileEditSubmit,
   };
@@ -212,11 +212,10 @@ export const useFileState = (onUpload: (data: any) => void) => {
 const BannerData: React.FC<{ onUpload: (data: any) => void }> = ({
   onUpload,
 }) => {
-  const { handleFileChange, handleBannerSubmit } = useFileState(onUpload);
+  const { handleBannerSubmit } = useFileState(onUpload);
 
   const handleFileInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    await handleFileChange(e, "profileBannerImgName");
-    handleBannerSubmit();
+    await handleBannerSubmit(e, "profileBannerImgName");
   };
 
   return (
@@ -237,13 +236,13 @@ const BannerData: React.FC<{ onUpload: (data: any) => void }> = ({
 const ProfileData: React.FC<{ onUpload: (data: any) => void }> = ({
   onUpload,
 }) => {
-  const { handleFileChange, handleProfileSubmit, profileInfo, setProfileInfo } =
+  const { handleProfileSubmit, profileInfo, setProfileInfo } =
     useFileState(onUpload);
 
   const [isEditVisible, setEditVisible] = useState(false);
 
-  const handleEditSubmit = async () => {
-    await handleProfileSubmit();
+  const handleEditSubmit = async (e: ChangeEvent<HTMLInputElement>) => {
+    await handleProfileSubmit(e, "profileImgName");
     setEditVisible(false);
   };
 
@@ -252,8 +251,7 @@ const ProfileData: React.FC<{ onUpload: (data: any) => void }> = ({
   };
 
   const handleFileInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    await handleFileChange(e, "profileImgName");
-    handleProfileSubmit();
+    await handleProfileSubmit(e, "profileImgName");
   };
 
   return (
