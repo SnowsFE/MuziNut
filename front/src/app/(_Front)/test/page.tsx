@@ -6,7 +6,9 @@ import AxiosURL from "@/app/axios/url";
 
 const SettingUserThumbnail = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const [imageBase64, setImageBase64] = useState("");
+  const [userId, setUserId] = useState(2); // 초기 userId 값을 설정합니다.
+  const [imageBase64, setImageBase64] = useState<string | null>(null);
+  const [userdata, setUserdata] = useState(null);
 
   const onUploadImage = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,30 +23,27 @@ const SettingUserThumbnail = () => {
       formData.append("bannerImg", file);
 
       try {
-        const response = await axios.post(
+        const response = await fetch(
           `${AxiosURL}/users/set-profile-bannerImage`,
-          formData,
           {
+            method: "POST",
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "multipart/form-data",
             },
+            body: formData,
           }
         );
 
-        const { base64Image } = response.data;
-        setImageBase64(base64Image);
+        const data = await response.json();
+        if (data.base64Image) {
+          setImageBase64(data.base64Image);
+        }
       } catch (error) {
         console.error("데이터를 받아오지 못했습니다", error);
       }
     },
     []
   );
-
-  // 메인 Get 통신 데이터
-  const [userId, setUserId] = useState(2); // 초기 userId 값을 설정합니다.
-
-  const [userdata, setuserdata] = useState();
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -53,7 +52,7 @@ const SettingUserThumbnail = () => {
           params: { userId },
         });
         const data = response.data;
-        setuserdata(data);
+        setUserdata(data);
         console.log("프로필 데이터 가져옴:", data);
       } catch (error) {
         console.error("프로필 데이터를 가져오는데 실패했습니다.", error);
@@ -80,21 +79,27 @@ const SettingUserThumbnail = () => {
         style={{ display: "none" }} // input element를 숨김
       />
       <Button onClick={onUploadImageButtonClick}>이미지 업로드</Button>
-      {imageBase64 && (
-        <StyledImage
-          src={`data:image/png;base64,${userdata}`}
-          alt="Uploaded Image"
-          width={1280}
-          height={210}
-        />
-      )}
+      <ImageContainer>
+        {imageBase64 && (
+          <StyledImage
+            src={`data:image/png;base64,${userdata}`}
+            alt="Uploaded Image"
+          />
+        )}
+      </ImageContainer>
     </>
   );
 };
 
+const ImageContainer = styled.div`
+  width: 1280px;
+  height: 210px;
+  border: 1px solid black;
+`;
+
 const StyledImage = styled.img`
-  max-width: 300px;
-  max-height: 300px;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
 `;
 

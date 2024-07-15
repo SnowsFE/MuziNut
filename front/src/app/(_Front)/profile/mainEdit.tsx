@@ -47,80 +47,23 @@ export const useFileState = (onUpload: (data: any) => void) => {
     likeCount: 0,
   });
 
-  // 프로필 정보 유효성 검사
-  // const validateProfileInfo = () => {
-  //   if (profileInfo.nickname.length > 10) {
-  //     return false;
-  //   }
-  //   if (profileInfo.intro.length > 70) {
-  //     return false;
-  //   }
-  //   return true;
-  // };
-
-  // 이미지 크기 검사 함수
-  const checkImageDimensions = (
-    file: File,
-    minWidth: number,
-    minHeight: number
-  ): Promise<boolean> => {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => {
-        resolve(img.width >= minWidth && img.height >= minHeight);
-      };
-      img.src = URL.createObjectURL(file);
-    });
-  };
-
-  // 파일 형식 검사 함수
-  const checkFileType = (file: File): boolean => {
-    const acceptedImageTypes = ["image/jpeg", "image/png", "image/gif"];
-    return acceptedImageTypes.includes(file.type);
-  };
-
   // 파일 변경 핸들러 수정
   const handleFileChange = async (
-    e: ChangeEvent<HTMLInputElement>,
-    key: string
+    e: ChangeEvent<HTMLInputElement>, // 파일 선택 이벤트 객체
+    key: string // 파일을 저장할 키 (예: 'profileBannerImgName')
   ) => {
+    // 파일이 선택되었는지 확인
     if (e.target.files && e.target.files.length > 0) {
+      // 선택된 파일
       const file = e.target.files[0];
 
-      if (!checkFileType(file)) {
-        alert("이미지 파일만 업로드 할 수 있습니다.");
-        // 유효하지 않은 파일이 선택된 경우 파일 상태를 초기화
-        setFiles((prevFiles) => ({ ...prevFiles, [key]: null }));
-        e.target.value = ""; // 선택된 파일 초기화
-        return;
-      }
-
-      // let isValid = true;
-      // if (key === "profileBannerImgName") {
-      //   isValid = await checkImageDimensions(file, 600, 210);
-      //   if (!isValid) {
-      //     alert("배너 이미지는 최소 600x210 크기여야 합니다.");
-      //     // 유효하지 않은 파일이 선택된 경우 파일 상태를 초기화
-      //     setFiles((prevFiles) => ({ ...prevFiles, [key]: null }));
-      //     e.target.value = ""; // 선택된 파일 초기화
-      //     return;
-      //   }
-      // } else if (key === "profileImgName") {
-      //   isValid = await checkImageDimensions(file, 160, 160);
-      //   if (!isValid) {
-      //     alert("프로필 이미지는 최소 160x160 크기여야 합니다.");
-      //     // 유효하지 않은 파일이 선택된 경우 파일 상태를 초기화
-      //     setFiles((prevFiles) => ({ ...prevFiles, [key]: null }));
-      //     return;
-      //   }
-      // }
-
+      // 이전 파일 상태를 가져와서 새 파일로 업데이트
       setFiles((prevFiles) => ({ ...prevFiles, [key]: file }));
     }
   };
 
   const authToken =
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjQzNjI4MDh9.-NRuorsHMlb3vmIHjuI77Lh_5vdH9nGrlkDkywRlGPE8fJ9pbx21MTOKKrha-5aOn_aK5JJvfJ32Um2zodolMQ";
+    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjQ2MDczMzh9.BbvfPZE8fzZNQNJdyq0XQz7GaIUYhhLUhoup35KwlfC-92MHXOi3jkILH19lFdDVQkuwtFWRlyRbVZQW8a8QUA";
 
   // 배너 이미지 데이터
   const handleBannerSubmit = async () => {

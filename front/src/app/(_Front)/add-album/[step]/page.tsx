@@ -73,7 +73,7 @@ export default function AddAlbumModal() {
     console.log("다음 버튼 클릭 - 현재 곡 리스트:", songs);
     // 다음 로직 수행
   };
-  
+
   //서버로 보낼 데이터
   // 앨범 및 곡 데이터를 서버로 전송하는 함수
   const sendToServer = () => {
@@ -88,8 +88,6 @@ export default function AddAlbumModal() {
     };
     console.log("서버로 전송할 데이터:", dataToSend);
   };
-
-
 
   //============================================================================
 
@@ -209,9 +207,7 @@ export default function AddAlbumModal() {
 
           {step === 2 && (
             <div className={styles.form__container}>
-              <StepForCheck 
-                title= {title}
-                songs= {songs}/>
+              <StepForCheck title={title} songs={songs} />
               <label className={isChecked ? "" : styles.checkboxError}>
                 <input
                   type="checkbox"
