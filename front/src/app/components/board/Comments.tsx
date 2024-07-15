@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { redirect } from "next/navigation";
 import { LikeIcon, ReplyIcon } from "@/app/components/icon/icon";
+import Reply from "@/app/components/board/Reply";
 
 const Comments = () => {
   const [comment, setComment] = useState(""); //사용자가 작성하는 댓글
   const [comments, setComments] = useState([]); //서버로 부터 받아온 댓글들 (대댓글 포함)
+  const [replyDisplay, setReplyDisplay] = useState(false); //redux 사용해서 적절히 적용
 
   return (
     <>
@@ -18,15 +20,16 @@ const Comments = () => {
           </TimeViewsContainer>
         </ProfileInfo>
         <Content>
-          <ReplyIcon />
-          내용이다
-          띄어쓰기------------------------------------------------------------------------------------
-          ---------------------------------------------------------------------
+          내용이다------------------------------------------------------
+          -------------------------------------------------------------------------------------------
         </Content>
-        <LikeButton>
+        <Option>
           <LikeIcon /> 300
-        </LikeButton>
+          <span> | </span>
+          <ReplyIcon></ReplyIcon>
+        </Option>
       </CommentContainer>
+      <Reply></Reply>
     </>
   );
 };
@@ -46,18 +49,17 @@ const CommentContainer = styled.div`
 
 //댓글 내용
 const Content = styled.span`
-  padding-left: 30px;
+  /* padding-left: 30px; */
   padding-right: 150px;
 `;
 
 //댓글 좋아요 버튼
-// 좋아요 버튼
-const LikeButton = styled.button`
+const Option = styled.div`
   display: flex;
   position: absolute;
   right: 10px;
   gap: 10px;
-  border: none;
+  border: solid;
   border-radius: 20px;
   padding: 10px 20px;
   margin-bottom: 15px;
@@ -72,13 +74,17 @@ const ProfileImage = styled.img`
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  margin-right: 10px;
+  /* margin-right: 10px; */
+  flex-shrink: 0; /* 프로필 이미지 고정 */
+  padding-right: 10px;
+  padding-left: 10px;
 `;
 
 // 프로필 정보
 const ProfileInfo = styled.div`
   display: flex;
   flex-direction: column;
+  padding-right: 20px;
   gap: 5px;
 `;
 

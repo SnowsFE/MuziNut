@@ -9,6 +9,7 @@ import {
 import Image from "next/image";
 import threedot from "../../../../../public/svgs/threedot.svg";
 import Comments from "@/app/components/board/Comments";
+import { getToken, getRefreshToken, setToken } from "@/app/common/common";
 
 interface PostProps {
   title: string;
@@ -37,24 +38,24 @@ const Data: PostProps = {
 
 const PostBox: React.FC = () => {
   const { title, writer, createdDt, view, like, image, write } = Data;
-  const [comment, setComment] = useState(""); //댓글
+  const [comment, setComment] = useState(""); //작성할 댓글
+  const [comments, setComments] = useState([]); //서버로부터 받는 댓글들
   const [reply, setReply] = useState(""); //대댓글
   const [commentLength, setCommentLength] = useState(0); // 댓글 길이 상태 추가
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
+  //초기에 서버로부터 받는 게시판 & 댓글 데이터
   useEffect(() => {
     const fetchUserProfile = async () => {
-      const token = localStorage.getItem("userToken");
-      if (token) {
-        const response = await fetch("/api/user-profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (response.ok) {
-          const data: UserProfile = await response.json();
-          setUserProfile(data);
-        }
+      //Todo 경로 수정
+      const response = await fetch("/api/user-profile", {
+        headers: {
+          Authorization: getToken(),
+        },
+      });
+      if (response.ok) {
+        const data: UserProfile = await response.json();
+        setUserProfile(data);
       }
     };
 
