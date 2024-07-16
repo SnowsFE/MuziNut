@@ -41,6 +41,25 @@ export const useFileState = (onUpload: (data: any) => void) => {
     likeCount: 0,
   });
 
+  // 이미지 사이즈 체크 함수
+  const checkImageSize = (file: File, maxWidth: number, maxHeight: number) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = function (e: ProgressEvent<FileReader>) {
+        const img = new Image();
+        img.onload = function () {
+          if (img.width >= maxWidth && img.height >= maxHeight) {
+            resolve(true); // 권장 사이즈 이상일 경우 true 반환
+          } else {
+            resolve(false); // 권장 사이즈 이하일 경우 false 반환
+          }
+        };
+        img.src = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
   const authToken =
     "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjQ2MDczMzh9.BbvfPZE8fzZNQNJdyq0XQz7GaIUYhhLUhoup35KwlfC-92MHXOi3jkILH19lFdDVQkuwtFWRlyRbVZQW8a8QUA";
 
@@ -53,6 +72,13 @@ export const useFileState = (onUpload: (data: any) => void) => {
       // 선택된 파일
       const file = e.target.files[0];
       console.log(file);
+
+      // 이미지 사이즈 체크 (권장 사이즈: 1280x210)
+      const isSizeValid = await checkImageSize(file, 1280, 210);
+      if (!isSizeValid) {
+        alert("배너 이미지는 1280x210를 권장 합니다!");
+        return;
+      }
 
       // FormData에 파일 추가
       const BannernewFiles = { ...files, [key]: file };
@@ -97,6 +123,13 @@ export const useFileState = (onUpload: (data: any) => void) => {
       const file = e.target.files[0];
       console.log(file);
 
+      // 이미지 사이즈 체크 (권장 사이즈: 160x160)
+      const isSizeValid = await checkImageSize(file, 160, 160);
+      if (!isSizeValid) {
+        alert("프로필 이미지는 최소 160x160 이상을 권장 합니다!");
+        return;
+      }
+
       // FormData에 파일 추가
       const profileFormData = new FormData();
       profileFormData.append("profileImg", file);
@@ -121,39 +154,6 @@ export const useFileState = (onUpload: (data: any) => void) => {
       }
     } else {
       console.error("업로드 파일이 존재하지 않음");
-    }
-  };
-
-  // 프로필 수정 데이터
-  const handleProfileEditSubmit = async () => {
-    const profileEditData = {
-      nickname: profileInfo.nickname,
-      intro: profileInfo.intro,
-    };
-
-    try {
-      const profileEdit = await axios.put(
-        `${AxiosUrl}/users/set-profile-nickname-intro`,
-        profileEditData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
-
-      if (profileEdit.status === 200 && profileEdit.data.success) {
-        console.log("프로필 닉네임 및 소개 업로드 성공:", profileEdit.data);
-        onUpload({
-          nickname: profileEdit.data.nickname,
-          intro: profileEdit.data.intro,
-        });
-      } else {
-        console.error("프로필 닉네임 및 소개 업로드 실패:", profileEdit.data);
-      }
-    } catch (error) {
-      console.error("프로필 닉네임 및 소개 업로드 실패:", error);
     }
   };
 
@@ -196,6 +196,41 @@ export const useFileState = (onUpload: (data: any) => void) => {
     setProfileInfo((prevInfo) => ({ ...prevInfo, [name]: value }));
   };
 
+  // 프로필 데이터 수정
+  const handleProfileEditSubmit = async () => {
+    const profileEditData = {
+      nickname: profileInfo.nickname,
+      intro: profileInfo.intro,
+    };
+
+    try {
+      const profileEdit = await axios.post(
+        `${AxiosUrl}/users/set-profile-nickname-intro`,
+        profileEditData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      setProfileInfo({
+        ...profileInfo,
+        nickname: profileEdit.data.nickname,
+        intro: profileEdit.data.intro,
+      });
+
+      console.log("프로필 닉네임 및 소개 업로드 성공:", profileEdit.data);
+      onUpload({
+        nickname: profileEdit.data.nickname,
+        intro: profileEdit.data.intro,
+      });
+    } catch {
+      console.error("프로필 닉네임 및 소개 업로드 실패");
+    }
+  };
+
   return {
     files,
     profileInfo,
@@ -236,13 +271,23 @@ const BannerData: React.FC<{ onUpload: (data: any) => void }> = ({
 const ProfileData: React.FC<{ onUpload: (data: any) => void }> = ({
   onUpload,
 }) => {
-  const { handleProfileSubmit, profileInfo, setProfileInfo } =
-    useFileState(onUpload);
+  const {
+    handleProfileSubmit,
+    profileInfo,
+    setProfileInfo,
+    handleProfileEditSubmit,
+    handleProfileInfoChange,
+  } = useFileState(onUpload);
 
   const [isEditVisible, setEditVisible] = useState(false);
 
   const handleEditSubmit = async () => {
-    await handleProfileSubmit(null, "profileImgName");
+    await handleProfileEditSubmit();
+    onUpload({
+      // 업로드 함수 호출 추가
+      nickname: profileInfo.nickname,
+      intro: profileInfo.intro,
+    });
     setEditVisible(false);
   };
 
@@ -267,13 +312,14 @@ const ProfileData: React.FC<{ onUpload: (data: any) => void }> = ({
         </Label>
       </UploadForm>
       <ProfileEditForm
-        profileInfo={profileInfo}
-        onChange={(e) =>
+        profileInfoData={profileInfo}
+        onChange={(e) => {
           setProfileInfo((prev) => ({
             ...prev,
             [e.target.name]: e.target.value,
-          }))
-        }
+          }));
+          handleProfileInfoChange(e); // 필요한 경우 추가적인 처리를 위해 이 함수 호출
+        }}
         onSubmit={handleEditSubmit}
         onCancel={handleEditCancel}
         visible={isEditVisible}
@@ -336,10 +382,11 @@ const CustomButton2 = styled.label`
 `;
 
 interface ProfileEditFormProps {
-  profileInfo: {
+  profileInfoData: {
     nickname: string;
     intro: string;
   };
+
   onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onSubmit?: () => void; // 추가: 저장 버튼 클릭 시 호출할 함수
   onCancel?: () => void; // 추가: 취소 버튼 클릭 시 호출할 함수
@@ -347,30 +394,36 @@ interface ProfileEditFormProps {
 }
 
 const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
-  profileInfo,
+  profileInfoData,
   onChange,
   onSubmit,
   onCancel,
   visible,
 }) => {
-  const [tempProfileInfo, setTempProfileInfo] = useState(profileInfo);
+  const [tempProfileInfo, setTempProfileInfo] = useState({
+    nickname: profileInfoData.nickname || "",
+    intro: profileInfoData.intro || "",
+  });
   const [nameError, setNameError] = useState(false);
   const [introduceError, setIntroduceError] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
-  const nameRef = useRef<HTMLInputElement>(null);
-  const introduceRef = useRef<HTMLTextAreaElement>(null);
+  const [nameDuplicateError, setNameDuplicateError] = useState(false); // 닉네임 중복 오류 상태 추가
 
   useEffect(() => {
-    setTempProfileInfo(profileInfo); // 폼이 열릴 때 임시 상태 초기화
+    setTempProfileInfo({
+      nickname: profileInfoData.nickname || "",
+      intro: profileInfoData.intro || "",
+    }); // 폼이 열릴 때 임시 상태 초기화
     setNameError(false);
     setIntroduceError(false); // 폼이 열릴 때 에러 상태 초기화
     setIsChanged(false); // 폼이 열릴 때 변경 상태 초기화
-  }, [profileInfo, visible]);
+    setNameDuplicateError(false); // 닉네임 중복 오류 상태 초기화
+  }, [profileInfoData, visible]);
 
   if (!visible) return null;
 
+  // 프로필 수정 에디터 제출 --------------------------------------------------------
   const handleFormSubmit = () => {
-    // 최소 입력 길이
     if (tempProfileInfo.nickname.length === 0) {
       setNameError(true);
       return;
@@ -380,29 +433,39 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
       return;
     }
 
-    if (nameError || introduceError) return; // 에러가 있으면 제출을 막음
+    if (nameError || introduceError) return;
 
-    // 변경된 값이 없으면 제출을 막음
+    if (tempProfileInfo.nickname === profileInfoData.nickname) {
+      setNameDuplicateError(true);
+      return;
+    }
+
     if (!isChanged) {
       alert("변경된 내용이 없습니다.");
       return;
     }
 
-    Object.keys(tempProfileInfo).forEach((key) => {
-      onChange({
-        target: {
-          name: key,
-          value: tempProfileInfo[key as keyof typeof tempProfileInfo], // tempProfileInfo의 key에 해당하는 값의 타입을 명시적으로 지정
-        },
-      } as ChangeEvent<HTMLInputElement | HTMLTextAreaElement>);
-    });
+    onChange({
+      target: {
+        name: "nickname",
+        value: tempProfileInfo.nickname,
+      },
+    } as ChangeEvent<HTMLInputElement>);
+
+    onChange({
+      target: {
+        name: "intro",
+        value: tempProfileInfo.intro,
+      },
+    } as ChangeEvent<HTMLTextAreaElement>);
 
     if (onSubmit) {
       onSubmit();
       alert("프로필이 성공적으로 저장되었습니다!");
-      onCancel?.(); // 저장 후 폼 밖으로 나가게 함
+      onCancel?.();
     }
   };
+  // 프로필 수정 에디터 제출 --------------------------------------------------------
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -410,31 +473,29 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
     const { name, value } = e.target;
     setTempProfileInfo((prevInfo) => ({ ...prevInfo, [name]: value }));
 
-    // 입력 필드 변경 시 에러 상태 초기화 및 길이 체크
     if (name === "nickname") {
       if (value.trim().length === 0 || value.length > 10) {
         setNameError(true);
       } else {
         setNameError(false);
+        setNameDuplicateError(value === profileInfoData.nickname); // 닉네임 중복 검사
       }
     } else if (name === "intro") {
-      if (value.trim().length === 0 || value.length > 70) {
-        setIntroduceError(true);
-      } else {
-        setIntroduceError(false);
-      }
+      setIntroduceError(value.trim().length === 0 || value.length > 70);
     }
 
-    // 변경된 값이 있는지 확인
-    setIsChanged(value !== profileInfo[name as keyof typeof profileInfo]);
+    setIsChanged(
+      value !== profileInfoData[name as keyof typeof profileInfoData]
+    );
   };
 
   const handleCancel = () => {
     if (window.confirm("정말로 취소하시겠습니까?")) {
-      setTempProfileInfo(profileInfo); // 취소 시 임시 상태 초기화
-      setNameError(false); // 에러 상태 초기화
-      setIntroduceError(false); // 에러 상태 초기화
-      setIsChanged(false); // 변경 상태 초기화
+      setTempProfileInfo(profileInfoData);
+      setNameError(false);
+      setIntroduceError(false);
+      setIsChanged(false);
+      setNameDuplicateError(false);
       onCancel?.();
     }
   };
@@ -447,25 +508,27 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
           닉네임
           <InputField1
             type="text"
-            name="nickname" // name 속성 값 수정
+            name="nickname"
             value={tempProfileInfo.nickname}
             onChange={handleChange}
-            ref={nameRef}
-            style={{ borderColor: nameError ? "red" : "#ccc" }}
+            style={{
+              borderColor: nameError || nameDuplicateError ? "red" : "#ccc",
+            }}
           />
         </InputLabel1>
-        {nameError && (
+        {nameError ? (
           <NameErrorMessage>
             최소 1글자 이상, 최대 10글자까지 입력할 수 있습니다.
           </NameErrorMessage>
-        )}
+        ) : nameDuplicateError ? (
+          <NameErrorMessage>이미 사용중인 닉네임 입니다</NameErrorMessage>
+        ) : null}
         <InputLabel2>
           자기소개
           <InputField2
-            name="intro" // name 속성 값 수정
+            name="intro"
             value={tempProfileInfo.intro}
             onChange={handleChange}
-            ref={introduceRef}
             style={{ borderColor: introduceError ? "red" : "#ccc" }}
           />
         </InputLabel2>

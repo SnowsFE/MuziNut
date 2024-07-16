@@ -186,7 +186,7 @@ const UseridProfile: React.FC = () => {
         ) : null}
       </BodyAlbum>
       <ProfileEditForm
-        profileInfo={profileInfo}
+        profileInfoData={profileInfo}
         onChange={handleProfileInfoChange}
         onSubmit={handleProfileEditSubmit}
         onCancel={closeEditForm}
