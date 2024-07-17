@@ -71,7 +71,20 @@
   font-size: 16px;
   cursor: pointer;
 }
+.timer__box{
+  margin-left: 10px;
+  color: red;
+  flex-shrink: 0;
+  height: 60px;
+  width: 94px;
+  display: flex;
+justify-content: center;
+  align-items: center;
 
+  border: none;
+  /* border: 1px solid black; */
+  
+}
 /* 에러 메시지 나오는 부분 */
 .error__msg {
   margin-top: 30px;
