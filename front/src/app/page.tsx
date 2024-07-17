@@ -30,7 +30,7 @@ const MainPage = () => {
                 <h6>최근 1주일 조회수를 기준으로 순위가 매겨집니다.</h6>
               </div>
             </div>
-            <BestMusic />
+            <BestMusic url="http://localhost:9999/musicChart" />
           </div>
           <div className={styles.music__section__right}>
             <div className={styles.section__title}>
@@ -42,7 +42,7 @@ const MainPage = () => {
 
             <BestArtist />
           </div>
-        </div>
+      </div>
       </section>
 
       {/* 커뮤니티 부분 */}

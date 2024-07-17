@@ -4,12 +4,10 @@ import { useEffect, useState } from "react";
 import styles from "./css/layout.module.css";
 import HeaderAndSide from "./components/HeaderAndSide/HeaderAndSide";
 import { usePathname } from "next/navigation";
+import { UserProvider } from "./components/UserContext";
 
 // Header랑 Sidebar 안 나오게 하는 페이지들
-const HIDDEN_HEADERS = ["/member/login", "/member/signup", "/member/reset-password",
-  "friends-list/chat/*"
-    
-];
+const HIDDEN_HEADERS = ["/member/login", "/member/signup", "/member/reset-password"];
 
 export default function RootLayout({
   children,
@@ -34,6 +32,8 @@ export default function RootLayout({
   console.log("현재 페이지는", isHiddenHeader);
 
   return (
+    <UserProvider>
+
     <html lang="ko">
       <body>
         <div className={styles.container}>
@@ -53,6 +53,8 @@ export default function RootLayout({
         </div>
       </body>
     </html>
+    </UserProvider>
+
   );
 }
 
