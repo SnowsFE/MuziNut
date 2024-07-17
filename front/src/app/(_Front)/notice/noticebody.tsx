@@ -4,12 +4,23 @@ import { FaSearch } from "react-icons/fa";
 import NoticePost from "./noticepost";
 import Image from "next/image";
 import Noticebanner from "../../../../public/images/eventbanner.png";
+import WriteQuill from "./noticewritequill";
 
 const NoticeBody: React.FC = () => {
-  const [selected, setSelected] = useState<string>("인기순");
+  const [selected, setSelected] = useState<string>("최신순");
+  const [writeVisible, setWriteVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const handleSelect = (option: string) => {
     setSelected(option);
+  };
+
+  const openWriteForm = () => {
+    setWriteVisible(true);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
   };
 
   return (
@@ -35,12 +46,22 @@ const NoticeBody: React.FC = () => {
           </ul>
         </NoticeOptions>
         <SearchContainer>
-          <ControllerSearchTitle>제목</ControllerSearchTitle>
-          <ControllerSearch placeholder="공지사항 검색" />
+          <Write onClick={openWriteForm}>글쓰기</Write>
+          <ControllerSearch
+            placeholder="바로 검색"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
           <SearchIcon />
         </SearchContainer>
       </NoticeController>
-      <NoticePost />
+      <NoticePost selected={selected} searchQuery={searchQuery} />
+      {writeVisible && (
+        <WriteQuill
+          onPublish={() => setWriteVisible(false)}
+          onClose={() => setWriteVisible(false)}
+        />
+      )}
     </NoticeContainer>
   );
 };
@@ -110,15 +131,19 @@ const SearchContainer = styled.div`
   position: relative;
 `;
 
-const ControllerSearchTitle = styled.div`
-  background-color: #e9ebf1;
-  color: black;
+// 글쓰기
+const Write = styled.div`
+  background-color: #16be78;
   padding: 10px 15px;
-  border: 1px solid #ddd;
   border-radius: 8px;
   margin-right: 8px;
   font-size: 14px;
-  font-family: "esamanru Medium";
+  font-family: "esamanru Bold";
+  cursor: pointer;
+
+  &:hover {
+    background-color: #1bb373;
+  }
 `;
 
 const ControllerSearch = styled.input`
@@ -145,5 +170,4 @@ const SearchIcon = styled(FaSearch)`
   position: absolute;
   right: 10px;
   color: #888;
-  cursor: pointer;
 `;

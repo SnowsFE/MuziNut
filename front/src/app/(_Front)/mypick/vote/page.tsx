@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { StarIcon } from "../../../components/icon/icon";
 import Image from "next/image";
-import artist from "../../../../../public/images/artist.png";
+import artist from "../../../../../public/images/BaseImg.png";
 import { MoneyIcon, VoteBox } from "../../../components/icon/icon";
 
 interface Artist {

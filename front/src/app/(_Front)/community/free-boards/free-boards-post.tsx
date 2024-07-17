@@ -30,7 +30,9 @@ const FreeBoardsPost: React.FC<FreeBoardsPostProps> = ({ selected }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/free-boards");
+        const res = await axios.get(
+          "http://localhost:8080/community/free-boards"
+        );
         setgetData(res.data);
       } catch (error) {
         console.error("데이터를 불러오지 못했습니다", error);

@@ -15,21 +15,20 @@ import {
   ProfileData,
   useFileState,
   ProfileEditForm,
-} from "./loungeEditor";
-import useAuth from "@/app/security/user-authentication";
+} from "./loungeEdit";
 
 const UseridProfile: React.FC = () => {
-  // // 유저 토큰 인증 ---------------------------------------------------------------------------
-  // useAuth();
-  // // 유저 토큰 인증 ---------------------------------------------------------------------------
-
+  // 셀렉트 탭
   const [selectedTab, setSelectedTab] = useState("lounge");
+  // 글 수정, 삭제 관리
   const [threedotopen, setThreeDotOpen] = useState(
     Array(LoungePostData.length).fill(false)
   );
+  // 댓글 관리
   const [openComments, setOpenComments] = useState(
     Array(LoungePostData.length).fill(false)
   );
+  // 게시글 보이고 안보이고 관리
   const [writeVisible, setWriteVisible] = useState(false);
   const [bannerUrl, setBannerUrl] = useState<string>(BaseBanner.src);
   const [profileUrl, setProfileUrl] = useState<string>(BaseImg.src);
@@ -39,6 +38,7 @@ const UseridProfile: React.FC = () => {
 
   const threedotRef = useRef<HTMLDivElement>(null);
 
+  // 수정, 삭제 버튼
   const handleThreeDotClick = (index: number) => {
     setThreeDotOpen((prev) =>
       prev.map((item, i) => (i === index ? !item : item))
@@ -73,14 +73,35 @@ const UseridProfile: React.FC = () => {
     setEditingIndex(null);
   };
 
-  const onUpload = (data: { bannerUrl?: string; profileUrl?: string }) => {
-    if (data.bannerUrl) {
-      setBannerUrl(data.bannerUrl);
+  // 프로필 배너 업로드 ------------------------------------------------------
+  const [profileBannerImgName, setprofileBannerImgName] = useState<string>(
+    BaseBanner.src
+  );
+  const [profileImgName, setprofileImgName] = useState<string>(BaseImg.src);
+
+  // 업로드 하는 함수
+  const onUpload = (data: {
+    profileBannerImgName?: string;
+    profileImgName?: string;
+  }) => {
+    if (data.profileBannerImgName) {
+      console.log("배너 이미지가 변경되었습니다:", data.profileBannerImgName);
+      setprofileBannerImgName(data.profileBannerImgName);
     }
-    if (data.profileUrl) {
-      setProfileUrl(data.profileUrl);
+    if (data.profileImgName) {
+      console.log("프로필 이미지가 변경되었습니다:", data.profileImgName);
+      setprofileImgName(data.profileImgName);
     }
   };
+
+  const { profileInfo, handleProfileInfoChange, handleProfileEditSubmit } =
+    useFileState((data) => {
+      onUpload({
+        profileBannerImgName: data.profileBannerImgName,
+        profileImgName: data.profileImgName,
+      });
+    });
+  // 프로필 배너 업로드 ------------------------------------------------------
 
   const openEditForm = () => {
     setEditFormVisible(true);
@@ -89,9 +110,6 @@ const UseridProfile: React.FC = () => {
   const closeEditForm = () => {
     setEditFormVisible(false);
   };
-
-  const { profileInfo, handleProfileInfoChange, handleSubmit } =
-    useFileState(onUpload);
 
   // 임시 데이터 - 실제 백엔드 API로 데이터를 받아오는 것으로 대체해야 합니다.
   const tempLoungePostData = [
@@ -143,12 +161,23 @@ const UseridProfile: React.FC = () => {
   return (
     <ProfileContainer>
       <Banner>
-        <Image src={bannerUrl} alt="banner-image" width={1280} height={210} />
+        <Image
+          src={`data:image/png;base64,${profileInfo.profileBannerImgName}`}
+          alt="이곳은 뮤지넛에서 여러분의 고유한 배너 이미지를 사용할 수 있도록 만든 공간입니다
+           배너 이미지는 1280 x 210 으로 설정해주세요"
+          width={1280}
+          height={210}
+        />
         <BannerData onUpload={onUpload} />
       </Banner>
       <Profile>
         <EditForm onClick={openEditForm}>⚙️</EditForm>
-        <Image src={profileUrl} alt="profile-image" width={160} height={160} />
+        <Image
+          src={`data:image/png;base64,${profileInfo.profileImgName}`}
+          alt="profileImgName"
+          width={160}
+          height={160}
+        />
         <ProfileData onUpload={onUpload} />
         <ProfileInfo>
           <ProfileName>{profileInfo.nickname}</ProfileName>
@@ -156,7 +185,11 @@ const UseridProfile: React.FC = () => {
             팔로잉 {profileInfo.followingCount} &nbsp; 팔로워{" "}
             {profileInfo.followersCount}
           </FollowInfo>
-          <ProfileDescription>{profileInfo.intro}</ProfileDescription>
+          {profileInfo.intro ? (
+            <ProfileDescription>{profileInfo.intro}</ProfileDescription>
+          ) : (
+            <ProfileDescription>자기소개를 입력하세요</ProfileDescription>
+          )}
         </ProfileInfo>
       </Profile>
       <SelectBar>
@@ -197,9 +230,9 @@ const UseridProfile: React.FC = () => {
           <LoungeContainer key={index}>
             <LoungeProfileInfo>
               <LoungeProfileImage>
-                {profileInfo.profileImg ? (
+                {profileInfo.profileImgName ? (
                   <Image
-                    src={`data:image/;base64,${profileInfo.profileImg}`}
+                    src={`data:image/;base64,${profileInfo.profileImgName}`}
                     alt="profile-image"
                     width={40}
                     height={40}
@@ -273,7 +306,7 @@ const UseridProfile: React.FC = () => {
         <ProfileEditForm
           profileInfo={profileInfo}
           onChange={handleProfileInfoChange}
-          onSubmit={handleSubmit}
+          onSubmit={handleProfileEditSubmit}
           onCancel={closeEditForm}
           visible={editFormVisible}
         />
@@ -304,7 +337,8 @@ const Banner = styled.div`
   position: relative;
 
   img {
-    background-color: var(--text-color);
+    background-color: white;
+    font-size: 60px;
     border-radius: 20px;
     overflow: hidden;
   }

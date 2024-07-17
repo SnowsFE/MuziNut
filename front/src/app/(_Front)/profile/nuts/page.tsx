@@ -206,7 +206,8 @@ const Banner = styled.div`
   position: relative;
 
   img {
-    background-color: var(--text-color);
+    background-color: white;
+    font-size: 60px;
     border-radius: 20px;
     overflow: hidden;
   }

@@ -1,111 +1,113 @@
-import { useState } from "react";
-import styled from "styled-components";
+import React, { useState, useEffect } from "react";
+import styled, { keyframes } from "styled-components";
+import axios from "axios";
+import AxiosURL from "@/app/axios/url";
 
-const NoticePost: React.FC = () => {
-  const posts = [
-    {
-      id: 1,
-      title: "첫 번째 게시글",
-      author: "작성자1",
-      date: "2024-07-01",
-      views: 100,
-      likes: 10,
-    },
-    {
-      id: 2,
-      title: "두 번째 게시글",
-      author: "작성자2",
-      date: "2024-07-02",
-      views: 150,
-      likes: 20,
-    },
-    {
-      id: 3,
-      title: "세 번째 게시글",
-      author: "작성자3",
-      date: "2024-07-03",
-      views: 200,
-      likes: 30,
-    },
-    {
-      id: 4,
-      title: "네 번째 게시글",
-      author: "작성자4",
-      date: "2024-07-04",
-      views: 250,
-      likes: 40,
-    },
-    {
-      id: 5,
-      title: "다섯 번째 게시글",
-      author: "작성자5",
-      date: "2024-07-05",
-      views: 300,
-      likes: 50,
-    },
-    {
-      id: 6,
-      title: "여섯 번째 게시글",
-      author: "작성자6",
-      date: "2024-07-06",
-      views: 350,
-      likes: 60,
-    },
-    {
-      id: 7,
-      title: "일곱 번째 게시글",
-      author: "작성자7",
-      date: "2024-07-07",
-      views: 400,
-      likes: 70,
-    },
-    {
-      id: 8,
-      title: "여덟 번째 게시글",
-      author: "작성자8",
-      date: "2024-07-08",
-      views: 450,
-      likes: 80,
-    },
-    {
-      id: 9,
-      title: "아홉 번째 게시글",
-      author: "작성자9",
-      date: "2024-07-09",
-      views: 500,
-      likes: 90,
-    },
-    {
-      id: 10,
-      title: "열 번째 게시글",
-      author: "작성자10",
-      date: "2024-07-10",
-      views: 550,
-      likes: 100,
-    },
-    {
-      id: 11,
-      title: "열 번째 게시글",
-      author: "작성자10",
-      date: "2024-07-10",
-      views: 550,
-      likes: 100,
-    },
-  ];
+interface Post {
+  id: number;
+  title: string;
+  writer: string;
+  createdDt: string;
+  view: number;
+  like: number;
+}
 
+interface NoticePostProps {
+  selected: string;
+  searchQuery: string;
+}
+
+const NoticePost: React.FC<NoticePostProps> = ({ selected, searchQuery }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 10;
+  const [adminBoardsForms, setAdminBoardsForms] = useState<Post[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // 현재 페이지에 해당하는 게시글을 계산
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+  const authToken =
+    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9BRE1JTiIsImV4cCI6MTcyNDQ3ODE4OH0.3z2IGByLdk3Q-khCsRjdgK4BtMZs-h51If5vYgF45rgegl8WjUfXoIMDzMsqFLVOquamuJ57dMplJEGevon4PQ";
 
-  // 페이지 번호를 계산
-  const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(posts.length / postsPerPage); i++) {
-    pageNumbers.push(i);
-  }
+  const fetchData = async (page: number) => {
+    setIsLoading(true);
+    try {
+      const res = await axios.get(`${AxiosURL}/community/admin-boards`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+        params: {
+          page: page - 1, // API가 0부터 시작하는 페이지 번호를 사용하는 경우
+          size: postsPerPage,
+        },
+      });
+
+      const { adminBoardsForms, totalPage } = res.data;
+
+      setAdminBoardsForms(adminBoardsForms || []);
+      setTotalPages(totalPage || 1);
+
+      console.log("totalPage:", totalPage);
+      console.log("adminBoardsForms:", adminBoardsForms);
+      console.log("res.data:", res.data);
+    } catch (error) {
+      console.error("데이터를 불러오는 중 오류가 발생했습니다", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(currentPage);
+  }, [currentPage, selected]);
+
+  const sortPosts = (criterion: string, posts: Post[] | undefined): Post[] => {
+    if (!posts || !Array.isArray(posts)) {
+      return [];
+    }
+
+    switch (criterion) {
+      case "인기순":
+        return posts.slice().sort((a, b) => b.view - a.view);
+      case "최신순":
+        return posts
+          .slice()
+          .sort(
+            (a, b) =>
+              new Date(b.createdDt).getTime() - new Date(a.createdDt).getTime()
+          );
+      case "좋아요순":
+        return posts.slice().sort((a, b) => b.like - a.like);
+      default:
+        return posts;
+    }
+  };
+
+  const filterPostsBySearchQuery = (posts: Post[], query: string): Post[] => {
+    if (!query) return posts;
+    return posts.filter((post) =>
+      post.title.toLowerCase().includes(query.toLowerCase())
+    );
+  };
+
+  const sortedPosts = sortPosts(selected, adminBoardsForms);
+  const filteredPosts = filterPostsBySearchQuery(sortedPosts, searchQuery);
+
+  const handlePageClick = (pageNumber: number) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
 
   return (
     <Container>
@@ -118,27 +120,37 @@ const NoticePost: React.FC = () => {
           <HeaderItem>조회수</HeaderItem>
           <HeaderItem>좋아요</HeaderItem>
         </Header>
-        {currentPosts.map((post) => (
-          <Post key={post.id}>
-            <PostItem>{post.title}</PostItem>
-            <PostItem>{post.author}</PostItem>
-            <PostItem>{post.date}</PostItem>
-            <PostItem>{post.views}</PostItem>
-            <PostItem>{post.likes}</PostItem>
-          </Post>
-        ))}
+        {isLoading ? (
+          <LoadingMessage>로딩 중...</LoadingMessage>
+        ) : adminBoardsForms.length === 0 ? (
+          <NoDataMessage>공지사항이 없습니다!</NoDataMessage>
+        ) : filteredPosts.length === 0 ? (
+          <NoDataMessage>검색 결과가 없습니다!</NoDataMessage>
+        ) : (
+          filteredPosts.map((post) => (
+            <Post key={post.id}>
+              <PostItem>{post.title}</PostItem>
+              <PostItem>{post.writer}</PostItem>
+              <PostItem>{post.createdDt}</PostItem>
+              <PostItem>{post.view}</PostItem>
+              <PostItem>{post.like}</PostItem>
+            </Post>
+          ))
+        )}
         <PageNation>
-          <PageButton onClick={() => setCurrentPage(1)}>{"<<"}</PageButton>
-          {pageNumbers.map((number) => (
+          <PageButton onClick={() => handlePageClick(1)}>{"<<"}</PageButton>
+          <PageButton onClick={handlePrevPage}>{"<"}</PageButton>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
             <PageButton
               key={number}
-              onClick={() => setCurrentPage(number)}
+              onClick={() => handlePageClick(number)}
               isActive={number === currentPage}
             >
               {number}
             </PageButton>
           ))}
-          <PageButton onClick={() => setCurrentPage(pageNumbers.length)}>
+          <PageButton onClick={handleNextPage}>{">"}</PageButton>
+          <PageButton onClick={() => handlePageClick(totalPages)}>
             {">>"}
           </PageButton>
         </PageNation>
@@ -164,7 +176,7 @@ const DarkBackground = styled.div`
   background-color: #fff;
   border-radius: 12px;
   z-index: 1;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
 const Content = styled.div`
@@ -187,6 +199,9 @@ const HeaderItem = styled.div`
   flex: 1;
   text-align: center;
   font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const Post = styled.div`
@@ -197,6 +212,7 @@ const Post = styled.div`
   background-color: #fff;
   border-bottom: 1px solid #ebedf3;
   color: black;
+  cursor: pointer;
 `;
 
 const PostItem = styled.div`
@@ -204,6 +220,9 @@ const PostItem = styled.div`
   text-align: center;
   font-size: 13px;
   font-family: "esamanru Medium";
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const PageNation = styled.div`
@@ -219,14 +238,30 @@ const PageButton = styled.div<{ isActive?: boolean }>`
   font-size: 14px;
   font-family: "esamanru Medium";
   margin: 0 5px;
+  cursor: pointer;
   width: 20px;
   text-align: center;
   padding: 8.5px 7px;
-  cursor: pointer;
   border-radius: 5px;
   background-color: ${({ isActive }) => (isActive ? "#ddd" : "#f1f1f1")};
   &:hover {
     background-color: #ddd;
   }
   color: black;
+`;
+
+// 로딩 메시지
+const LoadingMessage = styled.div`
+  padding: 40px 0 5px 0;
+  text-align: center;
+  font-size: 20px;
+  color: #16be78;
+`;
+
+// 데이터 없음 메시지
+const NoDataMessage = styled.div`
+  padding: 40px 0 5px 0;
+  text-align: center;
+  font-size: 20px;
+  color: #16be78;
 `;

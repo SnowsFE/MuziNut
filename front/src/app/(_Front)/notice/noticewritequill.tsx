@@ -1,8 +1,8 @@
-import React, { useMemo, useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
 import styled, { keyframes, css } from "styled-components";
-import QuillToolbar from "../../profile/lounge/EditorOption";
+import QuillToolbar from "../profile/lounge/EditorOption";
 import Quill from "quill";
 import AxiosURL from "@/app/axios/url";
 
@@ -14,33 +14,34 @@ const Size = Quill.import("attributors/style/size");
 Size.whitelist = ["13px", "16px", "18px", "24px", "28px", "32px"];
 Quill.register(Size, true);
 
-const WriteQuill: React.FC<{
+const NoticeWriteQuill: React.FC<{
   onPublish: (content: string) => void;
   onClose: () => void;
   initialContent?: string;
 }> = ({ onPublish, onClose, initialContent }) => {
   const quillRef = useRef<ReactQuill>(null);
   const [content, setContent] = useState<string>(initialContent || "");
+  const [title, setTitle] = useState<string>("");
   const [visible, setVisible] = useState<boolean>(true);
-  const [render, setRender] = useState<boolean>(true);
 
   useEffect(() => {
     if (!visible) {
-      const timer = setTimeout(() => setRender(false), 500);
+      const timer = setTimeout(() => setVisible(false), 500);
       return () => clearTimeout(timer);
     }
   }, [visible]);
 
-  const modules = useMemo(() => {
-    return {
+  const modules = useMemo(
+    () => ({
       toolbar: {
         container: "#toolbar",
         handlers: {
           image: handleImageUpload,
         },
       },
-    };
-  }, [content, initialContent, onClose, onPublish]);
+    }),
+    []
+  );
 
   useEffect(() => {
     const quill = quillRef.current?.getEditor();
@@ -52,29 +53,74 @@ const WriteQuill: React.FC<{
 
   const handleChange = (content: string) => {
     setContent(content);
-    console.log("글 변경", content);
   };
 
   const handleImageUpload = () => {
     const input = document.createElement("input");
     input.setAttribute("type", "file");
     input.setAttribute("accept", "image/*");
+
     input.onchange = async () => {
       const file = input.files?.[0];
       if (file) {
-        await handleSubmit(file);
+        const reader = new FileReader();
+
+        reader.onload = async (e) => {
+          const base64Data = e.target?.result as string;
+          const quill = quillRef.current?.getEditor();
+          if (quill) {
+            const range = quill.getSelection();
+            if (range) {
+              // 이미지를 Base64 형태로 Quill 에디터에 삽입
+              quill.clipboard.dangerouslyPasteHTML(
+                range.index,
+                `<img src="${base64Data}" />`
+              );
+            }
+          }
+        };
+
+        reader.readAsDataURL(file);
       }
     };
+
     input.click();
   };
 
-  const handleSubmit = async (file?: File) => {
+  const token =
+    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9BRE1JTiIsImV4cCI6MTcyNDQ3ODE4OH0.3z2IGByLdk3Q-khCsRjdgK4BtMZs-h51If5vYgF45rgegl8WjUfXoIMDzMsqFLVOquamuJ57dMplJEGevon4PQ";
+
+  const handleSubmit = async () => {
+    if ((title.trim() === "" || null) && (content.trim() === "" || null)) {
+      alert("작성하고 싶은 글을 작성해 주세요");
+      return;
+    }
+
+    if (title.trim() === "") {
+      alert("제목을 입력해주세요");
+      return;
+    }
+
+    if (content.trim() === "") {
+      alert("내용을 입력해주세요");
+      return;
+    }
+
     const formData = new FormData();
-    formData.append("content", content);
+    formData.append(
+      "form",
+      new Blob([JSON.stringify({ title })], { type: "application/json" })
+    );
+
+    const contentBlob = new Blob([content], { type: "text/html" });
+    formData.append("quillFile", contentBlob);
 
     try {
-      const response = await fetch(`${AxiosURL}/community/event-boards`, {
+      const response = await fetch(`${AxiosURL}/community/admin-boards`, {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: formData,
       });
 
@@ -83,17 +129,18 @@ const WriteQuill: React.FC<{
 
         // 글 등록 또는 수정 후에 최신 상태 반영
         if (initialContent !== null && initialContent !== undefined) {
-          // 글 수정 시
           const updatedContent = content;
           onPublish(updatedContent);
         } else {
-          // 글 등록 시
           onPublish(content);
         }
 
         // 에디터 닫기
         setVisible(false);
         onClose();
+
+        // 페이지 새로 고침
+        window.location.reload();
       } else {
         console.error("글 등록에 실패했습니다.");
       }
@@ -108,11 +155,16 @@ const WriteQuill: React.FC<{
       <EditorContainer visible={visible}>
         <Title>글쓰기</Title>
         <MainTitle>
-          <MainTitleInput type="text" placeholder="제목" />
+          <MainTitleInput
+            type="text"
+            placeholder="제목"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
         </MainTitle>
         <QuillToolbar />
         <CustomReactQuill
-          placeholder="자유롭게 여러분의 생각을 나눠보세요."
+          placeholder="이벤트 및 공지사항"
           theme="snow"
           ref={quillRef}
           value={content}
@@ -137,7 +189,7 @@ const WriteQuill: React.FC<{
   );
 };
 
-export default WriteQuill;
+export default NoticeWriteQuill;
 
 const fadeOut = keyframes`
   from {
