@@ -1,16 +1,12 @@
 import React from "react";
 import styles from "./page.module.css";
-import TabProvider from "@/app/components/chart/TabProvider";
-import ArtistTab from "@/app/components/chart/ArtistTab";
 import ArtistTableRow from "@/app/components/chart/ArtistList";
 
 const artist = () => {
   return (
     <div className={styles.container}>
-      <TabProvider>
-        <ArtistTab />
+        <div>인기아티스트 Top50</div>
         <ArtistList />
-      </TabProvider>
     </div>
   );
 };

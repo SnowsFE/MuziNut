@@ -2,6 +2,12 @@ import Image from "next/image";
 import search from "@/../public/images/favicon.png";
 import styles from "../chart/css/ArtistList.module.css";
 
+const ArtistData = [
+  {artistName: 'string'},
+  {img: "sdf/"}
+]
+
+
 const ArtistTableRow = () => (
   <tr className={styles.tr__wrap}>
     <td className={styles.td1__ranking}>
