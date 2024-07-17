@@ -10,6 +10,7 @@ import menuBar from "@/../public/svgs/menu.svg";
 import DarkMode from "../darkmode/globalstyle";
 import Link from "next/link";
 import LoginBtn from "./loginButton/loginBtn";
+import { useUser } from "../UserContext";
 
 interface NavbarProps {
   toggleSidebar: () => void;
@@ -24,6 +25,8 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
     setIsSidebarOpen(!isSidebarOpen); // 2) Sidebar의 열림/닫힘 상태를 반전
     toggleSidebar();
   }
+
+  const { user } = useUser(); // UserContext로부터 현재 사용자 정보 가져오기
 
   return (
     <div className={styles.header__container}>
@@ -55,9 +58,16 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
       {/* 오른쪽 nav 메뉴 */}
       <div className={styles.right__section}>
         <div className={styles.album__upload}>
-          <Link href="/add-album/[step]" as="/add-album/1">
-            <Image src={addalbum} alt="addalbum" width={40} height={40} />
-          </Link>
+          {/* 로그인 상태에 따라 다른 링크 설정 */}
+          {user ? (
+            <Link href="/add-album/[step]" as="/add-album/1">
+              <Image src={addalbum} alt="addalbum" width={40} height={40} />
+            </Link>
+          ) : (
+            <Link href="/member/login">
+              <Image src={addalbum} alt="addalbum" width={40} height={40} />
+            </Link>
+          )}
           <span>업로드</span>
         </div>
 
@@ -66,21 +76,32 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
 
         <div className={styles.divided__line}></div>
 
-        <a href="/friends-list/chat">
-          <Image src={chat} alt="chat" width={40} height={40} />
-        </a>
+        {/* 로그인 상태에 따라 다른 링크 설정 */}
+        {user ? (
+          <Link href="/friends-list/chat">
+            <Image src={chat} alt="chat" width={40} height={40} />
+          </Link>
+        ) : (
+          <Link href="/member/login">
+            <Image src={chat} alt="chat" width={40} height={40} />
+          </Link>
+        )}
 
-        <a href="#">
-          <Image src={alarm} alt="alarm" width={40} height={40} />
-        </a>
+        {/* 로그인 상태에 따라 다른 링크 설정 */}
+        {user ? (
+          <Link href="/test">
+            <Image src={alarm} alt="alarm" width={40} height={40} />
+          </Link>
+        ) : (
+          <Link href="/member/login">
+            <Image src={alarm} alt="alarm" width={40} height={40} />
+          </Link>
+        )}
 
-        <a href="#">
-          <div className={styles.login__btn}>
-            <LoginBtn />
-          </div>
-          {/* <Image src={profile} alt="profile" width={40} height={40} />
-          <Image src={downarrow} alt="downarrow" width={24} height={40} /> */}
-        </a>
+        {/* 로그인 버튼 */}
+        <div className={styles.login__btn}>
+          <LoginBtn />
+        </div>
       </div>
     </div>
   );
