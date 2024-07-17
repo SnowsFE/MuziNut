@@ -4,6 +4,7 @@ import styles from "./commonButton.module.css";
 import Image from "next/image";
 import heartIcon from '@/../../public/svgs/heart.svg'
 import heartFillIcon from '@/../../public/svgs/heart_fill.svg'
+import { useRouter } from "next/navigation";
 
 /*일반 버튼
 버튼 안에 텍스트
@@ -46,4 +47,20 @@ const HeartButton: React.FC = () => {
   );
 };
 
-export { CommonButton, HeartButton };
+const BackButton = () => {
+  const router = useRouter();
+
+  const onClickClose = () => {
+      router.back();
+  }
+
+  return (
+      <button onClick={onClickClose}>
+          <Image src="../../../public/svgs/close_btn.svg" alt="close_btn" width={30} height={30}/>
+
+      </button>
+  ) 
+}
+
+
+export { CommonButton, HeartButton, BackButton };
