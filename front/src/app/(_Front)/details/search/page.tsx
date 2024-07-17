@@ -57,42 +57,6 @@ const Search = () => {
 
 export default Search;
 
-// const ArtistList = () => {
-//   const rows = Array.from({ length: 2 }, (_, index) => (
-//     <ArtistTableRow key={index} />
-//   ));
-
-//   return (
-//     <div className={styles.artist__conatiner}>
-//       <table className={styles.table}>
-//         <tbody>{rows}</tbody>
-//       </table>
-//     </div>
-//   );
-// };
-
-// const MusicList = () => {
-//   const rows = Array.from({ length: 5 }, (_, index) => (
-//     <MusicTableRow key={index} />
-//   ));
-
-//   return (
-//     <div className={styles.music__container}>
-//       <div className={styles.play__option}>
-//         <a href="#">
-//           <button>전체 재생</button>
-//         </a>
-//         <a href="#">
-//           <button>선택 재생</button>
-//         </a>
-//       </div>
-//       <table className={styles.table}>
-//         <tbody>{rows}</tbody>
-//       </table>
-//     </div>
-//   );
-// };
-
 const ITEMS_PER_PAGE__ARTIST = 5;
 const ITEMS_PER_PAGE__MUSIC = 10;
 const ArtistList = () => {
@@ -116,7 +80,10 @@ const ArtistList = () => {
   };
 
   const startIdx = (currentPage - 1) * ITEMS_PER_PAGE__ARTIST;
-  const currentRows = allRows.slice(startIdx, startIdx + ITEMS_PER_PAGE__ARTIST);
+  const currentRows = allRows.slice(
+    startIdx,
+    startIdx + ITEMS_PER_PAGE__ARTIST
+  );
 
   return (
     <div className={styles.artist__container}>
@@ -136,10 +103,7 @@ const ArtistList = () => {
             {index + 1}
           </button>
         ))}
-        <button
-          onClick={handleNextPage}
-          disabled={currentPage === totalPages}
-        >
+        <button onClick={handleNextPage} disabled={currentPage === totalPages}>
           다음
         </button>
       </div>
@@ -196,10 +160,7 @@ const MusicList = () => {
             {index + 1}
           </button>
         ))}
-        <button
-          onClick={handleNextPage}
-          disabled={currentPage === totalPages}
-        >
+        <button onClick={handleNextPage} disabled={currentPage === totalPages}>
           다음
         </button>
       </div>
