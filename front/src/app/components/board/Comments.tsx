@@ -3,11 +3,33 @@ import styled from "styled-components";
 import { redirect } from "next/navigation";
 import { LikeIcon, ReplyIcon } from "@/app/components/icon/icon";
 import Reply from "@/app/components/board/Reply";
+import WriteReplyForm from "../board/WriteReplyForm";
+import axios from "axios";
+import { headers } from "next/headers";
+import { error } from "console";
 
 const Comments = () => {
   const [comment, setComment] = useState(""); //사용자가 작성하는 댓글
   const [comments, setComments] = useState([]); //서버로 부터 받아온 댓글들 (대댓글 포함)
-  const [replyDisplay, setReplyDisplay] = useState(false); //redux 사용해서 적절히 적용
+  let [modal, setModal] = useState(false); //대댓글 모달창
+
+  const likeButtonHandler = async () => {
+    alert("댓글 좋아요 클릭");
+    //Todo 댓글에 대한 pk 를 받아와서 좋아요 전송할 것
+    // const response = await axios
+    //   .post(`http://localhost:8080/comment-like/${commentId}`, {
+    //     headers: { Authorization: `Bearer token` },
+    //   })
+    //   .catch(function (error) {
+    //     if (error.response.data.status == 401) {
+    //       alert("만료된 토큰입니다"); //Todo 리프레시 토큰 전송
+    //     }
+    //   });
+  };
+
+  const replyButtonHandler = () => {
+    modal == true ? setModal(false) : setModal(true);
+  };
 
   return (
     <>
@@ -24,11 +46,19 @@ const Comments = () => {
           -------------------------------------------------------------------------------------------
         </Content>
         <Option>
-          <LikeIcon /> 300
+          <LikeButton onClick={likeButtonHandler}>
+            <LikeIcon />
+            <LikeCount>300</LikeCount>
+          </LikeButton>
           <span> | </span>
-          <ReplyIcon></ReplyIcon>
+          <ReplyButton onClick={replyButtonHandler}>
+            <ReplyIcon></ReplyIcon>
+          </ReplyButton>
         </Option>
       </CommentContainer>
+      {/* 대댓글 모달창 */}
+      {modal == true ? <WriteReplyForm></WriteReplyForm> : null}
+      {/* 대댓글 리스트 */}
       <Reply></Reply>
     </>
   );
@@ -50,7 +80,7 @@ const CommentContainer = styled.div`
 //댓글 내용
 const Content = styled.span`
   /* padding-left: 30px; */
-  padding-right: 150px;
+  padding-right: 165px;
 `;
 
 //댓글 좋아요 버튼
@@ -61,7 +91,7 @@ const Option = styled.div`
   gap: 10px;
   border: solid;
   border-radius: 20px;
-  padding: 10px 20px;
+  padding: 5px 10px;
   margin-bottom: 15px;
   cursor: pointer;
   font-size: 12px;
@@ -104,4 +134,25 @@ const TimeViewsContainer = styled.div`
 const Time = styled.div`
   font-size: 12px;
   color: #888;
+`;
+
+// 좋아요 버튼
+const LikeButton = styled.button`
+  display: flex;
+  border: 0;
+  background-color: transparent;
+  align-items: center;
+  font-family: "esamanru Medium";
+`;
+
+const LikeCount = styled.span`
+  padding-left: 5px;
+`;
+
+const ReplyButton = styled.button`
+  display: flex;
+  border: 0;
+  background-color: transparent;
+  align-items: center;
+  cursor: pointer;
 `;

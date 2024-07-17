@@ -40,7 +40,7 @@ const ProfileEdit: React.FC = () => {
   useEffect(() => {
     // 유효성 검사 상태에 따라 변경 여부 업데이트
     setIsChanged(!(nameError || introduceError || nameDuplicateError));
-  }, [nameError, introduceError, nameDuplicateError]);
+  }, [nickname, intro, nameError, introduceError, nameDuplicateError]);
 
   const handleSubmit = async () => {
     const editData = {
@@ -49,7 +49,8 @@ const ProfileEdit: React.FC = () => {
     };
 
     try {
-      const profileEdit = await axios.post(
+      alert(`프로필 수정 요청 ${AxiosURL}/users/set-profile-nickname-intro`);
+      const profileEdit = await axios.patch(
         `${AxiosURL}/users/set-profile-nickname-intro`,
         editData,
         {
@@ -130,7 +131,12 @@ const ProfileEdit: React.FC = () => {
           )}
           <ButtonContainer>
             <CancelButton onClick={handleCancel}>취소</CancelButton>
-            <SaveButton onClick={handleSubmit} disabled={!isChanged}>
+            <SaveButton
+              disabled={
+                !isChanged || nameError || introduceError || nameDuplicateError
+              }
+              onClick={handleSubmit}
+            >
               저장
             </SaveButton>
           </ButtonContainer>
@@ -251,8 +257,7 @@ const ButtonContainer = styled.div`
 `;
 
 const SaveButton = styled.button<{ disabled: boolean }>`
-  background-color: ${(props) =>
-    props.disabled ? "#b0dab9" : "#16be78"}; /* 비활성화 시 색상 */
+  background-color: ${(props) => (props.disabled ? "#b0dab9" : "#16be78")};
   color: white;
   border: none;
   border-radius: 25px;
@@ -262,8 +267,12 @@ const SaveButton = styled.button<{ disabled: boolean }>`
   cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
 
   &:hover {
-    background-color: ${(props) =>
-      props.disabled ? "#b0dab9" : "#13a86a"}; /* 비활성화 시 hover 색상 */
+    background-color: ${(props) => (props.disabled ? "#b0dab9" : "#13a86a")};
+  }
+
+  &:disabled {
+    background-color: #b0dab9;
+    cursor: not-allowed;
   }
 `;
 
