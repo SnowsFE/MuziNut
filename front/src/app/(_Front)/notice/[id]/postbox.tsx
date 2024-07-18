@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Submit } from "@/app/components/icon/icon";
-import {
-  MiniViewIcon,
-  LikeIcon,
-  BookMarkIcon,
-} from "@/app/components/icon/icon";
-import Image from "next/image";
+import { LikeIcon } from "@/app/components/icon/icon";
 import threedot from "../../../../../public/svgs/threedot.svg";
 import Comments from "@/app/components/board/Comments";
 import WriterProfileInfo from "@/app/components/board/WriterProfileInfo";
 import WriteCommentForm from "@/app/components/board/WriteCommentForm";
 
-import { getToken, getRefreshToken, setToken } from "@/app/common/common";
+import { getToken } from "@/app/common/common";
 
 interface PostProps {
   title: string;

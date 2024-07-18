@@ -1,10 +1,6 @@
 import styled from "styled-components";
 import Image from "next/image";
-import {
-  MiniViewIcon,
-  LikeIcon,
-  BookMarkIcon,
-} from "@/app/components/icon/icon";
+import { MiniViewIcon, BookMarkIcon } from "@/app/components/icon/icon";
 import React from "react";
 
 interface WriterProfileInfoProps {

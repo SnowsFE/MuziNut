@@ -167,7 +167,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
           params: { userId },
         });
         const data = response.data;
-        console.log("프로필 데이터 가져옴:", data);
+        // console.log("프로필 데이터 가져옴:", data);
 
         setProfileInfo(data);
         setAlbumInfo(data);

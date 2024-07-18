@@ -2,39 +2,84 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import BaseImg from "../../../../../public/images/BaseImg.png";
-import BaseBanner from "../../../../../public/images/BaseBanner.png";
 import threedot from "../../../../../public/svgs/threedot.svg";
 import Link from "next/link";
 import { LikeIcon, CommentIcon } from "../../../components/icon/icon";
-import { LoungePostData } from "../userdata";
 import { OpenComment } from "./comment";
 import WriteEditor from "./WriteEditor";
-import {
-  BannerData,
-  ProfileData,
-  useFileState,
-  ProfileEditForm,
-} from "./loungeEdit";
+import { BannerData, ProfileData, useFileState } from "./loungeEdit";
+import ProfileEdit from "../profileEdit";
 
 const UseridProfile: React.FC = () => {
-  // 셀렉트 탭
+  // 프로필, 배너 이미지 업로드 ------------------------------------------------------
   const [selectedTab, setSelectedTab] = useState("lounge");
-  // 글 수정, 삭제 관리
-  const [threedotopen, setThreeDotOpen] = useState(
-    Array(LoungePostData.length).fill(false)
-  );
-  // 댓글 관리
-  const [openComments, setOpenComments] = useState(
-    Array(LoungePostData.length).fill(false)
-  );
+  const [profileBannerImgName, setProfileBannerImgName] = useState<string>("");
+  const [profileImgName, setProfileImgName] = useState<string>("");
+  const [loungeBoardsString, setloungeBoardsString] = useState<string>("");
+  const [loungeBoardsNumber, setloungeBoardsNumber] = useState<number>();
+
+  // 업로드 하는 함수
+  const onUpload = (data: {
+    profileBannerImgName?: string | object;
+    profileImgName?: string | object;
+    filename?: string | object;
+  }) => {
+    if (typeof data.profileBannerImgName === "string") {
+      console.log("배너 이미지가 변경되었습니다:", data.profileBannerImgName);
+      setProfileBannerImgName(data.profileBannerImgName);
+    }
+    if (typeof data.profileImgName === "string") {
+      console.log("프로필 이미지가 변경되었습니다:", data.profileImgName);
+      setProfileImgName(data.profileImgName);
+    }
+    if (typeof data.filename === "string") {
+      console.log("게시글 본문이 등록되었습니다", data.filename);
+      setloungeBoardsString(data.filename);
+    }
+  };
+
+  const { profileInfo, boardsData } = useFileState((data) => {
+    onUpload({
+      profileBannerImgName: data.profileBannerImgName,
+      profileImgName: data.profileImgName,
+      filename: data.filename,
+    });
+  });
+
+  useEffect(() => {
+    if (profileInfo) {
+      setProfileBannerImgName(profileInfo.profileBannerImgName || "");
+      setProfileImgName(profileInfo.profileImgName || "");
+    }
+  }, [profileInfo]);
+
+  useEffect(() => {
+    if (boardsData) {
+      setloungeBoardsString(boardsData.filename || "");
+      setloungeBoardsString(boardsData.writer || "");
+      setloungeBoardsString(boardsData.createdDt || "");
+      setloungeBoardsNumber(boardsData.id);
+      setloungeBoardsNumber(boardsData.like);
+    }
+  }, [boardsData]);
+  // 프로필, 배너 이미지 업로드 ------------------------------------------------------
+
   // 게시글 보이고 안보이고 관리
   const [writeVisible, setWriteVisible] = useState(false);
-  const [bannerUrl, setBannerUrl] = useState<string>(BaseBanner.src);
-  const [profileUrl, setProfileUrl] = useState<string>(BaseImg.src);
-  const [editFormVisible, setEditFormVisible] = useState(false);
   const [publishedContent, setPublishedContent] = useState<string[]>([]);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+
+  // 글 수정, 삭제 관리
+  const [threedotopen, setThreeDotOpen] = useState<boolean[]>([]);
+  // 댓글 관리
+  const [openComments, setOpenComments] = useState<boolean[]>([]);
+
+  useEffect(() => {
+    if (publishedContent.length > 0) {
+      setThreeDotOpen(Array(publishedContent.length).fill(false));
+      setOpenComments(Array(publishedContent.length).fill(false));
+    }
+  }, [publishedContent]);
 
   const threedotRef = useRef<HTMLDivElement>(null);
 
@@ -51,7 +96,7 @@ const UseridProfile: React.FC = () => {
         threedotRef.current &&
         !threedotRef.current.contains(event.target as Node)
       ) {
-        setThreeDotOpen(Array(LoungePostData.length).fill(false));
+        setThreeDotOpen(Array(publishedContent.length).fill(false));
       }
     };
 
@@ -72,63 +117,6 @@ const UseridProfile: React.FC = () => {
     setWriteVisible(true);
     setEditingIndex(null);
   };
-
-  // 프로필 배너 업로드 ------------------------------------------------------
-  const [profileBannerImgName, setprofileBannerImgName] = useState<string>(
-    BaseBanner.src
-  );
-  const [profileImgName, setprofileImgName] = useState<string>(BaseImg.src);
-
-  // 업로드 하는 함수
-  const onUpload = (data: {
-    profileBannerImgName?: string;
-    profileImgName?: string;
-  }) => {
-    if (data.profileBannerImgName) {
-      console.log("배너 이미지가 변경되었습니다:", data.profileBannerImgName);
-      setprofileBannerImgName(data.profileBannerImgName);
-    }
-    if (data.profileImgName) {
-      console.log("프로필 이미지가 변경되었습니다:", data.profileImgName);
-      setprofileImgName(data.profileImgName);
-    }
-  };
-
-  const { profileInfo, handleProfileInfoChange, handleProfileEditSubmit } =
-    useFileState((data) => {
-      onUpload({
-        profileBannerImgName: data.profileBannerImgName,
-        profileImgName: data.profileImgName,
-      });
-    });
-  // 프로필 배너 업로드 ------------------------------------------------------
-
-  const openEditForm = () => {
-    setEditFormVisible(true);
-  };
-
-  const closeEditForm = () => {
-    setEditFormVisible(false);
-  };
-
-  // 임시 데이터 - 실제 백엔드 API로 데이터를 받아오는 것으로 대체해야 합니다.
-  const tempLoungePostData = [
-    {
-      profileImage: profileUrl,
-      profileName: "사용자 이름",
-      uploadTime: new Date().toLocaleDateString(),
-      content: "임시 데이터 내용입니다.",
-      bannerImage: BaseBanner.src,
-      like: 0,
-      comment: 0,
-    },
-    // 추가적인 임시 데이터를 필요에 따라 추가할 수 있습니다.
-  ];
-
-  // 컴포넌트가 처음 렌더링될 때 임시 데이터를 설정합니다.
-  useEffect(() => {
-    setPublishedContent(tempLoungePostData.map((post) => post.content));
-  }, []);
 
   // 글 등록 콜백 함수
   const handlePublish = (content: string) => {
@@ -162,19 +150,18 @@ const UseridProfile: React.FC = () => {
     <ProfileContainer>
       <Banner>
         <Image
-          src={`data:image/png;base64,${profileInfo.profileBannerImgName}`}
-          alt="이곳은 뮤지넛에서 여러분의 고유한 배너 이미지를 사용할 수 있도록 만든 공간입니다
-           배너 이미지는 1280 x 210 으로 설정해주세요"
+          src={`data:image/png;base64,${profileBannerImgName}`}
+          alt="배너 이미지"
           width={1280}
           height={210}
         />
         <BannerData onUpload={onUpload} />
       </Banner>
       <Profile>
-        <EditForm onClick={openEditForm}>⚙️</EditForm>
+        <ProfileEdit />
         <Image
-          src={`data:image/png;base64,${profileInfo.profileImgName}`}
-          alt="profileImgName"
+          src={`data:image/png;base64,${profileImgName}`}
+          alt="프로필 이미지"
           width={160}
           height={160}
         />
@@ -185,11 +172,9 @@ const UseridProfile: React.FC = () => {
             팔로잉 {profileInfo.followingCount} &nbsp; 팔로워{" "}
             {profileInfo.followersCount}
           </FollowInfo>
-          {profileInfo.intro ? (
-            <ProfileDescription>{profileInfo.intro}</ProfileDescription>
-          ) : (
-            <ProfileDescription>자기소개를 입력하세요</ProfileDescription>
-          )}
+          <ProfileDescription>
+            {profileInfo.intro || "자기소개를 입력하세요"}
+          </ProfileDescription>
         </ProfileInfo>
       </Profile>
       <SelectBar>
@@ -230,23 +215,14 @@ const UseridProfile: React.FC = () => {
           <LoungeContainer key={index}>
             <LoungeProfileInfo>
               <LoungeProfileImage>
-                {profileInfo.profileImgName ? (
-                  <Image
-                    src={`data:image/;base64,${profileInfo.profileImgName}`}
-                    alt="profile-image"
-                    width={40}
-                    height={40}
-                  />
-                ) : (
-                  <Image
-                    src={BaseImg}
-                    alt="base-profile-image"
-                    width={40}
-                    height={40}
-                  />
-                )}
+                <Image
+                  src={`data:image/;base64,${profileImgName}`}
+                  alt="profile-image"
+                  width={40}
+                  height={40}
+                />
               </LoungeProfileImage>
-              <LoungeProfileName>{profileInfo.nickname}</LoungeProfileName>
+              <LoungeProfileName>{boardsData.writer}</LoungeProfileName>
               <LoungeProfileUploadTime>
                 {new Date().toLocaleDateString()}
               </LoungeProfileUploadTime>
@@ -269,10 +245,10 @@ const UseridProfile: React.FC = () => {
               </LoungeProfileDetail>
             </LoungeProfileInfo>
             <LoungeWriteContainer>
-              <LoungeWrite>{content}</LoungeWrite>
+              <LoungeWrite>{profileBannerImgName}</LoungeWrite>
               <LoungeImage>
                 <Image
-                  src={BaseBanner}
+                  src={`data:image/png;base64,${profileBannerImgName}`}
                   alt="배너 이미지"
                   width={1280}
                   height={256}
@@ -282,17 +258,18 @@ const UseridProfile: React.FC = () => {
             <LoungeLikeCommentContainer>
               <LoungeLike>
                 <LikeIcon />
-                {LoungePostData[index].like}
+                {boardsData.like}
               </LoungeLike>
               <LoungeComment onClick={() => handleCommentToggle(index)}>
                 <CommentIcon />
-                {LoungePostData[index].comment}
+                {/* {boardsData.comment} */}
               </LoungeComment>
             </LoungeLikeCommentContainer>
             {openComments[index] && <OpenComment />}
           </LoungeContainer>
         ))}
       </Lounge>
+      {/* 수정하기 부분 */}
       {writeVisible && (
         <WriteEditor
           onPublish={handlePublish}
@@ -300,15 +277,6 @@ const UseridProfile: React.FC = () => {
           initialContent={
             editingIndex !== null ? publishedContent[editingIndex] : undefined
           }
-        />
-      )}
-      {editFormVisible && (
-        <ProfileEditForm
-          profileInfo={profileInfo}
-          onChange={handleProfileInfoChange}
-          onSubmit={handleProfileEditSubmit}
-          onCancel={closeEditForm}
-          visible={editFormVisible}
         />
       )}
     </ProfileContainer>
@@ -464,10 +432,6 @@ const LoungeProfileInfo = styled.div`
   gap: 7px;
   font-size: 13px;
   align-items: center;
-
-  :first-child {
-    margin-right: 2px;
-  }
 `;
 
 // 라운지 게시글 프로필 정보
@@ -495,10 +459,6 @@ const LoungeProfileDetail = styled.div`
   margin-left: auto; /* 오른쪽 끝으로 이동 */
   position: relative;
   cursor: pointer;
-
-  border: 1px solid none;
-  background-color: white;
-  border-radius: 7px;
 
   img {
     &:hover {

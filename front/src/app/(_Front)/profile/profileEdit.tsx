@@ -49,7 +49,6 @@ const ProfileEdit: React.FC = () => {
     };
 
     try {
-      alert(`프로필 수정 요청 ${AxiosURL}/users/set-profile-nickname-intro`);
       const profileEdit = await axios.patch(
         `${AxiosURL}/users/set-profile-nickname-intro`,
         editData,
@@ -61,9 +60,9 @@ const ProfileEdit: React.FC = () => {
         }
       );
 
-      setNickname(profileEdit.data.nickname);
-      setIntro(profileEdit.data.intro);
-      console.log("프로필 닉네임 및 소개 업로드 성공:", profileEdit.data);
+      // setNickname(profileEdit.data.nickname);
+      // setIntro(profileEdit.data.intro);
+      // console.log("프로필 닉네임 및 소개 업로드 성공:", profileEdit.data);
       alert("프로필이 수정되었습니다😆");
       window.location.reload();
     } catch (error) {

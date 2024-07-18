@@ -1,31 +1,3 @@
-// 댓글 데이터 -------------------------------------------------
-interface LoungePostProps {
-  loungepostdata: {
-    profile: string;
-    name: string;
-    write: string;
-    img: string;
-    like: number;
-    comment: number;
-  };
-}
-export type LoungePostPropsOmit = Omit<
-  LoungePostProps["loungepostdata"],
-  "img"
->;
-
-export const LoungePostData: LoungePostPropsOmit[] = [
-  {
-    profile: "",
-    name: "",
-    write: "",
-    like: 0,
-    comment: 0,
-  },
-];
-
-// 댓글 데이터 -------------------------------------------------
-
 // 게시글 데이터 ------------------------------------------------
 interface BoardsData {
   board: string | number;

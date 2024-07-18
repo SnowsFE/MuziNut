@@ -6,12 +6,8 @@ import Login from "../../../../../public/images/login.png";
 import banner from "../../../../../public/images/banner.png";
 import Link from "next/link";
 import { BoardData, BookMarkBoardData } from "../userdata";
-import {
-  BannerData,
-  ProfileData,
-  useFileState,
-  ProfileEditForm,
-} from "./boardsEdit";
+import { BannerData, ProfileData, useFileState } from "./boardsEdit";
+import ProfileEdit from "../profileEdit";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("boards");
@@ -34,18 +30,7 @@ const UseridProfile: React.FC = () => {
   };
 
   // useFileState 훅을 이용하여 상태와 함수들을 가져옵니다.
-  const { profileInfo, handleProfileInfoChange, handleSubmit } =
-    useFileState(onUpload);
-
-  // 프로필 정보 수정 폼 열기
-  const openEditForm = () => {
-    setEditFormVisible(true);
-  };
-
-  // 프로필 정보 수정 폼 닫기
-  const closeEditForm = () => {
-    setEditFormVisible(false);
-  };
+  const { profileInfo } = useFileState(onUpload);
 
   // 게시글 더보기 함수
   const AddBoard = () => {
@@ -72,7 +57,7 @@ const UseridProfile: React.FC = () => {
         <BannerData onUpload={onUpload} />
       </Banner>
       <Profile>
-        <EditForm onClick={openEditForm}>⚙️</EditForm>
+        <ProfileEdit />
         <Image src={profileUrl} alt="profile-image" width={160} height={160} />
         <ProfileData onUpload={onUpload} />
         <ProfileInfo>
@@ -144,13 +129,6 @@ const UseridProfile: React.FC = () => {
           </BoardsAdd>
         </BoardsBoards>
       </Boards>
-      <ProfileEditForm
-        profileInfo={profileInfo}
-        onChange={handleProfileInfoChange}
-        onSubmit={handleSubmit}
-        onCancel={closeEditForm}
-        visible={editFormVisible}
-      />
     </ProfileContainer>
   );
 };

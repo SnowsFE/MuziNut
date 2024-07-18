@@ -11,9 +11,6 @@ const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("main");
   const [profileBannerImgName, setProfileBannerImgName] = useState<string>("");
   const [profileImgName, setProfileImgName] = useState<string>("");
-  const [nickname, setNickname] = useState<string>();
-  const [intro, setIntro] = useState<string>();
-  const [editFormVisible, setEditFormVisible] = useState(false);
   const [albumImageURLs, setAlbumImageURLs] = useState<string[]>([]);
 
   // 백엔드에서 받은 이미지 URL 상태 관리
@@ -23,8 +20,8 @@ const UseridProfile: React.FC = () => {
   const [albumImageUrl, setAlbumImageUrl] = useState<string | null>(null);
 
   const onUpload = (data: {
-    profileBannerImgName?: string | object; // 수정 필요
-    profileImgName?: string | object; // 수정 필요
+    profileBannerImgName?: string | object;
+    profileImgName?: string | object;
   }) => {
     if (typeof data.profileBannerImgName === "string") {
       console.log("배너 이미지가 변경되었습니다:", data.profileBannerImgName);
@@ -53,8 +50,8 @@ const UseridProfile: React.FC = () => {
 
   useEffect(() => {
     if (profileInfo) {
-      setProfileBannerImgName(profileInfo.profileBannerImgName);
-      setProfileImgName(profileInfo.profileImgName);
+      setProfileBannerImgName(profileInfo.profileBannerImgName || "");
+      setProfileImgName(profileInfo.profileImgName || "");
     }
   }, [profileInfo]);
 
