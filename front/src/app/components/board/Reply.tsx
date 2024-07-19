@@ -2,17 +2,20 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { redirect } from "next/navigation";
 import { LikeIcon, ReplyIcon } from "@/app/components/icon/icon";
+import { useOutData } from "./AxiosData";
 
+// 대댓글 내용
 const Reply = () => {
+  const { replyData } = useOutData();
   return (
     <>
       <ReplyContainer>
-        <ReplyIcon></ReplyIcon>
-        <ProfileImage src={"/test"} alt="프로필 이미지" />
+        <ReplyIcon />
+        <ProfileImage src={replyData.ReplyProfileImg} alt="프로필 이미지" />
         <ProfileInfo>
-          <ProfileName>writer</ProfileName>
+          <ProfileName>{replyData.ReplyWriter}</ProfileName>
           <TimeViewsContainer>
-            <Time>createdDt</Time>
+            <Time>{replyData.ReplycreatedDt}</Time>
           </TimeViewsContainer>
         </ProfileInfo>
       </ReplyContainer>

@@ -3,6 +3,7 @@ import Image from "next/image";
 import { MiniViewIcon, BookMarkIcon } from "@/app/components/icon/icon";
 import React from "react";
 
+// 글 작성 프로필
 interface WriterProfileInfoProps {
   image: string;
   writer: string;

@@ -15,14 +15,11 @@ const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("lounge");
   const [profileBannerImgName, setProfileBannerImgName] = useState<string>("");
   const [profileImgName, setProfileImgName] = useState<string>("");
-  const [loungeBoardsString, setloungeBoardsString] = useState<string>("");
-  const [loungeBoardsNumber, setloungeBoardsNumber] = useState<number>();
 
   // 업로드 하는 함수
   const onUpload = (data: {
     profileBannerImgName?: string | object;
     profileImgName?: string | object;
-    filename?: string | object;
   }) => {
     if (typeof data.profileBannerImgName === "string") {
       console.log("배너 이미지가 변경되었습니다:", data.profileBannerImgName);
@@ -32,17 +29,12 @@ const UseridProfile: React.FC = () => {
       console.log("프로필 이미지가 변경되었습니다:", data.profileImgName);
       setProfileImgName(data.profileImgName);
     }
-    if (typeof data.filename === "string") {
-      console.log("게시글 본문이 등록되었습니다", data.filename);
-      setloungeBoardsString(data.filename);
-    }
   };
 
-  const { profileInfo, boardsData } = useFileState((data) => {
+  const { profileInfo } = useFileState((data) => {
     onUpload({
       profileBannerImgName: data.profileBannerImgName,
       profileImgName: data.profileImgName,
-      filename: data.filename,
     });
   });
 
@@ -53,15 +45,6 @@ const UseridProfile: React.FC = () => {
     }
   }, [profileInfo]);
 
-  useEffect(() => {
-    if (boardsData) {
-      setloungeBoardsString(boardsData.filename || "");
-      setloungeBoardsString(boardsData.writer || "");
-      setloungeBoardsString(boardsData.createdDt || "");
-      setloungeBoardsNumber(boardsData.id);
-      setloungeBoardsNumber(boardsData.like);
-    }
-  }, [boardsData]);
   // 프로필, 배너 이미지 업로드 ------------------------------------------------------
 
   // 게시글 보이고 안보이고 관리
@@ -146,6 +129,8 @@ const UseridProfile: React.FC = () => {
     setPublishedContent(updatedContent);
   };
 
+  console.log("메인:", profileInfo);
+
   return (
     <ProfileContainer>
       <Banner>
@@ -222,7 +207,7 @@ const UseridProfile: React.FC = () => {
                   height={40}
                 />
               </LoungeProfileImage>
-              <LoungeProfileName>{boardsData.writer}</LoungeProfileName>
+              <LoungeProfileName>{profileInfo.nickname}</LoungeProfileName>
               <LoungeProfileUploadTime>
                 {new Date().toLocaleDateString()}
               </LoungeProfileUploadTime>
@@ -245,20 +230,20 @@ const UseridProfile: React.FC = () => {
               </LoungeProfileDetail>
             </LoungeProfileInfo>
             <LoungeWriteContainer>
-              <LoungeWrite>{profileBannerImgName}</LoungeWrite>
-              <LoungeImage>
+              <LoungeWrite>{profileInfo.content}</LoungeWrite>
+              {/* <LoungeImage>
                 <Image
                   src={`data:image/png;base64,${profileBannerImgName}`}
                   alt="배너 이미지"
                   width={1280}
                   height={256}
                 />
-              </LoungeImage>
+              </LoungeImage> */}
             </LoungeWriteContainer>
             <LoungeLikeCommentContainer>
               <LoungeLike>
                 <LikeIcon />
-                {boardsData.like}
+                {profileInfo.like}
               </LoungeLike>
               <LoungeComment onClick={() => handleCommentToggle(index)}>
                 <CommentIcon />

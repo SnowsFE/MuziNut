@@ -5,8 +5,22 @@ import threedot from "../../../../../public/svgs/threedot.svg";
 import Comments from "@/app/components/board/Comments";
 import WriterProfileInfo from "@/app/components/board/WriterProfileInfo";
 import WriteCommentForm from "@/app/components/board/WriteCommentForm";
+import AxiosURL from "@/app/axios/url";
 
-import { getToken } from "@/app/common/common";
+import { useSearchParams } from "next/navigation";
+import axios from "axios";
+
+interface BoardsDataProps {
+  id: number;
+  title: string;
+  profileImg: string;
+  writer: string;
+  createdDt: string;
+  view: number;
+  quillFilename: string;
+  isLike: boolean;
+  isBookmark: boolean;
+}
 
 interface PostProps {
   title: string;
@@ -18,56 +32,69 @@ interface PostProps {
   write: string;
 }
 
-interface UserProfile {
-  nickname: string;
-  profileImage: string;
-}
-
 const Data: PostProps = {
-  title: "게시글 제목",
-  writer: "작성자 이름",
-  createdDt: "2024-07-06",
-  view: 1234,
-  like: 567,
-  image: "http://stimg.afreecatv.com/LOGO/ma/maluckitty/maluckitty.jpg",
-  write: "<p>본문 내용입니다.</p>",
+  title: "",
+  writer: "",
+  createdDt: "",
+  view: 0,
+  like: 0,
+  image: "",
+  write: "",
 };
 
 const PostBox: React.FC = () => {
+  const [boardsData, setBoardsData] = useState<BoardsDataProps>({
+    id: 0,
+    title: "",
+    profileImg: "",
+    writer: "",
+    createdDt: "",
+    view: 0,
+    quillFilename: "",
+    isLike: false,
+    isBookmark: false,
+  });
+
+  const authToken =
+    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9BRE1JTiIsImV4cCI6MTcyNDQ3ODE4OH0.3z2IGByLdk3Q-khCsRjdgK4BtMZs-h51If5vYgF45rgegl8WjUfXoIMDzMsqFLVOquamuJ57dMplJEGevon4PQ";
+
   const { title, writer, createdDt, view, like, image, write } = Data;
   const [comments, setComments] = useState([]); //서버로부터 받는 댓글들
   const [reply, setReply] = useState(""); //대댓글
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+
+  const searchParams = useSearchParams();
+  const id = searchParams ? searchParams.get("id") : null;
 
   //초기에 서버로부터 받는 게시판 & 댓글 데이터
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      //Todo 경로 수정
-      const response = await fetch("/community/admin-board/", {
-        headers: {
-          Authorization: getToken(),
-        },
-      });
-      if (response.ok) {
-        const data: UserProfile = await response.json();
-        setUserProfile(data);
+    const DetailBoards = async () => {
+      if (id) {
+        const res = await axios.get(`${AxiosURL}/community/admin-board/${id}`, {
+          headers: {
+            Authorization: authToken,
+          },
+        });
+        setBoardsData(res.data);
       }
     };
 
-    fetchUserProfile();
-  }, []);
+    DetailBoards();
+  }, [id]);
 
-  const redirectToEvent = () => {
-    window.location.href = "/event";
+  const redirectToNotice = () => {
+    window.location.href = "/notice";
   };
 
   return (
     <Container>
       <Header>
         <ListContainer>
-          <ListButton onClick={redirectToEvent}>이벤트 &gt;</ListButton>
+          <ListButton onClick={redirectToNotice}>공지사항 &gt;</ListButton>
         </ListContainer>
-        <Title>{title}</Title>
+        <Title>
+          {boardsData.profileImg}
+          {title}
+        </Title>
         <WriterProfileInfo
           image={image}
           writer={writer}

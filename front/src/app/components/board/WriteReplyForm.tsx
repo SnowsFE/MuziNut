@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Submit } from "@/app/components/icon/icon";
 import { getToken, getRefreshToken, setToken } from "@/app/common/common";
 
+// 대댓글 폼
 const WriteReplyForm = () => {
   const [reply, setReply] = useState(""); //작성할 댓글
   const [replyLength, setReplyLength] = useState(0); // 대댓글 길이 상태 추가

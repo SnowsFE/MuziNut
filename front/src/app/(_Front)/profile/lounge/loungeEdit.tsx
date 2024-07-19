@@ -19,6 +19,37 @@ export const useFileState = (onUpload: (data: any) => void) => {
     intro: string;
   }
 
+  // interface loungeProps {
+  //   id: number;
+  //   createdDt: string;
+  //   content: string;
+  //   like: number;
+  //   commentSize: number;
+  // }
+
+  // interface loungeCommentProps {
+  //   id: number;
+  //   createdDt: string;
+  //   commentProfileImage: string;
+  //   comment: string;
+  // }
+
+  // const [loungeInfo, setLoungeInfo] = useState<loungeProps>({
+  //   content: "",
+  //   createdDt: "",
+  //   id: 0,
+  //   like: 0,
+  //   comment: 0,
+  // });
+
+  // const [loungeCommentInfo, setLoungeCommentInfo] =
+  //   useState<loungeCommentProps>({
+  //     id: 0,
+  //     createdDt: "",
+  //     commentProfileImage: "",
+
+  //   });
+
   const [profileInfo, setProfileInfo] = useState<profileInfoProps>({
     profileBannerImgName: "",
     profileImgName: "",
@@ -144,48 +175,18 @@ export const useFileState = (onUpload: (data: any) => void) => {
     }
   };
 
-  interface BoardsProps {
-    id: number;
-    writer: string;
-    filename: string;
-    createdDt: string;
-    like: number;
-  }
-
-  const [boardsData, setboardsData] = useState<BoardsProps>({
-    id: 0,
-    writer: "",
-    filename: "",
-    createdDt: "",
-    like: 0,
-  });
-
   // 메인 Get 통신 데이터
-  const [userId, setUserId] = useState(2); // 초기 userId 값을 설정합니다.
-  const [Getdata, setGetData] = useState();
+  const [userId, setUserId] = useState(2);
 
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
         const res = await axios.get(`${AxiosUrl}/profile/lounge`, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
           params: { userId },
         });
 
-        // FormData 객체 생성
-        const getData = res.data;
-        setProfileInfo(getData);
-
-        console.log(profileInfo);
-        // const formData = new FormData();
-        // formData.append("json-data", res.data);
-        // const GetData = formData.get("json-data");
-
-        // 여기서 formData를 사용하여 필요한 작업을 수행할 수 있습니다.
-        // console.log(formData);
-        // console.log(res.data.nickname);
+        setProfileInfo(res.data);
+        console.log("받는데이터", res.data);
       } catch (error) {
         console.error("프로필 데이터를 가져오는데 실패했습니다.", error);
       }
@@ -198,8 +199,6 @@ export const useFileState = (onUpload: (data: any) => void) => {
     files,
     profileInfo,
     setProfileInfo,
-    boardsData,
-    setboardsData,
     handleBannerSubmit,
     handleProfileSubmit,
   };

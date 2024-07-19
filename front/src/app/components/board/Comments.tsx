@@ -8,6 +8,7 @@ import axios from "axios";
 import { headers } from "next/headers";
 import { error } from "console";
 
+// 댓글 컴포넌트
 const Comments = () => {
   const [comment, setComment] = useState(""); //사용자가 작성하는 댓글
   const [comments, setComments] = useState([]); //서버로 부터 받아온 댓글들 (대댓글 포함)
@@ -59,7 +60,7 @@ const Comments = () => {
       {/* 대댓글 모달창 */}
       {modal == true ? <WriteReplyForm></WriteReplyForm> : null}
       {/* 대댓글 리스트 */}
-      <Reply></Reply>
+      <Reply />
     </>
   );
 };
