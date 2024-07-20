@@ -35,7 +35,7 @@ const Comments = () => {
   return (
     <>
       <CommentContainer>
-        <ProfileImage src={"/test"} alt="프로필 이미지" />
+        <ProfileImage alt="프로필 이미지" />
         <ProfileInfo>
           <ProfileName>writer</ProfileName>
           <TimeViewsContainer>

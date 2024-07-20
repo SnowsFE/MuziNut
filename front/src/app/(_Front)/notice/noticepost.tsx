@@ -134,7 +134,7 @@ const NoticePost: React.FC<NoticePostProps> = ({ selected, searchQuery }) => {
           filteredPosts.map((post) => (
             <Post
               key={post.id}
-              onClick={() => router.push(`/notice/${post.id}`)} // 상세 페이지로 이동
+              onClick={() => router.push(`/notice/${post.id}`)}
             >
               <PostItem>{post.title}</PostItem>
               <PostItem>{post.writer}</PostItem>

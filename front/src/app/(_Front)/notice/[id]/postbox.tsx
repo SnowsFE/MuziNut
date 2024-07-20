@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { LikeIcon } from "@/app/components/icon/icon";
@@ -7,7 +8,7 @@ import WriterProfileInfo from "@/app/components/board/WriterProfileInfo";
 import WriteCommentForm from "@/app/components/board/WriteCommentForm";
 import AxiosURL from "@/app/axios/url";
 
-import { useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation"; // useParams 가져오기
 import axios from "axios";
 
 interface BoardsDataProps {
@@ -62,19 +63,28 @@ const PostBox: React.FC = () => {
   const [comments, setComments] = useState([]); //서버로부터 받는 댓글들
   const [reply, setReply] = useState(""); //대댓글
 
-  const searchParams = useSearchParams();
-  const id = searchParams ? searchParams.get("id") : null;
+  const params = useParams<{ id: string }>();
+  const id = params?.id;
 
-  //초기에 서버로부터 받는 게시판 & 댓글 데이터
+  //초기에 서버로부터 받는 게시판 & 댓글 데이터 [상세 페이지]
   useEffect(() => {
     const DetailBoards = async () => {
-      if (id) {
-        const res = await axios.get(`${AxiosURL}/community/admin-board/${id}`, {
-          headers: {
-            Authorization: authToken,
-          },
-        });
-        setBoardsData(res.data);
+      console.log("아이디는", id);
+      try {
+        if (id) {
+          const res = await axios.get(
+            `${AxiosURL}/community/admin-boards/${id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+              },
+            }
+          );
+          setBoardsData(res.data);
+          console.log("받아온 데이터는", res.data);
+        }
+      } catch (error) {
+        console.error("데이터를 받지 못했습니다", error);
       }
     };
 
@@ -103,7 +113,7 @@ const PostBox: React.FC = () => {
           threedot={threedot}
         ></WriterProfileInfo>
       </Header>
-      <Body dangerouslySetInnerHTML={{ __html: write }} />
+      <Body dangerouslySetInnerHTML={{ __html: boardsData.quillFilename }} />
       <Footer>
         <LikeButton>
           <LikeIcon /> {like}

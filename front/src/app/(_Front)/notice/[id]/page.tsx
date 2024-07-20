@@ -6,7 +6,7 @@ import { NoticeHeader } from "../noticeheader";
 import PostBox from "./postbox";
 
 const NoitcePostID: React.FC = () => {
-  const [selectedTab, setSelectedTab] = useState("event");
+  const [selectedTab, setSelectedTab] = useState("notice");
 
   return (
     <MainContainer>
