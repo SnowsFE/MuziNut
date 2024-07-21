@@ -1,27 +1,56 @@
 import styled from "styled-components";
-import Image from "next/image";
+import threedot from "../../../../public/svgs/threedot.svg";
 import { MiniViewIcon, BookMarkIcon } from "@/app/components/icon/icon";
-import React from "react";
+import React, { useEffect } from "react";
+import Image from "next/image";
+import axios from "axios";
 
 // 글 작성 프로필
 interface WriterProfileInfoProps {
-  image: string;
+  profileImg: string;
   writer: string;
   createdDt: string;
   view: number;
-  threedot: string;
+  isBookmark: boolean;
 }
 
 const WriterProfileInfo: React.FC<WriterProfileInfoProps> = ({
-  image,
+  profileImg,
   writer,
   createdDt,
   view,
-  threedot,
+  isBookmark,
 }) => {
+  const authToken =
+    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9BRE1JTiIsImV4cCI6MTcyNDQ3ODE4OH0.3z2IGByLdk3Q-khCsRjdgK4BtMZs-h51If5vYgF45rgegl8WjUfXoIMDzMsqFLVOquamuJ57dMplJEGevon4PQ";
+
+  // 북마크 클릭 핸들러
+  const handleBookmarkClick = async () => {
+    try {
+      const response = await axios.post(
+        "API_ENDPOINT/bookmark",
+        {
+          // writer, 유저 정보를어떻게 가져오지 유저정보에따라 북마크
+          isBookmark,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+      console.log("북마크 클릭: ", response.data);
+    } catch (error) {
+      console.error("북마크 요청 실패: ", error);
+    }
+  };
+
   return (
     <ProfileContainer>
-      <ProfileImage src={image} alt="프로필 이미지" />
+      <ProfileImage
+        src={`data:image/png;base64,${profileImg}`}
+        alt="프로필 이미지"
+      />
       <ProfileInfo>
         <ProfileName>{writer}</ProfileName>
         <TimeViewsContainer>
@@ -32,9 +61,24 @@ const WriterProfileInfo: React.FC<WriterProfileInfoProps> = ({
         </TimeViewsContainer>
       </ProfileInfo>
       <ShareContainer>
-        <BookMarkIcon />
-        <Image src={threedot} alt="공유하기, 신고하기"></Image>
+        <Image
+          onClick={handleBookmarkClick}
+          src={`data:image/svg+xml;base64,${isBookmark}`}
+          alt="북마크"
+          width={24}
+          height={32}
+        />
+        <Image
+          src={`data:image/svg+xml;base64,${threedot}`}
+          alt="공유, 신고"
+          width={24}
+          height={32}
+        />
       </ShareContainer>
+      {isBookmark}
+      <BookMarkIcon />
+      <Image src={threedot} alt="수정 삭제" />
+      수정 삭제기능 추가
     </ProfileContainer>
   );
 };
@@ -104,8 +148,6 @@ const ShareContainer = styled.div`
   cursor: pointer;
 
   img {
-    width: 24px;
-    height: 32px;
     &:hover {
       background-color: #e7e7e7; /* 배경색을 설정 */
       border-radius: 8px;

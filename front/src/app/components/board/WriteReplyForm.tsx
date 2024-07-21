@@ -44,19 +44,17 @@ const WriteReplyForm = () => {
 
   return (
     <CommentsSection>
-      {" "}
-      {/* 댓글 작성 폼 */}
       <CommentInputContainer>
         <CommentInput
           value={reply}
           onChange={handleCommentChange}
           placeholder="대댓글을 입력하세요..."
-          maxLength={500} // 최대 입력 글자 수
+          maxLength={100} // 최대 입력 글자 수
         />
         <CommentSubmitButton onClick={handleCommentSubmit}>
           <Submit />
         </CommentSubmitButton>
-        <CommentLength>{replyLength}/500</CommentLength>
+        <CommentLength>{replyLength}/100</CommentLength>
       </CommentInputContainer>
     </CommentsSection>
   );
@@ -65,7 +63,8 @@ const WriteReplyForm = () => {
 export default WriteReplyForm;
 
 const CommentsSection = styled.div`
-  margin-top: 20px;
+  position: absolute;
+  right: -250px;
   font-family: "esamanru Medium";
 `;
 
@@ -81,7 +80,7 @@ const CommentInput = styled.textarea`
   height: 100px;
   border-radius: 12px;
   border: 1px solid #ddd;
-  padding: 10px;
+  padding: 15px;
   font-family: "esamanru Light";
   font-size: 14px;
   line-height: 17px;
@@ -102,7 +101,7 @@ const CommentSubmitButton = styled.button`
   border: none;
   cursor: pointer;
   outline: none;
-  padding: 10px;
+  padding: 5px;
 
   &:hover {
     opacity: 0.8;
@@ -115,6 +114,6 @@ const CommentLength = styled.div`
   right: 45px;
   bottom: 13px;
   font-size: 12px;
-  padding: 10px;
+  padding: 5px;
   color: #888;
 `;

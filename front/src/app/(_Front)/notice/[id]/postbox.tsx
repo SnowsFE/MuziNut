@@ -8,68 +8,58 @@ import WriterProfileInfo from "@/app/components/board/WriterProfileInfo";
 import WriteCommentForm from "@/app/components/board/WriteCommentForm";
 import AxiosURL from "@/app/axios/url";
 
-import { useParams } from "next/navigation"; // useParams 가져오기
+import { useParams } from "next/navigation";
 import axios from "axios";
 
 interface BoardsDataProps {
   id: number;
   title: string;
+  quillFilename: string;
+  isLike: boolean;
+  likeCount: number;
+}
+
+interface CommentProps {
   profileImg: string;
   writer: string;
   createdDt: string;
-  view: number;
-  quillFilename: string;
+  contents: string;
   isLike: boolean;
-  isBookmark: boolean;
+  likeCount: number;
 }
-
-interface PostProps {
-  title: string;
-  writer: string;
-  createdDt: string;
-  view: number;
-  like: number;
-  image: string;
-  write: string;
-}
-
-const Data: PostProps = {
-  title: "",
-  writer: "",
-  createdDt: "",
-  view: 0,
-  like: 0,
-  image: "",
-  write: "",
-};
 
 const PostBox: React.FC = () => {
   const [boardsData, setBoardsData] = useState<BoardsDataProps>({
     id: 0,
     title: "",
+    quillFilename: "",
+    isLike: false,
+    likeCount: 0,
+  });
+
+  const [profileInfo, setProfileInfo] = useState({
     profileImg: "",
     writer: "",
     createdDt: "",
     view: 0,
-    quillFilename: "",
-    isLike: false,
     isBookmark: false,
   });
+
+  const [commentForm, setCommentForm] = useState({
+    comments: 0,
+  });
+  const [comments, setComments] = useState<CommentProps[]>([]); // 댓글 목록
+
+  const [reply, setReply] = useState(""); // 대댓글
 
   const authToken =
     "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9BRE1JTiIsImV4cCI6MTcyNDQ3ODE4OH0.3z2IGByLdk3Q-khCsRjdgK4BtMZs-h51If5vYgF45rgegl8WjUfXoIMDzMsqFLVOquamuJ57dMplJEGevon4PQ";
 
-  const { title, writer, createdDt, view, like, image, write } = Data;
-  const [comments, setComments] = useState([]); //서버로부터 받는 댓글들
-  const [reply, setReply] = useState(""); //대댓글
-
   const params = useParams<{ id: string }>();
   const id = params?.id;
 
-  //초기에 서버로부터 받는 게시판 & 댓글 데이터 [상세 페이지]
   useEffect(() => {
     const DetailBoards = async () => {
-      console.log("아이디는", id);
       try {
         if (id) {
           const res = await axios.get(
@@ -80,8 +70,31 @@ const PostBox: React.FC = () => {
               },
             }
           );
-          setBoardsData(res.data);
-          console.log("받아온 데이터는", res.data);
+
+          const profileData = {
+            profileImg: res.data.profileImg,
+            writer: res.data.writer,
+            createdDt: res.data.createdDt,
+            view: res.data.view,
+            isBookmark: res.data.isBookmark,
+          };
+
+          setProfileInfo(profileData);
+
+          setBoardsData({
+            id: res.data.id,
+            title: res.data.title,
+            quillFilename: res.data.quillFilename,
+            isLike: res.data.isLike,
+            likeCount: res.data.likeCount,
+          });
+
+          console.log(res.data);
+          setCommentForm({
+            comments: res.data.comments,
+          });
+
+          setComments(res.data.comments);
         }
       } catch (error) {
         console.error("데이터를 받지 못했습니다", error);
@@ -101,28 +114,35 @@ const PostBox: React.FC = () => {
         <ListContainer>
           <ListButton onClick={redirectToNotice}>공지사항 &gt;</ListButton>
         </ListContainer>
-        <Title>
-          {boardsData.profileImg}
-          {title}
-        </Title>
+        <Title>{boardsData.title}</Title>
         <WriterProfileInfo
-          image={image}
-          writer={writer}
-          createdDt={createdDt}
-          view={view}
-          threedot={threedot}
-        ></WriterProfileInfo>
+          profileImg={profileInfo.profileImg}
+          writer={profileInfo.writer}
+          createdDt={profileInfo.createdDt}
+          view={profileInfo.view}
+          isBookmark={profileInfo.isBookmark ? true : false}
+        />
       </Header>
       <Body dangerouslySetInnerHTML={{ __html: boardsData.quillFilename }} />
+      {/* 본문 내용 출력 */}
       <Footer>
         <LikeButton>
-          <LikeIcon /> {like}
+          <LikeIcon /> {boardsData.isLike ? true : false}
+          {boardsData.likeCount}
         </LikeButton>
       </Footer>
-      {/* 댓글 작성 폼 Todo 게시판 Id 보내줘야 함*/}
-      <WriteCommentForm></WriteCommentForm>
-      {/* 게시판 댓글들 */}
-      <Comments></Comments>
+      <WriteCommentForm comments={commentForm.comments} />
+      {comments.map((comment, index) => (
+        <Comments
+          key={index}
+          profileImg={comment.profileImg}
+          writer={comment.writer}
+          createdDt={comment.createdDt}
+          contents={comment.contents}
+          isLike={comment.isLike}
+          likeCount={comment.likeCount}
+        />
+      ))}
     </Container>
   );
 };
