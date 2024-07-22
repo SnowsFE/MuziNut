@@ -1,9 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 import Login from "../../../../../public/images/login.png";
 import banner from "../../../../../public/images/banner.png";
+import plynutAdd from "../../../../../public/svgs/PlyNutAdd.svg";
 import Link from "next/link";
 import {
   BannerData,
@@ -11,16 +12,94 @@ import {
   useFileState,
   ProfileEditForm,
 } from "./plynutEdit";
+import axios from "axios";
+import AxiosURL from "@/app/axios/url";
 
-// UseridProps를 props로 받습니다.
-const UseridProfile: React.FC = () => {
+interface PlynutDataProps {
+  title: string;
+}
+
+interface Track {
+  id: number;
+  album: string;
+  artist: string;
+  title: string;
+}
+
+const UseridProfile: React.FC<PlynutDataProps> = () => {
   const [selectedTab, setSelectedTab] = useState("plynut");
-
   const [bannerUrl, setBannerUrl] = useState<string>(banner.src);
   const [profileUrl, setProfileUrl] = useState<string>(Login.src);
   const [editFormVisible, setEditFormVisible] = useState(false);
+  const [addPlynut, setAddPlynut] = useState(false);
+  const [title, setTitle] = useState("");
+  const [titleError, setTitleError] = useState("");
+  const [PlyNutData, setPlyNutData] = useState([
+    { id: 0, title: "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" },
+    { id: 1, title: "~" },
+    { id: 2, title: "~" },
+    { id: 3, title: "~" },
+    { id: 4, title: "~" },
+    { id: 5, title: "~" },
+    { id: 6, title: "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" },
+    { id: 7, title: "~" },
+    { id: 8, title: "~" },
+    { id: 9, title: "~" },
+    { id: 10, title: "~" },
+    { id: 11, title: "~" },
+    { id: 12, title: "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" },
+    { id: 13, title: "~" },
+    { id: 14, title: "~" },
+    { id: 15, title: "~" },
+    { id: 16, title: "~" },
+    { id: 17, title: "~" },
+  ]);
+  const [PlyNutVisible, setPlyNutVisible] = useState(30);
+  const [selectedPlyNutId, setSelectedPlyNutId] = useState<number | null>(null);
+  const [tracks, setTracks] = useState<Track[]>([]);
 
-  // onUpload 함수 정의
+  // 데이터가 변경될 때마다 플리넛의 곡 정보를 업데이트합니다.
+  useEffect(() => {
+    if (selectedPlyNutId !== null) {
+      fetchTracks(selectedPlyNutId);
+    }
+  }, [selectedPlyNutId]);
+
+  if (PlyNutVisible > 30) {
+    alert("플리넛은 30개까지 생성 가능합니다");
+  }
+
+  const authToken = "your-auth-token-here";
+
+  const PlyNutDatas = async () => {
+    try {
+      const res = await axios.post(`${AxiosURL}/mypage/playnut`, PlyNutData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      console.log(res.data);
+    } catch (error) {
+      console.error("플리넛 데이터를 가져오지 못했습니다", error);
+    }
+  };
+
+  const fetchTracks = async (plynutId: number) => {
+    try {
+      const res = await axios.get(
+        `${AxiosURL}/mypage/playnut/${plynutId}/tracks`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+      setTracks(res.data);
+    } catch (error) {
+      console.error("곡 정보를 가져오지 못했습니다", error);
+    }
+  };
+
   const onUpload = (data: { bannerUrl?: string; profileUrl?: string }) => {
     if (data.bannerUrl) {
       console.log("배너 이미지가 변경되었습니다:", data.bannerUrl);
@@ -32,18 +111,43 @@ const UseridProfile: React.FC = () => {
     }
   };
 
-  // useFileState 훅을 이용하여 상태와 함수들을 가져옵니다.
   const { profileInfo, handleProfileInfoChange, handleSubmit } =
     useFileState(onUpload);
 
-  // 프로필 정보 수정 폼 열기
   const openEditForm = () => {
     setEditFormVisible(true);
   };
 
-  // 프로필 정보 수정 폼 닫기
   const closeEditForm = () => {
     setEditFormVisible(false);
+  };
+
+  const addPlyNut = () => {
+    setAddPlynut(true);
+  };
+
+  const closePlyNut = () => {
+    setAddPlynut(false);
+  };
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setTitle(value);
+
+    if (value.trim().length < 2) {
+      setTitleError("제목은 2글자 이상 입력 가능합니다.");
+    } else if (value.trim().length > 15) {
+      setTitleError("제목은 15글자까지만 입력 가능합니다.");
+    } else {
+      setTitleError("");
+    }
+  };
+
+  const isFormValid = title.trim().length >= 2 && title.trim().length <= 15;
+
+  const handlePlyNutClick = (index: number) => {
+    setSelectedPlyNutId(index);
+    window.location.hash = `${index}`;
   };
 
   return (
@@ -95,30 +199,79 @@ const UseridProfile: React.FC = () => {
           >
             <SelectItem selected={selectedTab === "nuts"}>넛츠</SelectItem>
           </StyledLink>
+          <StyledLink href={"/profile/plynut"}>
+            <SelectItem selected={selectedTab === "#Addplynut"}>
+              <Image onClick={addPlyNut} src={plynutAdd} alt="Addplynut" />
+            </SelectItem>
+          </StyledLink>
         </SelectContainer>
       </SelectBar>
-      <PlyNut>
-        <PlyNutHeaderMargin>
-          <PlyNutHeader>
-            <ul>
-              <li>앨범</li>
-              <li>아티스트</li>
-              <li>곡명</li>
-              <li>삭제하기</li>
-            </ul>
-          </PlyNutHeader>
-        </PlyNutHeaderMargin>
-        <PlyNutPlayListMargin>
-          <PlyNutPlayList>
-            <NO>1</NO>
-            <AlbumImage>이미지임다</AlbumImage>
-            <NickName>코딩</NickName>
-            <Genre>d</Genre>
-            <Like>dd</Like>
-            <Delete>dz</Delete>
-          </PlyNutPlayList>
-        </PlyNutPlayListMargin>
-      </PlyNut>
+      {addPlynut && (
+        <ModalOverlay>
+          <ModalContent>
+            <h2>플리넛 추가</h2>
+            <AddPlyNutContent>
+              <InputLabel2>
+                제목
+                <InputField2
+                  name="addplynut"
+                  value={title}
+                  onChange={handleTitleChange}
+                  style={{ borderColor: titleError ? "red" : "#ccc" }}
+                />
+                {titleError && (
+                  <NameErrorMessage>{titleError}</NameErrorMessage>
+                )}
+              </InputLabel2>
+            </AddPlyNutContent>
+            <ButtonContainer>
+              <CloseButton
+                onClick={closePlyNut}
+                style={{ marginRight: "10px" }}
+              >
+                닫기
+              </CloseButton>
+              <SaveButton disabled={!isFormValid} onClick={PlyNutDatas}>
+                추가
+              </SaveButton>
+            </ButtonContainer>
+          </ModalContent>
+        </ModalOverlay>
+      )}
+      <PlyNutContainer>
+        <PlyNutTitle>내 플리넛</PlyNutTitle>
+        <PlyNutBox>
+          {PlyNutData.slice(0, PlyNutVisible).map((PlyNut, index) => (
+            <Box key={PlyNut.id} onClick={() => handlePlyNutClick(PlyNut.id)}>
+              {PlyNut.title}
+            </Box>
+          ))}
+        </PlyNutBox>
+      </PlyNutContainer>
+      {selectedPlyNutId !== null && (
+        <TracksContainer>
+          <ul>
+            <li>앨범</li>
+            <li>아티스트</li>
+            <li>곡명</li>
+            <li>삭제하기</li>
+          </ul>
+          {tracks.length > 0 ? (
+            <TracksList>
+              {tracks.map((track) => (
+                <TrackItem key={track.id}>
+                  <TrackDetail>{track.album}</TrackDetail>
+                  <TrackDetail>{track.artist}</TrackDetail>
+                  <TrackDetail>{track.title}</TrackDetail>
+                  <DeleteButton>삭제하기</DeleteButton>
+                </TrackItem>
+              ))}
+            </TracksList>
+          ) : (
+            <p>곡이 없습니다.</p>
+          )}
+        </TracksContainer>
+      )}
       <ProfileEditForm
         profileInfo={profileInfo}
         onChange={handleProfileInfoChange}
@@ -217,6 +370,22 @@ const SelectContainer = styled.div`
   gap: 15px;
   border-bottom: 1px solid #ccc;
   position: relative;
+
+  :last-child {
+    margin-left: auto;
+  }
+
+  img {
+    position: absolute;
+    right: 0;
+    top: -10px;
+    padding: 7px;
+
+    &:hover {
+      background-color: #e7e7e7;
+      border-radius: 8px;
+    }
+  }
 `;
 
 // 선택된 항목에 하단 밑줄을 추가하는 스타일
@@ -246,61 +415,184 @@ const StyledLink = styled(Link)`
 // -------------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------------
-// 라운지를 감싸는 큰 컨테이너
-const PlyNut = styled.div`
-  padding-right: calc(50% - 642px);
-  padding-left: calc(50% - 642px);
+
+// 박스 섹션을 감싸는 컨테이너
+const PlyNutContainer = styled.div`
+  padding-top: 16px;
+  padding-bottom: 20px;
 `;
 
-// 플리넛 헤더 패딩 적용
-const PlyNutHeaderMargin = styled.div`
-  padding: 10px 0;
+// 섹션 타이틀
+const PlyNutTitle = styled.h2`
+  font-size: 20px;
 `;
 
-const PlyNutHeader = styled.div`
-  ul {
-    display: flex;
-    justify-content: space-around; /* 요소를 좌우로 공간을 나누고 가운데 정렬 */
-    list-style-type: none;
-    padding: 15px;
-    border: 1px solid #1bb373;
-    border-radius: 12px;
+// 박스를 감싸는 컨테이너
+const PlyNutBox = styled.div`
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  font-size: 14px;
+`;
+
+// 박스 스타일
+const Box = styled.div`
+  background-color: none;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+  transition: box-shadow 0.3s ease;
+  width: 100%;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &:hover {
+    transition: 0.3s ease;
+    border-color: #1bb373;
   }
-
-  li {
-    color: #1bb373;
-    margin: 0;
-  }
 `;
 
-// 플리넛 재생목록 패딩 적용
-const PlyNutPlayListMargin = styled.div``;
-
-// 플리넛 리스트 스타일링
-const PlyNutPlayList = styled.div`
+// 플리넛 추가 모달
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: space-around; /* 좌우 정렬 */
-  align-items: center; /* 상하 정렬 */
-  padding: 15px;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
 `;
 
-// 플리넛 NO
-const NO = styled.div``;
+const ModalContent = styled.div`
+  width: 300px;
+  background-color: white;
+  color: black;
+  padding: 10px 30px 20px 30px;
+  border-radius: 10px;
+  position: relative;
+  z-index: 4;
 
-// 플리넛 앨범 이미지
-const AlbumImage = styled.div``;
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+`;
 
-// 플리넛 닉네임 [굵은 글씨]
-const NickName = styled.div``;
+const AddPlyNutContent = styled.div`
+  color: black;
+  margin-bottom: 20px;
+`;
 
-// 플리넛 장르
-const Genre = styled.div``;
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`;
 
-// 플리넛 좋아요
-const Like = styled.div``;
+const CloseButton = styled.button`
+  border-radius: 25px;
+  padding: 10px 20px;
+  background-color: #16be78;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: "esamanru Medium";
 
-// 플리넛 삭제하기
-const Delete = styled.div``;
+  &:hover {
+    background-color: #13a86a;
+  }
+`;
+
+const SaveButton = styled.button<{ disabled: boolean }>`
+  border-radius: 25px;
+  padding: 10px 20px;
+  background-color: ${(props) => (props.disabled ? "#b0dab9" : "#16be78")};
+  color: white;
+  border: none;
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+  font-size: 16px;
+  font-family: "esamanru Medium";
+
+  &:hover {
+    background-color: ${(props) => (props.disabled ? "#b0dab9" : "#13a86a")};
+  }
+
+  &:disabled {
+    background-color: #b0dab9;
+    cursor: not-allowed;
+  }
+`;
+
+const InputLabel2 = styled.label`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+  font-family: "esamanru Medium";
+  color: black;
+`;
+
+const InputField2 = styled.input`
+  padding: 8px;
+  font-size: 14px;
+  font-family: "esamanru Light";
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 4px;
+  resize: none;
+`;
+
+const NameErrorMessage = styled.p`
+  position: absolute;
+  right: 32px;
+  top: 67px;
+  color: red;
+  font-size: 12px;
+  font-family: "esamanru Medium";
+`;
+
+const TracksContainer = styled.div`
+  margin-top: 20px;
+`;
+
+const TracksList = styled.div`
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 8px;
+`;
+
+const TrackItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid #eee;
+
+  &:last-child {
+    border-bottom: none;
+  }
+`;
+
+const TrackDetail = styled.span`
+  flex: 1;
+`;
+
+const DeleteButton = styled.button`
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #e60000;
+  }
+`;
 
 // 프로필 에디터
 const EditForm = styled.div`

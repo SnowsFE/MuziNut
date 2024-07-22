@@ -218,7 +218,7 @@ const EditorContainer = styled.div<{ visible: boolean }>`
   left: 50%;
   transform: translate(-50%, -50%);
   width: 700px;
-  height: 695px;
+  height: 645px;
   padding: 15px 40px;
   border-radius: 15px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
