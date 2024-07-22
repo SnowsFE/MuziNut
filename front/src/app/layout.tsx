@@ -29,7 +29,7 @@ export default function RootLayout({
       setIsHiddenHeader(HIDDEN_HEADERS.includes(pathname));
     }
   }, [pathname]);
-  console.log("현재 페이지는", isHiddenHeader);
+  // console.log("현재 페이지는", isHiddenHeader);
 
   return (
     <UserProvider>

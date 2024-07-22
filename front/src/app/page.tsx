@@ -4,7 +4,7 @@ import NewMusic from "./components/main/NewMusic";
 import BestArtist from "./components/main/BestArtist";
 import BestCommunity from "./components/main/BestCommunity";
 import BasicCommunity from "./components/main/BasicCommunity";
-import { BestMusic } from "./components/main/BestMusic";
+import HotMusic10 from "./components/main/HotMusic10";
 
 const MainPage = () => {
   return (
@@ -14,9 +14,9 @@ const MainPage = () => {
           <h1>최신 음악(추천 음악)</h1>
         </div>
         <div className={styles.new__section}>
-          <div>←</div>
+          {/* <div>←</div> */}
           <NewMusic />
-          <div>→</div>
+          {/* <div>→</div> */}
         </div>
       </section>
 
@@ -30,19 +30,21 @@ const MainPage = () => {
                 <h6>최근 1주일 조회수를 기준으로 순위가 매겨집니다.</h6>
               </div>
             </div>
-            <BestMusic url="http://localhost:9999/musicChart" />
+            {/* <BestMusic url="http://localhost:8080/muzinut/" /> */}
+            {/* <BestMusic /> */}
+
+            <HotMusic10 />
           </div>
           <div className={styles.music__section__right}>
             <div className={styles.section__title}>
               <div>
-                <h2> 인기 아티스트</h2>
-                <h2> Top 5</h2>
+                <h2> 인기 아티스트 Top5</h2>
               </div>
             </div>
 
-            <BestArtist />
+            {/* <BestArtist /> */}
           </div>
-      </div>
+        </div>
       </section>
 
       {/* 커뮤니티 부분 */}
