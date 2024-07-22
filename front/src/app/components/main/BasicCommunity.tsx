@@ -1,73 +1,97 @@
 "use client";
 import styles from "../main/css/BasicCommunity.module.css";
-import CommunityList from "./CommunityList";
-import { useCommunityFetchData } from "../useHook";
 import { useState } from "react";
-
-/*
-const listItems = [
-  { id: 1, titleName: "게시판 이름", authorName: "작성자", views: 100 },
-  { id: 2, titleName: "게시판 이름", authorName: "작성자", views: 100 },
-  { id: 3, titleName: "게시판 이름", authorName: "작성자", views: 100 },
-  { id: 4, titleName: "게시판 이름", authorName: "작성자", views: 100 },
-  { id: 5, titleName: "게시판 이름", authorName: "작성자", views: 100 }
-];
-*/
+import { FreeBoardDto, RecruitBoardDto, useNewCommunityFetchData } from "../useHook";
 
 export default function BasicCommunity() {
-  const [category, setCategory] = useState("free"); // 초기 카테고리 설정
-  const {
-    data: listItems,
-    loading,
-    error,
-  } = useCommunityFetchData(`http://localhost:9999/${category}`);
+  const [category, setCategory] = useState<"FreeBoard" | "RecruitBoard">("FreeBoard"); // 초기 카테고리 상태
 
-  // if (loading) return <p>Loading...</p>; // 로딩 중일 때 UI
-  // if (error) return <p>Error: {error.message}</p>; // 에러 발생 시 UI
+  const { freeBoardData, recruitBoardData, loading, error } =
+    useNewCommunityFetchData({
+      url: `http://localhost:8080/muzinut/newboard`, // 데이터 가져올 API 엔드포인트
+      keys: {
+        FreeBoard: "freeBoardDtos",
+        RecruitBoard: "recruitBoardDtos",
+      }, // 응답 데이터의 키
+    });
 
-  const handleCategoryClick = (newCategory: string) => {
-    setCategory(newCategory); // 카테고리 변경
+  const handleCategoryClick = (selectedCategory: "FreeBoard" | "RecruitBoard") => {
+    setCategory(selectedCategory); // 카테고리 변경
   };
+
+  if (loading) return <p>Loading...</p>; // 로딩 중일 때 UI
+  if (error) return <p>Error: {error.message}</p>; // 에러 발생 시 UI
+
+  console.log("freeBoardData:", freeBoardData); // 배열 형태로 들어옴.
+  console.log("recruitBoardData:", recruitBoardData); // 배열 형태로 들어옴.
+
+  // 현재 카테고리에 맞는 데이터 선택
+  const currentData = category === "FreeBoard" ? freeBoardData : recruitBoardData;
+
+  console.log("현재 데이터는", currentData);
 
   return (
     <div className={styles.container}>
       <div className={styles.title}>
         <h2
-          className={category === "free" ? styles.selected__category : ""}
-          onClick={() => handleCategoryClick("free")}
+          className={category === "FreeBoard" ? styles.selected__category : ""}
+          onClick={() => handleCategoryClick("FreeBoard")}
         >
           자유
         </h2>
         <h2
-          className={category === "music" ? styles.selected__category : ""}
-          onClick={() => handleCategoryClick("music")}
-        >
-          음악
-        </h2>
-        <h2
-          className={category === "recruit" ? styles.selected__category : ""}
-          onClick={() => handleCategoryClick("recruit")}
+          className={category === "RecruitBoard" ? styles.selected__category : ""}
+          onClick={() => handleCategoryClick("RecruitBoard")}
         >
           모집
         </h2>
       </div>
-      {loading && <p></p>} {/* 로딩 중일 때 표시될 UI */}
-      {error && <p>Error: {error.message}</p>} {/* 에러 발생 시 표시될 UI */}
-      {!loading && !error && (
-        <>
-          <div className={styles.communityList__container}>
-            <CommunityList listItems={listItems} />
-          </div>
-          <div className={styles.divided__line}></div>
+      {currentData && currentData.length > 0 ? (
+
+      <div className={styles.communityList__container}>
+        <div className={styles.list__contents__wrap}>
+        <ul>
+              {currentData.map((item, index) => (
+                <li
+                  key={category === "FreeBoard"
+                    ? (item as FreeBoardDto).freeBoardId
+                    : (item as RecruitBoardDto).recruitBoardId}
+                >
+                  <a
+                    href={`/community/${category}/${category === "FreeBoard"
+                      ? (item as FreeBoardDto).freeBoardId
+                      : (item as RecruitBoardDto).recruitBoardId}`}
+                  >
+                     <div className={styles.list__container}>
+                        <div className={styles.list__title}>
+                          <span>
+                            {index + 1}. {item.title}
+                          </span>
+                        </div>
+                        <div className={styles.list__name__view}>
+                          <span>{item.nickname}</span>
+                        </div>
+                      </div>
+                  </a>
+                </li>
+              ))}
+
+              </ul>
+
+              <div className={styles.divided__line}></div>
           <ul className={styles.list__contents__wrap__bottom}>
             <div className={styles.btn__wrap}>
-              <button>게시판 더 보러가기</button>
+             <a href={`/community/${category}`}>
+             <button>게시판 더 보러가기</button></a>
               <button>글 작성하러 가기</button>
             </div>
           </ul>
-        </>
+
+          </div>
+        </div>
+      ) : (
+        <p>데이터를 불러올 수 없습니다.</p>
       )}
     </div>
   );
 }
-

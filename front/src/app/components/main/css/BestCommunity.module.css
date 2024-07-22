@@ -28,3 +28,46 @@
   padding: 30px;
   /* border: 1px solid red; */
 }
+
+/* CommunityList 합친 부분*/
+/* contents 부분 */
+.list__contents__wrap {
+  text-decoration: none;
+  /* background-color: orange; */
+}
+
+.list__contents__wrap > ul {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+
+  padding: 0;
+  list-style: none;
+  /* border: 3px solid black; */
+}
+
+/* 커뮤니티 리스트 (한개당)*/
+.list__container {
+  display: flex;
+  flex-direction: row;
+
+  justify-content: space-between;
+  align-items: center;
+  /* gap: 350px; */
+  border-radius: 30px;
+  border: none;
+  background-color: rgb(225, 225, 225);
+  height: 60px;
+  padding: 10px;
+}
+.list__title {
+  margin-left: 30px;
+  font-size: 18px;
+  font-weight: 600;
+}
+.list__name__view {
+  margin-right: 30px;
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+}
