@@ -4,8 +4,10 @@
   /* width: 40%; */
   height: 876px;
   border-radius: 40px;
-  background-color: white;
+
+  /* background-color: white; */
   /* border: 1px solid green; */
+  
   /* border: none; */
   display: flex;
   flex-direction: column;
@@ -14,7 +16,7 @@
 }
 
 .list__contents__wrap {
-  padding: 0 30px;
+  padding: 10px 30px;
   /* border: 30px solid red; */
 }
 
@@ -23,26 +25,53 @@
   flex-direction: column;
   gap: 25px;
   list-style: none;
+  padding-left: 0;
 }
 
 /* 아티스트 리스트 */
-.list__conatiner {
+.list__container {
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
-  align-items: center;
   /* gap: 350px; */
-  border-radius: 30px;
   /* border: none; */
-  background-color: rgb(235, 235, 235);
+  /* background-color: rgb(235, 235, 235); */
   height: 120px;
-  padding: 10px 20px;
+  overflow: hidden;
+  padding: 10px;
+  /* border-radius: 30px; */
+  /* border: 2px solid #eee; */
 }
 
-.list__container__row {
-    display: flex;
-    flex-direction: row;
-    justify-content: end;
-    gap: 10px;
-    /* border: 1px solid black; */
+.contents__container {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  font-size: 24px;
+  align-items: center;
+  /* border: 1px solid red; */
+}
+.ranking {
+  text-align: center;
+  width: 43px;
+  /* border: 1px solid red; */
+}
+/* 랭킹 + 이미지 */
+.ranking__Img {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.ranking__Img > .img {
+  border-radius: 50%;
+  /* border: 1px solid red; */
+}
+
+.details__artist {
+  display: flex;
+  justify-content: end;
+  font-size: 16px;
+  gap: 13px;
+  align-items: center;
+  /* border: 1px solid green; */
 }
