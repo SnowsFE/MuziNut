@@ -1,9 +1,11 @@
-import React, { useMemo, useRef, useState, useEffect } from "react";
+"use client";
+import React, { useRef, useState, useEffect, useMemo } from "react";
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
 import styled, { keyframes, css } from "styled-components";
-import QuillToolbar from "../../profile/lounge/EditorOption";
+import QuillToolbar from "./EditorOption";
 import Quill from "quill";
+import AxiosURL from "@/app/axios/url";
 
 const Font = Quill.import("formats/font");
 Font.whitelist = ["esamanruLight", "esamanruMedium", "esamanruBold"];
@@ -13,33 +15,34 @@ const Size = Quill.import("attributors/style/size");
 Size.whitelist = ["13px", "16px", "18px", "24px", "28px", "32px"];
 Quill.register(Size, true);
 
-const WriteQuill: React.FC<{
+const NoticeWriteQuill: React.FC<{
   onPublish: (content: string) => void;
   onClose: () => void;
   initialContent?: string;
 }> = ({ onPublish, onClose, initialContent }) => {
   const quillRef = useRef<ReactQuill>(null);
   const [content, setContent] = useState<string>(initialContent || "");
+  const [title, setTitle] = useState<string>("");
   const [visible, setVisible] = useState<boolean>(true);
-  const [render, setRender] = useState<boolean>(true);
 
   useEffect(() => {
     if (!visible) {
-      const timer = setTimeout(() => setRender(false), 500);
+      const timer = setTimeout(() => setVisible(false), 500);
       return () => clearTimeout(timer);
     }
   }, [visible]);
 
-  const modules = useMemo(() => {
-    return {
+  const modules = useMemo(
+    () => ({
       toolbar: {
         container: "#toolbar",
         handlers: {
-          image: QuillImageUpload,
+          image: handleImageUpload,
         },
       },
-    };
-  }, [content, initialContent, onClose, onPublish]);
+    }),
+    []
+  );
 
   useEffect(() => {
     const quill = quillRef.current?.getEditor();
@@ -51,29 +54,69 @@ const WriteQuill: React.FC<{
 
   const handleChange = (content: string) => {
     setContent(content);
-    console.log("글 변경", content);
   };
 
-  const QuillImageUpload = () => {
+  const handleImageUpload = () => {
     const input = document.createElement("input");
     input.setAttribute("type", "file");
     input.setAttribute("accept", "image/*");
+
     input.onchange = async () => {
       const file = input.files?.[0];
       if (file) {
-        await QuillSubmit(file);
+        const reader = new FileReader();
+
+        reader.onload = async (e) => {
+          const base64Data = e.target?.result as string;
+          const quill = quillRef.current?.getEditor();
+          if (quill) {
+            const range = quill.getSelection();
+            if (range) {
+              // 이미지를 Base64 형태로 Quill 에디터에 삽입
+              quill.clipboard.dangerouslyPasteHTML(
+                range.index,
+                `<img src="${base64Data}" />`
+              );
+            }
+          }
+        };
+
+        reader.readAsDataURL(file);
       }
     };
+
     input.click();
   };
 
-  const QuillSubmit = async (file?: File) => {
+  const authToken =
+    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjQ2MDczMzh9.BbvfPZE8fzZNQNJdyq0XQz7GaIUYhhLUhoup35KwlfC-92MHXOi3jkILH19lFdDVQkuwtFWRlyRbVZQW8a8QUA";
+
+  const handleSubmit = async () => {
+    if (content.trim() === "" || null) {
+      alert("작성하고 싶은 글을 작성해 주세요");
+      return;
+    }
+
+    if (content.trim() === "") {
+      alert("내용을 입력해주세요");
+      return;
+    }
+
     const formData = new FormData();
-    formData.append("content", content);
+    formData.append(
+      "form",
+      new Blob([JSON.stringify({ title })], { type: "application/json" })
+    );
+
+    const contentBlob = new Blob([content], { type: "text/html" });
+    formData.append("quillFile", contentBlob);
 
     try {
-      const response = await fetch("http://localhost:8080", {
+      const response = await fetch(`${AxiosURL}/profile/lounge`, {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
         body: formData,
       });
 
@@ -82,17 +125,18 @@ const WriteQuill: React.FC<{
 
         // 글 등록 또는 수정 후에 최신 상태 반영
         if (initialContent !== null && initialContent !== undefined) {
-          // 글 수정 시
           const updatedContent = content;
           onPublish(updatedContent);
         } else {
-          // 글 등록 시
           onPublish(content);
         }
 
         // 에디터 닫기
         setVisible(false);
         onClose();
+
+        // 페이지 새로 고침
+        // window.location.reload();
       } else {
         console.error("글 등록에 실패했습니다.");
       }
@@ -105,35 +149,35 @@ const WriteQuill: React.FC<{
     <>
       <Overlay visible={visible} />
       <EditorContainer visible={visible}>
-        <QuillTitle>라운지 Talk</QuillTitle>
+        <Title>글쓰기</Title>
         <QuillToolbar />
         <CustomReactQuill
-          placeholder="자유롭게 여러분의 생각을 나눠보세요."
+          placeholder="여러분의 소식을 공유해보세요."
           theme="snow"
           ref={quillRef}
           value={content}
           onChange={handleChange}
           modules={modules}
         />
-        <QuillButtonContainer>
-          <QuillCancelButton
+        <ButtonContainer>
+          <CancelButton
             onClick={() => {
               setVisible(false);
               onClose();
             }}
           >
             취소
-          </QuillCancelButton>
-          <StyledButton onClick={() => QuillSubmit()}>
+          </CancelButton>
+          <StyledButton onClick={() => handleSubmit()}>
             {initialContent ? "글 수정" : "글 등록"}
           </StyledButton>
-        </QuillButtonContainer>
+        </ButtonContainer>
       </EditorContainer>
     </>
   );
 };
 
-export default WriteQuill;
+export default NoticeWriteQuill;
 
 const fadeOut = keyframes`
   from {
@@ -174,7 +218,7 @@ const EditorContainer = styled.div<{ visible: boolean }>`
   left: 50%;
   transform: translate(-50%, -50%);
   width: 700px;
-  height: 635px;
+  height: 695px;
   padding: 15px 40px;
   border-radius: 15px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -188,7 +232,7 @@ const EditorContainer = styled.div<{ visible: boolean }>`
         `};
 `;
 
-const QuillTitle = styled.h2`
+const Title = styled.h2`
   text-align: center;
   margin-bottom: 20px;
   color: black;
@@ -225,7 +269,7 @@ const CustomReactQuill = styled(ReactQuill)`
   }
 `;
 
-const QuillButtonContainer = styled.div`
+const ButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   margin: 13px 0;
@@ -244,7 +288,7 @@ const StyledButton = styled.button`
   }
 `;
 
-const QuillCancelButton = styled.button`
+const CancelButton = styled.button`
   background-color: #ccc;
   color: black;
   border: none;

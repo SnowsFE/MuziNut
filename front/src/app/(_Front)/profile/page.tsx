@@ -1,25 +1,16 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import Image from "next/image";
-import BaseImg from "../../../../public/images/BaseImg.png";
-import BaseBanner from "../../../../public/images/BaseBanner.png";
 import Link from "next/link";
-import {
-  BannerData,
-  ProfileData,
-  useFileState,
-  ProfileEditForm,
-} from "./mainEdit";
+import { BannerData, ProfileData, useFileState } from "./mainEdit";
 import { BaseImgBox } from "@/app/components/icon/icon";
+import ProfileEdit from "./profileEdit";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("main");
-  const [profileBannerImgName, setprofileBannerImgName] = useState<string>(
-    BaseBanner.src
-  );
-  const [profileImgName, setprofileImgName] = useState<string>(BaseImg.src);
-  const [editFormVisible, setEditFormVisible] = useState(false);
+  const [profileBannerImgName, setProfileBannerImgName] = useState<string>("");
+  const [profileImgName, setProfileImgName] = useState<string>("");
   const [albumImageURLs, setAlbumImageURLs] = useState<string[]>([]);
 
   // 백엔드에서 받은 이미지 URL 상태 관리
@@ -28,33 +19,27 @@ const UseridProfile: React.FC = () => {
   >(null);
   const [albumImageUrl, setAlbumImageUrl] = useState<string | null>(null);
 
-  // 업로드 하는 함수
   const onUpload = (data: {
-    profileBannerImgName?: string;
-    profileImgName?: string;
+    profileBannerImgName?: string | object;
+    profileImgName?: string | object;
   }) => {
-    if (data.profileBannerImgName) {
+    if (typeof data.profileBannerImgName === "string") {
       console.log("배너 이미지가 변경되었습니다:", data.profileBannerImgName);
-      setprofileBannerImgName(data.profileBannerImgName);
+      setProfileBannerImgName(data.profileBannerImgName);
     }
-    if (data.profileImgName) {
+    if (typeof data.profileImgName === "string") {
       console.log("프로필 이미지가 변경되었습니다:", data.profileImgName);
-      setprofileImgName(data.profileImgName);
+      setProfileImgName(data.profileImgName);
     }
   };
 
-  const {
-    profileInfo,
-    albumInfo,
-    handleProfileInfoChange,
-    handleProfileEditSubmit,
-  } = useFileState((data) => {
+  const { profileInfo, albumInfo } = useFileState((data) => {
     setMainSongAlbumImageUrl(data.mainSongAlbumImageURL);
     setAlbumImageUrl(data.albumImageURL);
 
     // albumImageURL 배열에 이미지 URL 추가
     if (data.albumImageURL) {
-      setAlbumImageURLs([...albumImageURLs, data.albumImageURL]);
+      setAlbumImageURLs((prevURLs) => [...prevURLs, data.albumImageURL]);
     }
 
     onUpload({
@@ -63,33 +48,29 @@ const UseridProfile: React.FC = () => {
     });
   });
 
-  // 프로필 정보 수정 폼 열기
-  const openEditForm = () => {
-    setEditFormVisible(true);
-  };
-
-  // 프로필 정보 수정 폼 닫기
-  const closeEditForm = () => {
-    setEditFormVisible(false);
-  };
+  useEffect(() => {
+    if (profileInfo) {
+      setProfileBannerImgName(profileInfo.profileBannerImgName || "");
+      setProfileImgName(profileInfo.profileImgName || "");
+    }
+  }, [profileInfo]);
 
   return (
     <ProfileContainer>
       <Banner>
         <Image
-          src={`data:image/png;base64,${profileInfo.profileBannerImgName}`}
-          alt="이곳은 뮤지넛에서 여러분의 고유한 배너 이미지를 사용할 수 있도록 만든 공간입니다
-           배너 이미지는 1280 x 210 으로 설정해주세요"
+          src={`data:image/png;base64,${profileBannerImgName}`}
+          alt="배너 이미지"
           width={1280}
           height={210}
         />
         <BannerData onUpload={onUpload} />
       </Banner>
       <Profile>
-        <EditForm onClick={openEditForm}>⚙️</EditForm>
+        <ProfileEdit />
         <Image
-          src={`data:image/png;base64,${profileInfo.profileImgName}`}
-          alt="profileImgName"
+          src={`data:image/png;base64,${profileImgName}`}
+          alt="프로필 이미지"
           width={160}
           height={160}
         />
@@ -100,11 +81,9 @@ const UseridProfile: React.FC = () => {
             팔로잉 {profileInfo.followingCount} &nbsp; 팔로워{" "}
             {profileInfo.followersCount}
           </FollowInfo>
-          {profileInfo.intro ? (
-            <ProfileDescription>{profileInfo.intro}</ProfileDescription>
-          ) : (
-            <ProfileDescription>자기소개를 입력하세요</ProfileDescription>
-          )}
+          <ProfileDescription>
+            {profileInfo.intro || "자기소개를 입력하세요"}
+          </ProfileDescription>
         </ProfileInfo>
       </Profile>
       <SelectBar>
@@ -168,30 +147,22 @@ const UseridProfile: React.FC = () => {
         )}
       </MainMusicContainer>
       <BodyAlbum>
-        {albumImageURLs.length > 0 ? (
+        {albumImageURLs.length > 0 && (
           <AlbumList>
-            {albumImageURLs &&
-              albumImageURLs.map((url, index) => (
-                <AlbumItem key={index}>
-                  <Image
-                    src={`data:image/png;base64,${url}`}
-                    alt={`albumImage${index}`}
-                    width={200}
-                    height={200}
-                  />
-                  <AlbumTitle>Album Title</AlbumTitle>
-                </AlbumItem>
-              ))}
+            {albumImageURLs.map((url, index) => (
+              <AlbumItem key={index}>
+                <Image
+                  src={`data:image/png;base64,${url}`}
+                  alt={`albumImage${index}`}
+                  width={200}
+                  height={200}
+                />
+                <AlbumTitle>Album Title</AlbumTitle>
+              </AlbumItem>
+            ))}
           </AlbumList>
-        ) : null}
+        )}
       </BodyAlbum>
-      <ProfileEditForm
-        profileInfoData={profileInfo}
-        onChange={handleProfileInfoChange}
-        onSubmit={handleProfileEditSubmit}
-        onCancel={closeEditForm}
-        visible={editFormVisible}
-      />
     </ProfileContainer>
   );
 };
@@ -345,7 +316,6 @@ const QuestionContainer = styled.div`
   max-width: 50%;
   max-height: auto;
   height: auto;
-  z-index: 1;
 `;
 
 // 그림자 애니메이션

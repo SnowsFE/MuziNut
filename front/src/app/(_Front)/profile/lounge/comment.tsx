@@ -32,16 +32,6 @@ const commentData: CommentProps[] = [
     comment: 0,
     replies: [],
   },
-  {
-    id: 0,
-    name: "",
-    profile: "",
-    time: "",
-    bodytext: "",
-    like: 0,
-    comment: 0,
-    replies: [],
-  },
 ];
 
 // 타임스탬프를 사람이 읽기 쉬운 형식으로 변환하는 함수

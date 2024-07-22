@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import axios from "axios";
 import AxiosURL from "@/app/axios/url";
+import { useRouter } from "next/navigation";
 
 interface Post {
   id: number;
@@ -23,6 +24,8 @@ const NoticePost: React.FC<NoticePostProps> = ({ selected, searchQuery }) => {
   const [adminBoardsForms, setAdminBoardsForms] = useState<Post[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+
+  const router = useRouter();
 
   const authToken =
     "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9BRE1JTiIsImV4cCI6MTcyNDQ3ODE4OH0.3z2IGByLdk3Q-khCsRjdgK4BtMZs-h51If5vYgF45rgegl8WjUfXoIMDzMsqFLVOquamuJ57dMplJEGevon4PQ";
@@ -120,6 +123,7 @@ const NoticePost: React.FC<NoticePostProps> = ({ selected, searchQuery }) => {
           <HeaderItem>조회수</HeaderItem>
           <HeaderItem>좋아요</HeaderItem>
         </Header>
+
         {isLoading ? (
           <LoadingMessage>로딩 중...</LoadingMessage>
         ) : adminBoardsForms.length === 0 ? (
@@ -128,7 +132,10 @@ const NoticePost: React.FC<NoticePostProps> = ({ selected, searchQuery }) => {
           <NoDataMessage>검색 결과가 없습니다!</NoDataMessage>
         ) : (
           filteredPosts.map((post) => (
-            <Post key={post.id}>
+            <Post
+              key={post.id}
+              onClick={() => router.push(`/notice/${post.id}`)}
+            >
               <PostItem>{post.title}</PostItem>
               <PostItem>{post.writer}</PostItem>
               <PostItem>{post.createdDt}</PostItem>
