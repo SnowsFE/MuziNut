@@ -1,9 +1,6 @@
 "use client";
 import styles from "../main/css/BestCommunity.module.css";
-import CommunityList, { CommunityListItem } from "./CommunityList";
 import { useCommunityFetchData } from "../useHook";
-import axios from "axios";
-import Link from "next/navigation";
 import { styled } from "styled-components";
 /*
 const listItems = [
