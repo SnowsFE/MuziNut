@@ -12,7 +12,7 @@ interface TabContextType {
 export const TabContext = createContext<TabContextType>({
   tab: "one",
   setTab: () => {},
-  url: "http://localhost:9999/Chart-new",
+  url: "http://localhost:8080/music/newsong",
   setUrl: () => {},
 });
 
@@ -20,7 +20,7 @@ export const TabProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [tab, setTab] = useState<string>("one");
-  const [url, setUrl] = useState<string>("http://localhost:9999/Chart-new");
+  const [url, setUrl] = useState<string>("http://localhost:8080/music/newsong");
 
   return (
     <TabContext.Provider value={{ tab, setTab, url, setUrl }}>

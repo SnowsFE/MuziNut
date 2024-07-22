@@ -21,13 +21,15 @@
 
 /* 차트 Table 컨테이너 */
 .music__chart__container {
+  margin-top: 30px;
   padding: 20px 0;
   /* border: 1px solid pink; */
 }
-.music__chart__container table {
+.table__container {
   width: 100%;
   text-align: left; /*왼쪽 정렬*/
   border-collapse: collapse; /*td간 간격 제거*/
+  /* border: 1px solid black; */
 }
 
 /* 테이블 헤더 blind 처리 */
@@ -45,6 +47,9 @@
   padding-bottom: 20px;
   padding-top: 20px;
 }
+.table__row tr td:first-child {
+  padding-right: 50px;
+}
 .table__row tr td:last-child {
   padding-right: 50px;
 }
@@ -58,3 +63,5 @@
 .table__row tr th {
   padding-right: 0;
 }
+
+

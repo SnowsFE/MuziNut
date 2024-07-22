@@ -13,13 +13,13 @@ export default function MusicTab() {
 
   const onClickFirst = () => {
     setTab("one");
-    setUrl("http://localhost:9999/Chart-new");
+    setUrl("http://localhost:8080/music/newsong");
     console.log("첫 번쨰 Tab 눌림");
     setShowGenreTabs(false); // 다른 탭 클릭 시 하위 장르 탭 숨기기
   };
   const onClickSecond = () => {
     setTab("two");
-    setUrl("http://localhost:9999/Chart-top100");
+    setUrl("http://localhost:8080/music/hotsong");
     console.log("두 번쨰 Tab 눌림");
     setShowGenreTabs(false); // 다른 탭 클릭 시 하위 장르 탭 숨기기
   };
@@ -30,7 +30,7 @@ export default function MusicTab() {
   // };
   const onClickThird = () => {
     setTab("three");
-    setUrl("http://localhost:9999/k-pop");
+    setUrl("http://localhost:8080/music/genresong/kpop");
     console.log("세 번째 Tab 눌림");
     setShowGenreTabs((prev) => !prev); // 장르별 음악 클릭 시 하위 장르 탭 보이기/숨기기 토글
   };
@@ -39,7 +39,7 @@ export default function MusicTab() {
     setActiveGenreTab(genreId); // 클릭한 장르 탭을 활성화 상태로 설정
 
     setTab(`${genreId}`);
-    setUrl(`http://localhost:9999/${genreId}`);
+    setUrl(`http://localhost:8080/music/genresong/${genreId}`);
     console.log(`장르 ${genreId} 클릭`);
   };
 

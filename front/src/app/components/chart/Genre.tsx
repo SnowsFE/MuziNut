@@ -9,7 +9,7 @@ type GenreTabProps = {
 
 const GenreTabs: React.FC<GenreTabProps> = ({ activeTab, onTabClick }) => {
   const genreTabs = [
-    { id: "k-pop", name: "K-POP" },
+    { id: "kpop", name: "K-POP" },
     { id: "ballade", name: "발라드" },
     { id: "pop-song", name: "POP" },
     { id: "hip-hop", name: "힙합" },
