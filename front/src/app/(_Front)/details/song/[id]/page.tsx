@@ -1,94 +1,176 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import styles from "./page.module.css";
 import Image from "next/image";
 import MusicContentInfo from "@/app/components/music-content/MusicContentInfo";
 import Link from "next/link";
 import { HeartButton } from "@/app/components/button/commonButton";
+import { useParams } from "next/navigation";
+import defaultImg from "@/../../public/images/artist2.png";
 
-const album = () => {
-  const introduction = {
-    title: "소개글",
-    text: `aespa, 첫 정규 앨범 ‘Armageddon’ 발매! 힙한 무드 ‘Supernova’→힙합
-    댄스곡 ‘Armageddon’으로 강렬한 질주! 세계관 시즌 2 서사 담은 역대급
-    스케일 음악+비주얼! ‘글로벌 히트메이커’ aespa가 첫 정규 앨범
-    ‘Armageddon’을 발매했다.`,
+export type SongData = {
+  albumImg: string;
+  title: string;
+  nickname: string;
+  likeCount: number;
+  lyrics: string;
+  composer: string;
+  lyricist: string;
+  albumId: 1;
+  genres: [];
+  like: boolean;
+};
+
+type Params = {
+  id: string;
+};
+
+export default function Song() {
+  const params = useParams() as Params;
+  const { id } = params;
+
+  console.log("params는", params);
+
+  const [songData, setSongData] = useState<SongData | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태 관리(좋아요버튼)
+  const [token, setToken] = useState<string | null>(null); // 사용자 토큰 관리
+
+  if (songData) {
+    console.log("songData의 like 여부", songData.like);
+  }
+
+  // songID가 변경될 때만 렌더링 다시
+  useEffect(() => {
+    if (id) {
+      const fetchSongData = async () => {
+        try {
+          const response = await fetch(`http://localhost:8080/music/${id}`);
+          const data: SongData = await response.json();
+          setSongData(data);
+        } catch (error) {
+          console.error("음악데이터 정보를 가져오는 데 실패했습니다.", error);
+        }
+      };
+
+      fetchSongData();
+    }
+
+    //토큰 관리
+    const token = localStorage.getItem("token");
+    // console.log(token);
+    if (token) {
+      setIsLoggedIn(true);
+      setToken(token); // 토큰 설정
+    }
+  }, [id]);
+
+  if (!songData) return <div>Loading...</div>;
+
+
+
+
+  // 좋아요 버튼 눌렀을 경우
+  const handleLikeBtn = async () => {
+    if (songData) {
+      const newLikeCount =
+        songData.like === true
+          ? songData.likeCount - 1
+          : songData.likeCount + 1;
+      const newLikeStatus = !songData.like;
+
+      //UI 에 우선 업데이트 -> 서버에 전송(렌더링 다시 될 때-접속하거나 새로고침만 상태 업데이트)
+
+      // 프론트에서 songData(좋아요 수, 좋아요 T/F 여부 관리)
+      setSongData({
+        ...songData,
+        likeCount: newLikeCount,
+        like: newLikeStatus,
+      });
+
+      console.log('like수', songData.likeCount);
+      console.log('like상태', songData.like);
+      // 서버 요청은 비동기적으로 처리
+      // 서버에 데이터 전송
+      try {
+        const response = await fetch("http:/localhost:8080/update-like", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${token}`, 
+          },
+          body: JSON.stringify({
+            albumId: songData.albumId,
+            like: newLikeStatus,
+            likeCount: newLikeCount,
+          }),
+        });
+
+        if (!response.ok) {
+          // 서버 응답이 실패한 경우, UI 상태 제자리로
+          alert("좋아요 업데이트에 실패했습니다.");
+          setSongData({
+            ...songData,
+            likeCount: songData.likeCount,
+            like: songData.like
+          });
+          console.log('like수22', songData.likeCount);
+          console.log('like상태22', songData.like);
+        }
+      } catch (error) {
+        // 네트워크 오류가 발생한 경우, UI 상태 제자리로
+        alert("좋아요 업데이트 중 오류가 발생했습니다.");
+        setSongData({
+          ...songData,
+          likeCount: songData.likeCount,
+          like: songData.like
+        });
+        console.error("Error updating like:", error);
+      }
+    }
   };
 
-  const lyrics = {
-    title: "가사",
-    text: `  like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
-          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
-          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
-          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
-          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
-          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
-          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
-          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
-          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
-          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
-          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
-          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
-          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
-          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
-          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
-          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
-          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
-          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
-          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
-          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
-          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
-          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
-          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
-          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
-          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
-          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
-          너 누구야 like some kind of Supernova Watch out Look at me go 재미 좀 볼 빛의
-          Core So hot hot 문이 열려 서로의 존재를 느껴 마치 Discord 날 닮은 너
-          너 누구야`,
-  };
-
-  const songInfo = {
-    title: "좋은 날",
-    artist: "아이유",
-    genre: "발라드, 케이팝",
-  };
-
-  const likeNum = 30;
+ 
 
   return (
     <div className={styles.container}>
       음악 사진 눌렀을 때 나오는 상세 페이지 입니다.
       <section className={styles.music__info__section}>
         <h2>음악 정보</h2>
-
         <div className={styles.music__info__wrap}>
           <div className={styles.album__info__container}>
             <div className={styles.album__img}>
-              <Image
-                src="/svgs/album_thumb.png"
-                alt="Services"
-                width={400}
-                height={400}
-              />
+              <Link href={`/details/album/${songData.albumId}`}>
+                {/* musicCharData의 이미지가 없으면 기본 이미지(album)으로 설정 */}
+                <Image
+                  src={
+                    songData.albumImg
+                      ? `data:image/png;base64,${songData.albumImg}`
+                      : defaultImg
+                  }
+                  alt="album"
+                  width={400}
+                  height={400}
+                />
+              </Link>
             </div>
             <div className={styles.song__info}>
               <div className={styles.title__artist}>
-                <h1>{songInfo.title}</h1>
+                <h1>{songData.title}</h1>
                 <h2>
-                  <Link href="./">{songInfo.artist}</Link>
+                  <Link href="./">{songData.nickname}</Link>
                 </h2>
               </div>
 
               <div className={styles.song__info__details}>
                 <ul>
                   <li>
-                    <span>장르:</span> {songInfo.genre}
+                    <span>장르:</span> {songData.genres.join(", ")}
                   </li>
                   <li>
-                    <span>작사:</span> {songInfo.artist}
+                    <span>작사:</span> {songData.lyricist}
                   </li>
                   <li>
-                    <span>작곡:</span> {songInfo.artist}
+                    <span>작곡:</span> {songData.composer}
                   </li>
                 </ul>
               </div>
@@ -108,7 +190,12 @@ const album = () => {
 
           <div className={styles.btn__container}>
             <div className={styles.btn__heart}>
-              <HeartButton /> <span>{likeNum}</span>
+              <HeartButton
+                onClick={handleLikeBtn}
+                isLiked={songData.like}
+                isLoggedIn={isLoggedIn}
+              />
+              <span>{songData.likeCount}</span>
             </div>
             <div className={styles.btn__add}>
               <span>플리넛에 추가하기</span>
@@ -149,11 +236,8 @@ const album = () => {
         </div>
       </section>
       <section className={styles.lyrics__section}>
-        {/* <MusicContentInfo title={introduction.title} text={introduction.text} /> */}
-        <MusicContentInfo title={lyrics.title} text={lyrics.text} />
+        <MusicContentInfo title="가사" text={songData.lyrics} />
       </section>
     </div>
   );
-};
-
-export default album;
+}
