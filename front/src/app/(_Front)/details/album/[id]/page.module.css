@@ -1,171 +1,186 @@
+/* page.module.css */
 .container {
-  display: flex;
-  flex-direction: column;
-  /* padding: 50px; */
-}
-
-/* 음악 정보 */
-.music__info__section,
-.lyrics__section {
-  /* border: 3px solid red; */
-  background-color: var(--bg-color);
   padding: 20px;
-  /* border: 1px solid blue; */
-  margin-bottom: 60px;
+  font-family: Arial, sans-serif;
 }
 
 .music__info__section {
-  display: flex;
-  flex-direction: column;
+  background-color: #e0f2f1; /* 연한 초록색 */
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
 }
-.music__info__section > h2 {
-  color: green;
-  /* border: 1px solid red; */
-}
+
 .music__info__wrap {
-  padding: 20px;
   display: flex;
-  justify-content: center;
-  justify-content: space-between;
-
-  box-sizing: border-box;
   align-items: center;
-  padding: 20px;
-  border-radius: 13px;
-  border: 2px solid #eee;
-  box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.06);
 }
 
-/* 곡 정보들
-앨범 사진, 곡 이름, 아티스트, 장르, 작사/작곡 */
 .album__info__container {
-  position: relative;
-
   display: flex;
-  width: 70%;
-  margin: 30px 20px 30px 20px;
-  max-height: 140px;
-  overflow: hidden;
-  gap: 30px;
-  box-sizing: border-box;
-  border-radius: 0 8px 8px 0;
-  border: 1px solid #c6c6c6;
+  align-items: center;
 }
+
 .album__img {
-  width: 130px;
-  overflow: hidden;
-  /* border: 1px solid red; */
-}
-.album__img > img {
-  width: 100%;
-  object-fit: cover;
-}
-.song__info {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 10px;
-  flex: 1;
-  padding: 3px;
-  /* border: 1px solid red; */
-}
-
-.title__artist > h1,
-.title__artist > h2 {
-  margin: 0;
-}
-.title__artist > h1 {
-  font-size: 40px;
-  margin-bottom: 16px;
-}
-.title__artist > h2 > a {
-  text-decoration: none;
-  font-size: 24px;
-  color: green;
-}
-.title__artist > h2 > a:hover {
-  text-decoration: underline;
-}
-
-.song__info__details {
-  margin-top: 35px;
-  font-size: 20px;
-}
-.song__info__details > ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.song__info__details > ul > li {
-  margin-bottom: 9px;
-}
-.song__info__details > ul > li > span {
-  margin-right: 5px;
-  color: rgb(75, 75, 75);
-}
-
-/* 재생하기 버튼 */
-.play__btn {
-  position: absolute;
-  padding: 20px;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  right: 10px;
-  top: 10px;
-}
-
-.divider {
-  width: 20px;
-  border-right: 1px solid #646464;
-}
-
-/*버튼 컨테이너
-좋아요 버튼, 공유 버튼, 추가 버튼*/
-.btn__container {
-  height: 400px;
   margin-right: 20px;
-  /* border: 1px solid rgb(170, 58, 107); */
-}
-/* 좋아요 버튼 */
-.btn__heart {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  margin-top: 40px;
-  font-size: 30px;
-  gap: 20px;
-  /* border: 1px solid blue; */
-}
-.btn__heart img {
-  width: 40px;
-  height: 40px;
 }
 
-.btn__add {
+.song__info {
+  flex: 1;
+}
+
+.title__artist {
+  margin-bottom: 10px;
+}
+
+.title__artist h1 {
+  margin: 0;
+  font-size: 24px;
+  color: #00796b; /* 텍스트 색상 */
+  cursor: pointer; /* 제목 클릭 가능 표시 */
+}
+
+.title__artist h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #004d40; /* 텍스트 색상 */
+}
+
+.btn__container {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  font-size: 20px;
-  gap: 13px;
-  padding: 20px;
-  margin-top: 40px;
-  border-radius: 8px;
-  border: 1px solid #c6c6c6;
 }
 
 .btn__share {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-top: 40px;
-  padding: 20px;
-  /* justify-content: space-between; */
-  font-size: 20px;
-  border-radius: 8px;
-  border: 1px solid #c6c6c6;
 }
-.btn__share > span > a {
-  margin-left: 10px;
-  /* border: 1px solid red; */
+
+.btn__share span {
+  margin-right: 10px;
+}
+
+.btn__share a {
+  margin-left: 5px;
+}
+
+.lyrics__section {
+  margin-top: 20px;
+}
+
+.music-list-section {
+  margin-top: 20px;
+}
+
+/* page.module.css */
+
+/* 모달의 기본 스타일 */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* 모달이 열릴 때 스타일 */
+.modal.open {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* 모달 콘텐츠의 스타일 */
+.modal__content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 60%; /* 모달의 너비를 더 작게 설정 */
+  max-width: 400px; /* 최대 너비 설정 */
+  position: relative;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 모달 닫기 버튼의 스타일 */
+.close__btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #f44336;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+
+
+/* 수록곡 부분 */
+
+/* 전체재생 or 선택재생 버튼 컨테이너 */
+.play__option__container {
+  margin-top: 40px;
+  display: flex;
+  gap: 20px;
+}
+.play__option__container button {
+  font-size: 18px;
+  font-weight: 600;
+  border: none;
+  background-color: rgb(183, 232, 177);
+  border-radius: 13px;
+  padding: 3px 10px;
+}
+
+/* 차트 Table 컨테이너 */
+.music__chart__container {
+  margin-top: 30px;
+  padding: 20px 0;
+  /* border: 1px solid pink; */
+}
+.table__container {
+  width: 100%;
+  text-align: left; /*왼쪽 정렬*/
+  border-collapse: collapse; /*td간 간격 제거*/
+  /* border: 1px solid black; */
+}
+
+/* 테이블 헤더 blind 처리 */
+.blind {
+  overflow: hidden;
+  position: absolute;
+  clip: rect(0 0 0 0);
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+}
+
+/* 각 td에 padding-top padding-bottom 동일하게 적용*/
+.table__row tr td {
+  padding-bottom: 20px;
+  padding-top: 20px;
+}
+.table__row tr td:first-child {
+  padding-right: 50px;
+}
+.table__row tr td:last-child {
+  padding-right: 50px;
+}
+.table__row tr {
+  border-bottom: 1px solid rgb(194, 190, 190);
+}
+.table__row tr:last-child {
+  border-bottom: none;
+}
+.table__row tr td,
+.table__row tr th {
+  padding-right: 0;
 }
