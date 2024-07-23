@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { LikeIcon } from "@/app/components/icon/icon";
-import threedot from "../../../../../public/svgs/threedot.svg";
 import Comments from "@/app/components/board/Comments";
 import WriterProfileInfo from "@/app/components/board/WriterProfileInfo";
 import WriteCommentForm from "@/app/components/board/WriteCommentForm";
@@ -15,7 +14,7 @@ interface BoardsDataProps {
   id: number;
   title: string;
   quillFilename: string;
-  isLike: boolean;
+  boardLikeStatus: boolean;
   likeCount: number;
 }
 
@@ -24,8 +23,12 @@ interface CommentProps {
   writer: string;
   createdDt: string;
   contents: string;
-  isLike: boolean;
+  boardLikeStatus: boolean;
   likeCount: number;
+}
+
+interface QuillProps {
+  Quill: string;
 }
 
 const PostBox: React.FC = () => {
@@ -33,7 +36,7 @@ const PostBox: React.FC = () => {
     id: 0,
     title: "",
     quillFilename: "",
-    isLike: false,
+    boardLikeStatus: false,
     likeCount: 0,
   });
 
@@ -48,6 +51,11 @@ const PostBox: React.FC = () => {
   const [commentForm, setCommentForm] = useState({
     comments: 0,
   });
+
+  const [QuillData, setQuillData] = useState<QuillProps>({
+    Quill: "",
+  });
+
   const [comments, setComments] = useState<CommentProps[]>([]); // 댓글 목록
 
   const [reply, setReply] = useState(""); // 대댓글
@@ -81,13 +89,15 @@ const PostBox: React.FC = () => {
 
           setProfileInfo(profileData);
 
-          setBoardsData({
+          const boardsData = {
             id: res.data.id,
             title: res.data.title,
             quillFilename: res.data.quillFilename,
-            isLike: res.data.isLike,
+            boardLikeStatus: res.data.boardLikeStatus,
             likeCount: res.data.likeCount,
-          });
+          };
+
+          setBoardsData(boardsData);
 
           console.log(res.data);
           setCommentForm({
@@ -95,6 +105,12 @@ const PostBox: React.FC = () => {
           });
 
           setComments(res.data.comments);
+
+          // 두 번째 요청을 첫 번째 요청의 결과를 사용하여 수행
+          const resdata = await axios.get(
+            `http://localhost:8080/boards/get-file?filename=${boardsData.quillFilename}`
+          );
+          setQuillData(resdata.data);
         }
       } catch (error) {
         console.error("데이터를 받지 못했습니다", error);
@@ -123,11 +139,11 @@ const PostBox: React.FC = () => {
           isBookmark={profileInfo.isBookmark ? true : false}
         />
       </Header>
-      <Body dangerouslySetInnerHTML={{ __html: boardsData.quillFilename }} />
+      <Body dangerouslySetInnerHTML={{ __html: QuillData }} />
       {/* 본문 내용 출력 */}
       <Footer>
         <LikeButton>
-          <LikeIcon /> {boardsData.isLike ? true : false}
+          <LikeIcon /> {boardsData.boardLikeStatus ? true : false}
           {boardsData.likeCount}
         </LikeButton>
       </Footer>
@@ -139,7 +155,7 @@ const PostBox: React.FC = () => {
           writer={comment.writer}
           createdDt={comment.createdDt}
           contents={comment.contents}
-          isLike={comment.isLike}
+          boardLikeStatus={comment.boardLikeStatus}
           likeCount={comment.likeCount}
         />
       ))}
@@ -273,6 +289,13 @@ const ShareContainer = styled.div`
 const Body = styled.div`
   font-family: "esamanru Medium";
   min-height: 500px;
+
+  img {
+    margin-top: 5px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
 `;
 
 // 푸터

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Submit } from "@/app/components/icon/icon";
-import { getToken, getRefreshToken, setToken } from "@/app/common/common";
+import { getRefreshToken, setToken } from "@/app/common/common";
 
 interface CommentFormProps {
   comments: number;

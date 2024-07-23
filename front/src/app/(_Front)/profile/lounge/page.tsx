@@ -11,12 +11,16 @@ import { BannerData, ProfileData, useFileState } from "./loungeEdit";
 import ProfileEdit from "../profileEdit";
 
 const UseridProfile: React.FC = () => {
-  // 프로필, 배너 이미지 업로드 ------------------------------------------------------
   const [selectedTab, setSelectedTab] = useState("lounge");
   const [profileBannerImgName, setProfileBannerImgName] = useState<string>("");
   const [profileImgName, setProfileImgName] = useState<string>("");
+  const [writeVisible, setWriteVisible] = useState(false);
+  const [LoungePost, setLoungePost] = useState<string[]>([]);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [threedotopen, setThreeDotOpen] = useState<boolean[]>([]);
+  const [openComments, setOpenComments] = useState<boolean[]>([]);
+  const threedotRef = useRef<HTMLDivElement>(null);
 
-  // 업로드 하는 함수
   const onUpload = (data: {
     profileBannerImgName?: string | object;
     profileImgName?: string | object;
@@ -31,7 +35,7 @@ const UseridProfile: React.FC = () => {
     }
   };
 
-  const { profileInfo } = useFileState((data) => {
+  const { profileInfo, LoungeForm, quiilFiles } = useFileState((data) => {
     onUpload({
       profileBannerImgName: data.profileBannerImgName,
       profileImgName: data.profileImgName,
@@ -45,28 +49,16 @@ const UseridProfile: React.FC = () => {
     }
   }, [profileInfo]);
 
-  // 프로필, 배너 이미지 업로드 ------------------------------------------------------
-
-  // 게시글 보이고 안보이고 관리
-  const [writeVisible, setWriteVisible] = useState(false);
-  const [publishedContent, setPublishedContent] = useState<string[]>([]);
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
-
-  // 글 수정, 삭제 관리
-  const [threedotopen, setThreeDotOpen] = useState<boolean[]>([]);
-  // 댓글 관리
-  const [openComments, setOpenComments] = useState<boolean[]>([]);
-
   useEffect(() => {
-    if (publishedContent.length > 0) {
-      setThreeDotOpen(Array(publishedContent.length).fill(false));
-      setOpenComments(Array(publishedContent.length).fill(false));
+    if (LoungeForm.length > 0) {
+      const loungeContents = LoungeForm.map((item) => item.content);
+
+      setLoungePost(loungeContents);
+      setThreeDotOpen(Array(LoungeForm.length).fill(false));
+      setOpenComments(Array(LoungeForm.length).fill(false));
     }
-  }, [publishedContent]);
+  }, [LoungeForm]);
 
-  const threedotRef = useRef<HTMLDivElement>(null);
-
-  // 수정, 삭제 버튼
   const handleThreeDotClick = (index: number) => {
     setThreeDotOpen((prev) =>
       prev.map((item, i) => (i === index ? !item : item))
@@ -79,16 +71,14 @@ const UseridProfile: React.FC = () => {
         threedotRef.current &&
         !threedotRef.current.contains(event.target as Node)
       ) {
-        setThreeDotOpen(Array(publishedContent.length).fill(false));
+        setThreeDotOpen(Array(LoungePost.length).fill(false));
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [LoungePost]);
 
   const handleCommentToggle = (index: number) => {
     setOpenComments((prev) =>
@@ -101,35 +91,28 @@ const UseridProfile: React.FC = () => {
     setEditingIndex(null);
   };
 
-  // 글 등록 콜백 함수
   const handlePublish = (content: string) => {
     if (editingIndex !== null) {
-      // 글 수정
-      const updatedContent = [...publishedContent];
+      const updatedContent = [...LoungePost];
       updatedContent[editingIndex] = content;
-      setPublishedContent(updatedContent);
+      setLoungePost(updatedContent);
       setEditingIndex(null);
     } else {
-      // 새 글 등록
-      setPublishedContent((prev) => [...prev, content]);
+      setLoungePost((prev) => [...prev, content]);
     }
     setWriteVisible(false);
   };
 
-  // 글 수정 콜백 함수
   const handleEdit = (index: number) => {
     setEditingIndex(index);
     setWriteVisible(true);
   };
 
-  // 글 삭제 콜백 함수
   const handleDelete = (index: number) => {
-    const updatedContent = [...publishedContent];
+    const updatedContent = [...LoungePost];
     updatedContent.splice(index, 1);
-    setPublishedContent(updatedContent);
+    setLoungePost(updatedContent);
   };
-
-  console.log("메인:", profileInfo);
 
   return (
     <ProfileContainer>
@@ -185,7 +168,6 @@ const UseridProfile: React.FC = () => {
           >
             <SelectItem selected={selectedTab === "plynut"}>플리넛</SelectItem>
           </StyledLink>
-          |
           <StyledLink
             href={"/profile/nuts"}
             onClick={() => setSelectedTab("nuts")}
@@ -196,7 +178,7 @@ const UseridProfile: React.FC = () => {
         </SelectContainer>
       </SelectBar>
       <Lounge>
-        {publishedContent.map((content, index) => (
+        {LoungePost.map((content, index) => (
           <LoungeContainer key={index}>
             <LoungeProfileInfo>
               <LoungeProfileImage>
@@ -230,37 +212,28 @@ const UseridProfile: React.FC = () => {
               </LoungeProfileDetail>
             </LoungeProfileInfo>
             <LoungeWriteContainer>
-              <LoungeWrite>{profileInfo.content}</LoungeWrite>
-              {/* <LoungeImage>
-                <Image
-                  src={`data:image/png;base64,${profileBannerImgName}`}
-                  alt="배너 이미지"
-                  width={1280}
-                  height={256}
-                />
-              </LoungeImage> */}
+              <LoungeWrite dangerouslySetInnerHTML={{ __html: quiilFiles }} />
             </LoungeWriteContainer>
             <LoungeLikeCommentContainer>
               <LoungeLike>
                 <LikeIcon />
-                {profileInfo.like}
+                {LoungeForm[index].like}
               </LoungeLike>
               <LoungeComment onClick={() => handleCommentToggle(index)}>
                 <CommentIcon />
-                {/* {boardsData.comment} */}
+                {LoungeForm[index].commentSize}
               </LoungeComment>
             </LoungeLikeCommentContainer>
             {openComments[index] && <OpenComment />}
           </LoungeContainer>
         ))}
       </Lounge>
-      {/* 수정하기 부분 */}
       {writeVisible && (
         <WriteEditor
           onPublish={handlePublish}
           onClose={() => setWriteVisible(false)}
           initialContent={
-            editingIndex !== null ? publishedContent[editingIndex] : undefined
+            editingIndex !== null ? LoungePost[editingIndex] : undefined
           }
         />
       )}
@@ -466,14 +439,11 @@ const LoungeWriteContainer = styled.div`
 // 라운지 글쓰기
 const LoungeWrite = styled.div`
   padding: 0 0 10px 0;
-`;
 
-// 라운지 글쓰기 이미지
-const LoungeImage = styled.div`
   img {
+    margin-top: 5px;
     max-width: 100%;
-    max-height: none;
-    border-radius: 12px;
+    border-radius: 10px;
   }
 `;
 // -------------------------------------------------------------------------------------------------------
