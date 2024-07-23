@@ -46,7 +46,7 @@ const MusicList: React.FC<MusicListProps> = ({
     )}
     {/* 2. 앨범 이미지 - details/album/[id]로 이동 */}
     <td className={styles.thumb__picture}>
-      <Link href={`/details/album/${musicChartData.songId}`}>
+      {/* <Link href={`/details/album/${musicChartData.songId}`}> */}
         {/* musicCharData의 이미지가 없으면 기본 이미지(album)으로 설정 */}
         <Image
           src={
@@ -58,7 +58,7 @@ const MusicList: React.FC<MusicListProps> = ({
           width={50}
           height={50}
         />
-      </Link>
+      {/* </Link> */}
     </td>
     {/* 3. 순위(index) */}
     <td className={styles.ranking}>

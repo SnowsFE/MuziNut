@@ -42,7 +42,7 @@ const MainPage = () => {
               </div>
             </div>
 
-            {/* <BestArtist /> */}
+            <BestArtist />
           </div>
         </div>
       </section>
