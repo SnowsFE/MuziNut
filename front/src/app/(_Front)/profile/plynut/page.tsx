@@ -35,7 +35,6 @@ const UseridProfile: React.FC<PlynutDataProps> = () => {
   const [title, setTitle] = useState("");
   const [titleError, setTitleError] = useState("");
   const [PlyNutData, setPlyNutData] = useState([
-    { id: 0, title: "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" },
     { id: 1, title: "~" },
     { id: 2, title: "~" },
     { id: 3, title: "~" },
@@ -46,16 +45,10 @@ const UseridProfile: React.FC<PlynutDataProps> = () => {
     { id: 8, title: "~" },
     { id: 9, title: "~" },
     { id: 10, title: "~" },
-    { id: 11, title: "~" },
-    { id: 12, title: "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" },
-    { id: 13, title: "~" },
-    { id: 14, title: "~" },
-    { id: 15, title: "~" },
-    { id: 16, title: "~" },
-    { id: 17, title: "~" },
   ]);
-  const [PlyNutVisible, setPlyNutVisible] = useState(30);
+  const [PlyNutVisible, setPlyNutVisible] = useState(10);
   const [selectedPlyNutId, setSelectedPlyNutId] = useState<number | null>(null);
+  const [openPlyNutId, setOpenPlyNutId] = useState<number | null>(null);
   const [tracks, setTracks] = useState<Track[]>([]);
 
   // 데이터가 변경될 때마다 플리넛의 곡 정보를 업데이트합니다.
@@ -65,8 +58,8 @@ const UseridProfile: React.FC<PlynutDataProps> = () => {
     }
   }, [selectedPlyNutId]);
 
-  if (PlyNutVisible > 30) {
-    alert("플리넛은 30개까지 생성 가능합니다");
+  if (PlyNutVisible > 10) {
+    alert("플리넛은 10개까지 생성 가능합니다");
   }
 
   const authToken = "your-auth-token-here";
@@ -286,7 +279,9 @@ const UseridProfile: React.FC<PlynutDataProps> = () => {
 export default UseridProfile;
 
 // 마이페이지 전체를 감싸는 컨테이너
-const ProfileContainer = styled.div``;
+const ProfileContainer = styled.div`
+  position: relative;
+`;
 
 // 배너
 const Banner = styled.div`
@@ -418,21 +413,28 @@ const StyledLink = styled(Link)`
 
 // 박스 섹션을 감싸는 컨테이너
 const PlyNutContainer = styled.div`
-  padding-top: 16px;
-  padding-bottom: 20px;
+  position: absolute;
+  right: 0;
+  top: 460px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 5px 20px 20px 20px;
+  background-color: white;
 `;
 
 // 섹션 타이틀
 const PlyNutTitle = styled.h2`
-  font-size: 20px;
+  font-size: 18px;
+  text-align: center;
 `;
 
 // 박스를 감싸는 컨테이너
 const PlyNutBox = styled.div`
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 20px;
-  font-size: 14px;
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 300px;
+  gap: 10px;
+  font-size: 12px;
 `;
 
 // 박스 스타일

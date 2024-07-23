@@ -1,9 +1,13 @@
+"use client";
 import styled from "styled-components";
 import threedot from "../../../../public/svgs/threedot.svg";
 import { MiniViewIcon, BookMarkIcon } from "@/app/components/icon/icon";
-import React, { useEffect } from "react";
+import React from "react";
 import Image from "next/image";
 import axios from "axios";
+import { useParams } from "next/navigation";
+import AxiosURL from "@/app/axios/url";
+import { TokenInfo } from "@/app/common/common";
 
 // 글 작성 프로필
 interface WriterProfileInfoProps {
@@ -21,25 +25,27 @@ const WriterProfileInfo: React.FC<WriterProfileInfoProps> = ({
   view,
   isBookmark,
 }) => {
-  const authToken =
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9BRE1JTiIsImV4cCI6MTcyNDQ3ODE4OH0.3z2IGByLdk3Q-khCsRjdgK4BtMZs-h51If5vYgF45rgegl8WjUfXoIMDzMsqFLVOquamuJ57dMplJEGevon4PQ";
+  const tokenData = TokenInfo(); // 토큰 데이터를 가져옵니다.
+  const authToken = tokenData?.token; // 토큰을 추출합니다.
+  const params = useParams<{ id: string }>();
+  const id = params?.id;
 
-  // 북마크 클릭 핸들러
   const handleBookmarkClick = async () => {
     try {
-      const response = await axios.post(
-        "API_ENDPOINT/bookmark",
-        {
-          // writer, 유저 정보를어떻게 가져오지 유저정보에따라 북마크
-          isBookmark,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
+      if (id && authToken) {
+        const response = await axios.post(
+          `${AxiosURL}/bookmark/${id}`,
+          {
+            isBookmark, // 유저 정보에 따라 북마크 상태 결정
           },
-        }
-      );
-      console.log("북마크 클릭: ", response.data);
+          {
+            headers: {
+              Authorization: authToken,
+            },
+          }
+        );
+        console.log("북마크 클릭: ", response.data);
+      }
     } catch (error) {
       console.error("북마크 요청 실패: ", error);
     }
@@ -63,13 +69,13 @@ const WriterProfileInfo: React.FC<WriterProfileInfoProps> = ({
       <ShareContainer>
         <Image
           onClick={handleBookmarkClick}
-          src={`data:image/svg+xml;base64,${isBookmark}`}
+          src={`data:image/png;base64,${isBookmark}`}
           alt="북마크"
           width={24}
           height={32}
         />
         <Image
-          src={`data:image/svg+xml;base64,${threedot}`}
+          src={`data:image/png;base64,${threedot}`}
           alt="공유, 신고"
           width={24}
           height={32}

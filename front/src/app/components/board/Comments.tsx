@@ -11,7 +11,7 @@ interface CommentProps {
   writer: string;
   createdDt: string;
   contents: string;
-  isLike: boolean;
+  boardLikeStatus: boolean;
   likeCount: number;
 }
 
@@ -22,7 +22,7 @@ const Comments: React.FC<CommentProps> = ({}) => {
     writer: "",
     createdDt: "",
     contents: "",
-    isLike: false,
+    boardLikeStatus: false,
     likeCount: 0,
   }); //서버로 부터 받아온 댓글들 (대댓글 포함)
   let [modal, setModal] = useState(false); //대댓글 모달창
@@ -62,7 +62,7 @@ const Comments: React.FC<CommentProps> = ({}) => {
         <Option>
           <LikeButton onClick={likeButtonHandler}>
             <LikeIcon />
-            {comments.isLike ? true : false}
+            {comments.boardLikeStatus ? true : false}
             <LikeCount>{comments.likeCount}</LikeCount>
           </LikeButton>
           <span> | </span>

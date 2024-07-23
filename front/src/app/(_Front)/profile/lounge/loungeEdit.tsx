@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, ChangeEvent } from "react";
 import styled from "styled-components";
 import axios from "axios";
-import AxiosUrl from "@/app/axios/url";
+import AxiosURL from "@/app/axios/url";
 
 // useFileState 훅과 초기 데이터
 export const useFileState = (onUpload: (data: any) => void) => {
@@ -19,37 +19,6 @@ export const useFileState = (onUpload: (data: any) => void) => {
     intro: string;
   }
 
-  // interface loungeProps {
-  //   id: number;
-  //   createdDt: string;
-  //   content: string;
-  //   like: number;
-  //   commentSize: number;
-  // }
-
-  // interface loungeCommentProps {
-  //   id: number;
-  //   createdDt: string;
-  //   commentProfileImage: string;
-  //   comment: string;
-  // }
-
-  // const [loungeInfo, setLoungeInfo] = useState<loungeProps>({
-  //   content: "",
-  //   createdDt: "",
-  //   id: 0,
-  //   like: 0,
-  //   comment: 0,
-  // });
-
-  // const [loungeCommentInfo, setLoungeCommentInfo] =
-  //   useState<loungeCommentProps>({
-  //     id: 0,
-  //     createdDt: "",
-  //     commentProfileImage: "",
-
-  //   });
-
   const [profileInfo, setProfileInfo] = useState<profileInfoProps>({
     profileBannerImgName: "",
     profileImgName: "",
@@ -58,6 +27,18 @@ export const useFileState = (onUpload: (data: any) => void) => {
     followersCount: 0,
     intro: "자기소개를 입력하세요",
   });
+
+  interface LoungeProps {
+    id: number;
+    boardLikeStatus: boolean;
+    createdDt: string;
+    content: string;
+    like: number;
+    commentSize: number;
+    filename: string;
+  }
+
+  const [LoungeForm, setLoungeForm] = useState<LoungeProps[]>([]);
 
   // 이미지 사이즈 체크 함수
   const checkImageSize = (file: File, maxWidth: number, maxHeight: number) => {
@@ -110,7 +91,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
       // 프로필 배너 이미지 업로드
       try {
         const res = await axios.post(
-          `${AxiosUrl}/users/set-profile-bannerImage`,
+          `${AxiosURL}/users/set-profile-bannerImage`,
           formData,
           {
             headers: {
@@ -155,7 +136,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
       try {
         // 프로필 이미지 업로드
         const res = await axios.post(
-          `${AxiosUrl}/users/set-profile`,
+          `${AxiosURL}/users/set-profile`,
           profileFormData,
           {
             headers: {
@@ -177,16 +158,28 @@ export const useFileState = (onUpload: (data: any) => void) => {
 
   // 메인 Get 통신 데이터
   const [userId, setUserId] = useState(2);
+  const [quiilFiles, setQuillFile] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const res = await axios.get(`${AxiosUrl}/profile/lounge`, {
+        const res = await axios.get(`${AxiosURL}/profile/lounge`, {
           params: { userId },
         });
 
         setProfileInfo(res.data);
-        console.log("받는데이터", res.data);
+        setLoungeForm(res.data.loungesForms);
+
+        // 두 번째 요청을 첫 번째 요청의 결과를 사용하여 수행
+        let temp: string[] = [];
+        for (var i = 0; i < res.data.loungesForms.length; i++) {
+          const resdata = await axios.get(
+            `${AxiosURL}/boards/get-file?filename=${res.data.loungesForms[i].filename}`
+          );
+          temp.push(resdata.data);
+        }
+        setQuillFile(temp);
+        console.log(temp);
       } catch (error) {
         console.error("프로필 데이터를 가져오는데 실패했습니다.", error);
       }
@@ -199,6 +192,9 @@ export const useFileState = (onUpload: (data: any) => void) => {
     files,
     profileInfo,
     setProfileInfo,
+    quiilFiles,
+    LoungeForm,
+    setLoungeForm,
     handleBannerSubmit,
     handleProfileSubmit,
   };
