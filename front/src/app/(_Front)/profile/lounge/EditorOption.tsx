@@ -50,8 +50,6 @@ const QuillToolbar = () => {
           <select className="ql-background" />
         </span>
         <span className="ql-formats">
-          <select className="ql-align" />
-          <button className="ql-link" />
           <button className="ql-image" />
         </span>
       </div>

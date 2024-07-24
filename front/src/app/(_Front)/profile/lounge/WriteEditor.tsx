@@ -126,6 +126,12 @@ const NoticeWriteQuill: React.FC<{
         : `${AxiosURL}/profile/lounge`;
       const method = id ? "PUT" : "POST";
 
+      // PUT 요청일 때 빈 content 상태를 확인
+      if (method === "PUT" && content.trim() === "") {
+        alert("수정할 내용이 없습니다.");
+        return;
+      }
+
       const response = await fetch(url, {
         method,
         headers: {
@@ -136,7 +142,7 @@ const NoticeWriteQuill: React.FC<{
 
       if (response.ok) {
         if (method === "POST") {
-          alert("새 글이 성공적으로 등록되었습니다.");
+          alert("글이 성공적으로 등록되었습니다.");
         } else if (method === "PUT") {
           alert("글이 성공적으로 수정되었습니다.");
         }

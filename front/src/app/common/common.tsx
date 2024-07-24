@@ -3,9 +3,9 @@ import AxiosURL from "../axios/url";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-// 로컬 스토리지에 있는 리프레시 토큰을 가져오는 메서드
+// 로컬 스토리지에 있는  토큰을 가져오는 메서드
 function getToken() {
-  return "Bearer " + localStorage.getItem("getToken");
+  return "Bearer " + localStorage.getItem("token");
 }
 
 function getRefreshToken() {
@@ -13,7 +13,8 @@ function getRefreshToken() {
 }
 
 // 토큰들을 셋팅하는 메서드
-function setToken(refreshToken: string) {
+function setToken(token: string, refreshToken: string) {
+  localStorage.setItem("token", token);
   localStorage.setItem("refreshToken", refreshToken);
 }
 
@@ -34,19 +35,19 @@ const TokenInfo = () => {
           }
         );
 
-        setToken(refreshResponse.data.refreshToken);
-        setTokenData(refreshResponse.data); // 토큰 정보 설정
+        setToken(refreshResponse.data.token, refreshResponse.data.refreshToken);
       } catch (refreshError) {
         // 리프레시 토큰이 만료된 경우
         localStorage.removeItem("refreshToken");
-        // window.location.reload();
+        localStorage.removeItem("token");
+        window.location.href = "/login"; //로그인 경로로 리다이랙트
       }
     };
 
     fetchTokenData();
-  }, [router]);
+  }, []);
 
   return tokenData;
 };
 
-export { getRefreshToken, setToken, TokenInfo };
+export { getToken, getRefreshToken, setToken, TokenInfo };

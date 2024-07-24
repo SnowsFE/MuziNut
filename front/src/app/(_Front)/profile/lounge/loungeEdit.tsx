@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, ChangeEvent } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import AxiosURL from "@/app/axios/url";
+import { getToken } from "@/app/common/common";
 
 // useFileState 훅과 초기 데이터
 export const useFileState = (onUpload: (data: any) => void) => {
@@ -59,8 +60,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
     });
   };
 
-  const authToken =
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjQ2MDczMzh9.BbvfPZE8fzZNQNJdyq0XQz7GaIUYhhLUhoup35KwlfC-92MHXOi3jkILH19lFdDVQkuwtFWRlyRbVZQW8a8QUA";
+  const authToken = getToken;
 
   const handleBannerSubmit = async (
     e: ChangeEvent<HTMLInputElement>,
@@ -102,7 +102,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
         );
         console.log(res.data);
         onUpload({ [key]: res.data }); // 업로드 성공 시 데이터 처리
-        // window.location.reload(); // 페이지 새로고침 (필요에 따라 변경)
+        window.location.reload(); // 페이지 새로고침 (필요에 따라 변경)
       } catch (error) {
         console.error("배너 이미지 업로드 실패:", error);
       }
@@ -147,7 +147,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
         );
         console.log(res.data);
         onUpload({ [key]: res.data }); // 업로드 성공 시 데이터 처리
-        // window.location.reload(); // 페이지 새로고침 (필요에 따라 변경)
+        window.location.reload(); // 페이지 새로고침 (필요에 따라 변경)
       } catch (error) {
         console.error("프로필 이미지 업로드 실패:", error);
       }
