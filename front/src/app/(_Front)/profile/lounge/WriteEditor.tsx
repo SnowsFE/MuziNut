@@ -1,4 +1,3 @@
-"use client";
 import React, { useRef, useState, useEffect, useMemo } from "react";
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
@@ -6,6 +5,7 @@ import styled, { keyframes, css } from "styled-components";
 import QuillToolbar from "./EditorOption";
 import Quill from "quill";
 import AxiosURL from "@/app/axios/url";
+import { useFileState } from "./loungeEdit";
 
 const Font = Quill.import("formats/font");
 Font.whitelist = ["esamanruLight", "esamanruMedium", "esamanruBold"];
@@ -24,6 +24,19 @@ const NoticeWriteQuill: React.FC<{
   const [content, setContent] = useState<string>(initialContent || "");
   const [title, setTitle] = useState<string>("");
   const [visible, setVisible] = useState<boolean>(true);
+  const [id, setId] = useState<string | null>(null); // id 상태를 추가합니다.
+
+  const { quiilFiles } = useFileState((data) => {
+    quiilFiles;
+  });
+
+  useEffect(() => {
+    // 해시값을 읽어와서 id 상태를 설정합니다.
+    const hash = window.location.hash;
+    if (hash) {
+      setId(hash.replace("#", "")); // #을 제거한 id를 설정합니다.
+    }
+  }, []);
 
   useEffect(() => {
     if (!visible) {
@@ -92,11 +105,6 @@ const NoticeWriteQuill: React.FC<{
     "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjQ2MDczMzh9.BbvfPZE8fzZNQNJdyq0XQz7GaIUYhhLUhoup35KwlfC-92MHXOi3jkILH19lFdDVQkuwtFWRlyRbVZQW8a8QUA";
 
   const handleSubmit = async () => {
-    if (content.trim() === "" || null) {
-      alert("작성하고 싶은 글을 작성해 주세요");
-      return;
-    }
-
     if (content.trim() === "") {
       alert("내용을 입력해주세요");
       return;
@@ -112,8 +120,14 @@ const NoticeWriteQuill: React.FC<{
     formData.append("quillFile", contentBlob);
 
     try {
-      const response = await fetch(`${AxiosURL}/profile/lounge`, {
-        method: "POST",
+      // id가 있을 때 PUT 요청, 없을 때 POST 요청
+      const url = id
+        ? `${AxiosURL}/profile/lounge/${id}`
+        : `${AxiosURL}/profile/lounge`;
+      const method = id ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -121,27 +135,25 @@ const NoticeWriteQuill: React.FC<{
       });
 
       if (response.ok) {
-        console.log("글이 성공적으로 등록되었습니다.");
-
-        // 글 등록 또는 수정 후에 최신 상태 반영
-        if (initialContent !== null && initialContent !== undefined) {
-          const updatedContent = content;
-          onPublish(updatedContent);
-        } else {
-          onPublish(content);
+        if (method === "POST") {
+          alert("새 글이 성공적으로 등록되었습니다.");
+        } else if (method === "PUT") {
+          alert("글이 성공적으로 수정되었습니다.");
         }
 
-        // 에디터 닫기
+        onPublish(content);
         setVisible(false);
         onClose();
-
-        // 페이지 새로 고침
-        // window.location.reload();
+        window.location.href = "/profile/lounge";
       } else {
-        console.error("글 등록에 실패했습니다.");
+        console.error("요청에 실패했습니다.");
+        const errorData = await response.json();
+        console.error("Error details:", errorData);
+        alert("글 등록 또는 수정에 실패했습니다. 오류: " + errorData.message);
       }
     } catch (error) {
-      console.error("글 등록 중 오류 발생:", error);
+      console.error("요청 중 오류 발생:", error);
+      alert("글 등록 또는 수정 중 오류가 발생했습니다.");
     }
   };
 

@@ -179,7 +179,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
           temp.push(resdata.data);
         }
         setQuillFile(temp);
-        console.log(temp);
+        // console.log(temp);
       } catch (error) {
         console.error("프로필 데이터를 가져오는데 실패했습니다.", error);
       }

@@ -4,6 +4,10 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 // 로컬 스토리지에 있는 리프레시 토큰을 가져오는 메서드
+function getToken() {
+  return "Bearer " + localStorage.getItem("getToken");
+}
+
 function getRefreshToken() {
   return "Bearer " + localStorage.getItem("refreshToken");
 }

@@ -9,6 +9,7 @@ import { OpenComment } from "./comment";
 import WriteEditor from "./WriteEditor";
 import { BannerData, ProfileData, useFileState } from "./loungeEdit";
 import ProfileEdit from "../profileEdit";
+import { useRouter } from "next/navigation";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("lounge");
@@ -19,18 +20,17 @@ const UseridProfile: React.FC = () => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [threedotopen, setThreeDotOpen] = useState<boolean[]>([]);
   const [openComments, setOpenComments] = useState<boolean[]>([]);
-  const threedotRef = useRef<HTMLDivElement>(null);
+  const threedotRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const router = useRouter();
 
   const onUpload = (data: {
     profileBannerImgName?: string | object;
     profileImgName?: string | object;
   }) => {
     if (typeof data.profileBannerImgName === "string") {
-      console.log("배너 이미지가 변경되었습니다:", data.profileBannerImgName);
       setProfileBannerImgName(data.profileBannerImgName);
     }
     if (typeof data.profileImgName === "string") {
-      console.log("프로필 이미지가 변경되었습니다:", data.profileImgName);
       setProfileImgName(data.profileImgName);
     }
   };
@@ -52,14 +52,18 @@ const UseridProfile: React.FC = () => {
   useEffect(() => {
     if (LoungeForm.length > 0) {
       const loungeContents = LoungeForm.map((item) => item.content);
-
       setLoungePost(loungeContents);
       setThreeDotOpen(Array(LoungeForm.length).fill(false));
       setOpenComments(Array(LoungeForm.length).fill(false));
+      threedotRefs.current = Array(LoungeForm.length).fill(null);
     }
   }, [LoungeForm]);
 
-  const handleThreeDotClick = (index: number) => {
+  const handleThreeDotClick = (index: number, postId: number) => {
+    // 게시글 ID를 사용하여 라우트 변경
+    router.push(`/profile/lounge#${postId}`);
+
+    // 메뉴 열기/닫기 로직
     setThreeDotOpen((prev) =>
       prev.map((item, i) => (i === index ? !item : item))
     );
@@ -67,18 +71,19 @@ const UseridProfile: React.FC = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        threedotRef.current &&
-        !threedotRef.current.contains(event.target as Node)
-      ) {
-        setThreeDotOpen(Array(LoungePost.length).fill(false));
-      }
+      threedotRefs.current.forEach((ref, index) => {
+        if (ref && !ref.contains(event.target as Node)) {
+          setThreeDotOpen((prev) =>
+            prev.map((item, i) => (i === index ? false : item))
+          );
+        }
+      });
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [LoungePost]);
+  }, []);
 
   const handleCommentToggle = (index: number) => {
     setOpenComments((prev) =>
@@ -98,7 +103,7 @@ const UseridProfile: React.FC = () => {
       setLoungePost(updatedContent);
       setEditingIndex(null);
     } else {
-      setLoungePost((prev) => [...prev, content]);
+      console.log(`새 게시글 내용: ${content}`);
     }
     setWriteVisible(false);
   };
@@ -109,9 +114,11 @@ const UseridProfile: React.FC = () => {
   };
 
   const handleDelete = (index: number) => {
-    const updatedContent = [...LoungePost];
-    updatedContent.splice(index, 1);
+    const updatedContent = LoungePost.filter((_, i) => i !== index);
     setLoungePost(updatedContent);
+    setThreeDotOpen((prev) => prev.filter((_, i) => i !== index));
+    setOpenComments((prev) => prev.filter((_, i) => i !== index));
+    threedotRefs.current = threedotRefs.current.filter((_, i) => i !== index);
   };
 
   return (
@@ -178,55 +185,65 @@ const UseridProfile: React.FC = () => {
         </SelectContainer>
       </SelectBar>
       <Lounge>
-        {LoungePost.map((content, index) => (
-          <LoungeContainer key={index}>
-            <LoungeProfileInfo>
-              <LoungeProfileImage>
-                <Image
-                  src={`data:image/;base64,${profileImgName}`}
-                  alt="profile-image"
-                  width={40}
-                  height={40}
+        {LoungePost.map((content, index) => {
+          const loungeItem = LoungeForm[index];
+          const postId = loungeItem?.id; // 게시글 ID를 가져옵니다.
+          return (
+            <LoungeContainer key={index}>
+              <LoungeProfileInfo>
+                <LoungeProfileImage>
+                  <Image
+                    src={`data:image/png;base64,${profileImgName}`}
+                    alt="profile-image"
+                    width={40}
+                    height={40}
+                  />
+                </LoungeProfileImage>
+                <LoungeProfileName>{profileInfo.nickname}</LoungeProfileName>
+                <LoungeProfileUploadTime>
+                  {new Date().toLocaleDateString()}
+                </LoungeProfileUploadTime>
+                <LoungeProfileDetail
+                  ref={(el: HTMLDivElement | null) =>
+                    (threedotRefs.current[index] = el)
+                  }
+                  onClick={() => handleThreeDotClick(index, postId)}
+                >
+                  <Image
+                    src={threedot}
+                    alt="공유하기, 신고하기 기능"
+                    width={24}
+                    height={24}
+                  />
+                  {threedotopen[index] && (
+                    <ThreeDotOpen>
+                      <label onClick={() => handleEdit(index)}>수정</label>|
+                      <label onClick={() => handleDelete(index)}>삭제</label>
+                    </ThreeDotOpen>
+                  )}
+                </LoungeProfileDetail>
+              </LoungeProfileInfo>
+              <LoungeWriteContainer>
+                <LoungeWrite
+                  dangerouslySetInnerHTML={{ __html: quiilFiles[index] }}
                 />
-              </LoungeProfileImage>
-              <LoungeProfileName>{profileInfo.nickname}</LoungeProfileName>
-              <LoungeProfileUploadTime>
-                {new Date().toLocaleDateString()}
-              </LoungeProfileUploadTime>
-              <LoungeProfileDetail
-                ref={threedotRef}
-                onClick={() => handleThreeDotClick(index)}
-              >
-                <Image
-                  src={threedot}
-                  alt="공유하기, 신고하기 기능"
-                  width={24}
-                  height={24}
-                />
-                {threedotopen[index] && (
-                  <ThreeDotOpen>
-                    <label onClick={() => handleEdit(index)}>수정</label>|
-                    <label onClick={() => handleDelete(index)}>삭제</label>
-                  </ThreeDotOpen>
-                )}
-              </LoungeProfileDetail>
-            </LoungeProfileInfo>
-            <LoungeWriteContainer>
-              <LoungeWrite dangerouslySetInnerHTML={{ __html: quiilFiles }} />
-            </LoungeWriteContainer>
-            <LoungeLikeCommentContainer>
-              <LoungeLike>
-                <LikeIcon />
-                {LoungeForm[index].like}
-              </LoungeLike>
-              <LoungeComment onClick={() => handleCommentToggle(index)}>
-                <CommentIcon />
-                {LoungeForm[index].commentSize}
-              </LoungeComment>
-            </LoungeLikeCommentContainer>
-            {openComments[index] && <OpenComment />}
-          </LoungeContainer>
-        ))}
+              </LoungeWriteContainer>
+              {loungeItem && (
+                <LoungeLikeCommentContainer>
+                  <LoungeLike>
+                    <LikeIcon />
+                    {loungeItem.like}
+                  </LoungeLike>
+                  <LoungeComment onClick={() => handleCommentToggle(index)}>
+                    <CommentIcon />
+                    {loungeItem.commentSize}
+                  </LoungeComment>
+                </LoungeLikeCommentContainer>
+              )}
+              {openComments[index] && <OpenComment />}
+            </LoungeContainer>
+          );
+        })}
       </Lounge>
       {writeVisible && (
         <WriteEditor
