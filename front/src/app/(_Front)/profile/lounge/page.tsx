@@ -9,6 +9,7 @@ import { OpenComment } from "./comment";
 import WriteEditor from "./WriteEditor";
 import { BannerData, ProfileData, useFileState } from "./loungeEdit";
 import ProfileEdit from "../profileEdit";
+import AxiosURL from "@/app/axios/url";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("lounge");
@@ -19,18 +20,16 @@ const UseridProfile: React.FC = () => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [threedotopen, setThreeDotOpen] = useState<boolean[]>([]);
   const [openComments, setOpenComments] = useState<boolean[]>([]);
-  const threedotRef = useRef<HTMLDivElement>(null);
+  const threedotRefs = useRef<Array<HTMLDivElement | null>>([]);
 
   const onUpload = (data: {
     profileBannerImgName?: string | object;
     profileImgName?: string | object;
   }) => {
     if (typeof data.profileBannerImgName === "string") {
-      console.log("배너 이미지가 변경되었습니다:", data.profileBannerImgName);
       setProfileBannerImgName(data.profileBannerImgName);
     }
     if (typeof data.profileImgName === "string") {
-      console.log("프로필 이미지가 변경되었습니다:", data.profileImgName);
       setProfileImgName(data.profileImgName);
     }
   };
@@ -52,33 +51,61 @@ const UseridProfile: React.FC = () => {
   useEffect(() => {
     if (LoungeForm.length > 0) {
       const loungeContents = LoungeForm.map((item) => item.content);
-
       setLoungePost(loungeContents);
       setThreeDotOpen(Array(LoungeForm.length).fill(false));
       setOpenComments(Array(LoungeForm.length).fill(false));
+      threedotRefs.current = Array(LoungeForm.length).fill(null);
     }
   }, [LoungeForm]);
 
-  const handleThreeDotClick = (index: number) => {
+  const handleThreeDotClick = (index: number, postId: number) => {
+    // 게시글 ID를 사용하여 라우트 변경
+    const url = `/profile/lounge#${postId}`;
+    window.history.replaceState(null, "", url);
+
+    // 해당 요소로 스크롤
+    setTimeout(() => {
+      const element = document.getElementById(postId.toString());
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }, 0);
+
+    // 메뉴 열기/닫기 로직
     setThreeDotOpen((prev) =>
       prev.map((item, i) => (i === index ? !item : item))
     );
   };
 
   useEffect(() => {
+    // 페이지 새로고침 감지
+    if (window.performance.navigation.type === 1) {
+      // 새로고침 시에만 URL 변경
+      window.location.href = "/profile/lounge";
+    }
+  }, []);
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        threedotRef.current &&
-        !threedotRef.current.contains(event.target as Node)
+        threedotRefs.current.some(
+          (ref) => ref && ref.contains(event.target as Node)
+        )
       ) {
-        setThreeDotOpen(Array(LoungePost.length).fill(false));
+        return; // 삼각형 버튼 내부 클릭 시 무시
       }
+
+      // 삼각형 버튼 외부 클릭 시 해시값 제거
+      window.history.replaceState(null, "", "/profile/lounge");
+      setThreeDotOpen(Array(LoungePost.length).fill(false));
     };
+
     document.addEventListener("mousedown", handleClickOutside);
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [LoungePost]);
+  }, [LoungePost.length]);
 
   const handleCommentToggle = (index: number) => {
     setOpenComments((prev) =>
@@ -98,7 +125,7 @@ const UseridProfile: React.FC = () => {
       setLoungePost(updatedContent);
       setEditingIndex(null);
     } else {
-      setLoungePost((prev) => [...prev, content]);
+      console.log(`새 게시글 내용: ${content}`);
     }
     setWriteVisible(false);
   };
@@ -108,10 +135,45 @@ const UseridProfile: React.FC = () => {
     setWriteVisible(true);
   };
 
-  const handleDelete = (index: number) => {
-    const updatedContent = [...LoungePost];
-    updatedContent.splice(index, 1);
-    setLoungePost(updatedContent);
+  const authToken =
+    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjQ2MDczMzh9.BbvfPZE8fzZNQNJdyq0XQz7GaIUYhhLUhoup35KwlfC-92MHXOi3jkILH19lFdDVQkuwtFWRlyRbVZQW8a8QUA";
+
+  const handleDelete = async (index: number) => {
+    const postId = LoungeForm[index]?.id;
+    if (!postId) return;
+
+    if (window.confirm("정말로 이 게시글을 삭제하시겠습니까?")) {
+      try {
+        const response = await fetch(`${AxiosURL}/profile/lounge/${postId}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+
+        if (response.ok) {
+          // 성공적으로 삭제된 경우
+          alert("게시글이 성공적으로 삭제되었습니다.");
+          window.history.replaceState(null, "", "/profile/lounge");
+
+          const updatedContent = LoungePost.filter((_, i) => i !== index);
+          setLoungePost(updatedContent);
+          setThreeDotOpen((prev) => prev.filter((_, i) => i !== index));
+          setOpenComments((prev) => prev.filter((_, i) => i !== index));
+          threedotRefs.current = threedotRefs.current.filter(
+            (_, i) => i !== index
+          );
+        } else {
+          console.error("삭제 요청에 실패했습니다.");
+          const errorData = await response.json();
+          console.error("Error details:", errorData);
+          alert("게시글 삭제에 실패했습니다. 오류: " + errorData.message);
+        }
+      } catch (error) {
+        console.error("삭제 요청 중 오류 발생:", error);
+        alert("게시글 삭제 중 오류가 발생했습니다.");
+      }
+    }
   };
 
   return (
@@ -178,55 +240,65 @@ const UseridProfile: React.FC = () => {
         </SelectContainer>
       </SelectBar>
       <Lounge>
-        {LoungePost.map((content, index) => (
-          <LoungeContainer key={index}>
-            <LoungeProfileInfo>
-              <LoungeProfileImage>
-                <Image
-                  src={`data:image/;base64,${profileImgName}`}
-                  alt="profile-image"
-                  width={40}
-                  height={40}
+        {LoungePost.map((content, index) => {
+          const loungeItem = LoungeForm[index];
+          const postId = loungeItem?.id; // 게시글 ID를 가져옵니다.
+          return (
+            <LoungeContainer key={postId} id={postId.toString()}>
+              <LoungeProfileInfo>
+                <LoungeProfileImage>
+                  <Image
+                    src={`data:image/png;base64,${profileImgName}`}
+                    alt="profile-image"
+                    width={40}
+                    height={40}
+                  />
+                </LoungeProfileImage>
+                <LoungeProfileName>{profileInfo.nickname}</LoungeProfileName>
+                <LoungeProfileUploadTime>
+                  {new Date().toLocaleDateString()}
+                </LoungeProfileUploadTime>
+                <LoungeProfileDetail
+                  ref={(el) => {
+                    threedotRefs.current[index] = el;
+                  }}
+                  onClick={() => handleThreeDotClick(index, postId)}
+                >
+                  <Image
+                    src={threedot}
+                    alt="공유하기, 신고하기 기능"
+                    width={24}
+                    height={24}
+                  />
+                  {threedotopen[index] && (
+                    <ThreeDotOpen>
+                      <label onClick={() => handleEdit(index)}>수정</label>|
+                      <label onClick={() => handleDelete(index)}>삭제</label>
+                    </ThreeDotOpen>
+                  )}
+                </LoungeProfileDetail>
+              </LoungeProfileInfo>
+              <LoungeWriteContainer>
+                <LoungeWrite
+                  dangerouslySetInnerHTML={{ __html: quiilFiles[index] }}
                 />
-              </LoungeProfileImage>
-              <LoungeProfileName>{profileInfo.nickname}</LoungeProfileName>
-              <LoungeProfileUploadTime>
-                {new Date().toLocaleDateString()}
-              </LoungeProfileUploadTime>
-              <LoungeProfileDetail
-                ref={threedotRef}
-                onClick={() => handleThreeDotClick(index)}
-              >
-                <Image
-                  src={threedot}
-                  alt="공유하기, 신고하기 기능"
-                  width={24}
-                  height={24}
-                />
-                {threedotopen[index] && (
-                  <ThreeDotOpen>
-                    <label onClick={() => handleEdit(index)}>수정</label>|
-                    <label onClick={() => handleDelete(index)}>삭제</label>
-                  </ThreeDotOpen>
-                )}
-              </LoungeProfileDetail>
-            </LoungeProfileInfo>
-            <LoungeWriteContainer>
-              <LoungeWrite dangerouslySetInnerHTML={{ __html: quiilFiles }} />
-            </LoungeWriteContainer>
-            <LoungeLikeCommentContainer>
-              <LoungeLike>
-                <LikeIcon />
-                {LoungeForm[index].like}
-              </LoungeLike>
-              <LoungeComment onClick={() => handleCommentToggle(index)}>
-                <CommentIcon />
-                {LoungeForm[index].commentSize}
-              </LoungeComment>
-            </LoungeLikeCommentContainer>
-            {openComments[index] && <OpenComment />}
-          </LoungeContainer>
-        ))}
+              </LoungeWriteContainer>
+              {loungeItem && (
+                <LoungeLikeCommentContainer>
+                  <LoungeLike>
+                    <LikeIcon />
+                    {loungeItem.like}
+                  </LoungeLike>
+                  <LoungeComment onClick={() => handleCommentToggle(index)}>
+                    <CommentIcon />
+                    {loungeItem.commentSize}
+                  </LoungeComment>
+                </LoungeLikeCommentContainer>
+              )}
+              {openComments[index] && <OpenComment />}
+            </LoungeContainer>
+          );
+        })}
       </Lounge>
       {writeVisible && (
         <WriteEditor
@@ -433,7 +505,7 @@ const LoungeProfileDetail = styled.div`
 const LoungeWriteContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0px 15px 10px 15px;
+  padding: 0 15px 10px 15px;
 `;
 
 // 라운지 글쓰기

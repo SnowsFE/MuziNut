@@ -128,7 +128,7 @@ export default function Sidebar({ isSidebarOpen }: SidebarProps) {
                     </li>
                     <li>
                       <Link href="/mypick/bestpick">
-                        <span>응원하기</span>
+                        <span>랭킹</span>
                       </Link>
                     </li>
                     <li>

@@ -10,6 +10,7 @@ import {
 } from "../../../components/icon/icon";
 import { bestArtists, commentData, commentNumber } from "../bestartist";
 import { LikeIcon } from "../../../components/icon/icon";
+import Link from "next/link";
 
 interface ArtistProps {
   artist: {
@@ -57,18 +58,7 @@ const BestPick: React.FC = () => {
 
   return (
     <BestPickContainer>
-      <BestPickSearch>
-        <BestPickInputMargin>
-          <StarIcon />
-          <StyledInput
-            type="text"
-            placeholder="나의 아티스트 찾기"
-            value={inputValue}
-            onChange={handleInputChange}
-          />
-          <Search onClick={handleSearchClick}>검색</Search>
-        </BestPickInputMargin>
-      </BestPickSearch>
+      <MoveVote href={"vote"}>아티스트에게 투표하기</MoveVote>
       <BestPickArtist>
         {bestArtists.map((artist, index) => (
           <Artist key={artist.id} artist={artist} medalIndex={index} />
@@ -128,19 +118,33 @@ const Artist: React.FC<ArtistProps> = ({ artist, medalIndex }) => {
         <ArtistName>{artist.name}</ArtistName>
       </ArtistProfile>
       <ArtistMusicVote>
-        <ArtistMusic>{artist.music}</ArtistMusic>
-        <ArtistVote>{artist.votes}표</ArtistVote>
+        <VoteText>득표수</VoteText>
+        <ReceiveVoteAmount>{artist.votes}</ReceiveVoteAmount>
       </ArtistMusicVote>
-      <VoteRateBox>
-        <VoteText>투표율</VoteText>
-        <VoteRate>{artist.voterate}%</VoteRate>
-      </VoteRateBox>
       <VoteButton>투표하기</VoteButton>
     </ArtistContainer>
   );
 };
 
 export default BestPick;
+
+// 투표하러 가기 버튼
+const MoveVote = styled(Link)`
+  background-color: #1bd185;
+  border-radius: 12px;
+  font-size: 17px;
+  padding: 10px;
+  margin-left: auto;
+  margin-top: 5px;
+  text-decoration: none;
+  color: black;
+
+  &:hover {
+    background-color: #16be78;
+    transition: 0.3s ease;
+    cursor: pointer;
+  }
+`;
 
 // 응원하기 베스트 픽 3명을 감싸는 컨테이너
 const BestPickContainer = styled.div`
@@ -153,67 +157,13 @@ const BestPickContainer = styled.div`
   align-items: center;
 `;
 
-// 베스트 픽 검색창
-const BestPickSearch = styled.div`
-  position: relative;
-  border: 2px solid #eeeeee;
-  border-radius: 12px;
-  width: 50%;
-  height: 50px;
-  display: flex;
-  background-color: #ffffff;
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
-
-  &:focus-within {
-    box-shadow: 0 0 0 2px #8dd9b9;
-    border-color: transparent;
-  }
-`;
-
-// 베스트 픽 인풋박스 내부 마진
-const BestPickInputMargin = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0 10px;
-`;
-
-// 베스트 픽 인풋 박스
-const StyledInput = styled.input`
-  flex: 1;
-  padding: 7px 7px 6px 7px;
-  border: none;
-  width: 300px;
-  height: auto;
-  line-height: 1.5;
-  &:focus {
-    outline: none;
-  }
-`;
-
-// 베스트 픽 검색 버튼
-const Search = styled.div`
-  margin-left: 8px;
-  padding-left: 8px;
-  border-left: 1px solid rgba(90, 101, 119, 0.15);
-  color: #ccc;
-  cursor: pointer;
-
-  &:hover {
-    transform: scale(1.01);
-    color: #0f0f0f;
-    transition: 0.3s ease;
-  }
-`;
-
 // 베스트 픽 아티스트 목록 [ Map함수 ]
 const BestPickArtist = styled.div`
   display: flex;
   align-items: center;
   padding-right: calc(50% - 642px);
   padding-left: calc(50% - 642px);
-  padding-top: 50px;
+  padding-top: 20px;
   gap: 30px;
 `;
 
@@ -422,24 +372,12 @@ const ProfileImage = styled.img`
 // 아티스트 이름
 const ArtistName = styled.div`
   font-weight: bold;
+  font-size : 30px;
   margin-bottom: 10px;
 `;
 
-// 아티스트 음악, 투표 컨테이너
-const ArtistMusicVote = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-`;
-
-// 아티스트 음악 [ 곡 ]
-const ArtistMusic = styled.div``;
-
-// 아티스트 투표
-const ArtistVote = styled.div``;
-
 // 아티스트 투표 박스
-const VoteRateBox = styled.div`
+const ArtistMusicVote = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -448,11 +386,11 @@ const VoteRateBox = styled.div`
   gap: 10px;
 `;
 
-// 아티스트 투표율 텍스트
+// 아티스트 득표수 텍스트
 const VoteText = styled.div``;
 
-// 아티스트 투표율 비율
-const VoteRate = styled.div`
+// 아티스트 받은 투표수 비율
+const ReceiveVoteAmount = styled.div`
   font-size: 36px;
 `;
 
