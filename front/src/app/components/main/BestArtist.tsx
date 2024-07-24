@@ -9,11 +9,12 @@ import search from "../../../../public/images/favicon.png";
 import Link from "next/link";
 import { useArtistFetchData } from "../useHook";
 import gsap from "gsap";
-export type ArtistDataItem = {
-  userId: number;
-  nickname: string;
-  profileImg: string;
-};
+
+// export type ArtistDataItem = {
+//   userId: number;
+//   nickname: string;
+//   profileImg: string;
+// };
 
 export default function BestArtist() {
   // use훅으로 데이터 가져오는 부분
@@ -41,13 +42,13 @@ export default function BestArtist() {
           gsap.set(item, { clearProps: "all" });
         });
       });
-      
+
       items.forEach((item, index) => {
         timeline
           .to(item, {
             scaleX: 1.08,
             scaleY: 1.08,
-            backgroundColor: "#f0f0f0",
+            color: "green",
             transformOrigin: "center",
             ease: "power2.inOut",
             duration: 0,
@@ -59,19 +60,20 @@ export default function BestArtist() {
           .to(item, {
             scaleX: 1,
             scaleY: 1,
+            color: "black",
             backgroundColor: "transparent",
             ease: "power2.inOut",
             duration: 0,
           });
       });
- // 타임라인이 끝난 후 스타일을 명확히 복원하기 위한 후처리
- timeline.call(() => {
-  items.forEach((item) => {
-    gsap.set(item, { clearProps: "all" });
-  });
-});
-}
-}, [listItems]);
+      // 타임라인이 끝난 후 스타일을 명확히 복원하기 위한 후처리
+      timeline.call(() => {
+        items.forEach((item) => {
+          gsap.set(item, { clearProps: "all" });
+        });
+      });
+    }
+  }, [listItems]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -84,7 +86,7 @@ export default function BestArtist() {
         <div className={styles.list__contents__wrap}>
           <ul ref={listRef}>
             {listItems.map((item, index) => (
-              <li key={item.userId}>
+              <li key={item.id}>
                 <div className={styles.list__container}>
                   <div className={styles.contents__container}>
                     <div className={styles.ranking__Img}>

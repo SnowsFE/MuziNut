@@ -7,7 +7,7 @@
 
   /* background-color: white; */
   /* border: 1px solid green; */
-  
+
   /* border: none; */
   display: flex;
   flex-direction: column;
@@ -74,4 +74,16 @@
   gap: 13px;
   align-items: center;
   /* border: 1px solid green; */
+}
+
+.contents__container a {
+  text-decoration: none;
+  color: inherit;
+}
+.contents__container h4:hover {
+  color: green;
+  text-align: underline;
+}
+.contents__container h4 {
+  text-align: underline;
 }

@@ -3,8 +3,9 @@
 .td1__ranking {
   padding-left: 20px;
   width: 60px;
-  font-size: 60px;
+  font-size: 50px;
   font-weight: bold;
+  text-align: center;
   /* border: 3px solid red; */
 }
 
@@ -19,11 +20,11 @@
 }
 
 .td3__info__section {
-  padding-left: 20px;
+  padding-left: 48px;
   /* border: 1px solid green; */
 }
 .td3__info__section .name {
-  font-size: 24px;
+  font-size: 34px;
   font-weight: bold;
   width: 400px;
 }
@@ -42,6 +43,7 @@
 }
 .go__profile:hover {
   color: black;
+  text-decoration: underline;
 }
 
 .td4__follow__btn {
@@ -65,4 +67,11 @@
 .td4__follow__btn button:hover {
   background-color: rgba(93, 144, 93, 0.62);
   color: white;
+}
+.follow__num__green {
+  color: rgb(18, 151, 18);
+}
+.info a, .name a {
+  text-decoration: none;
+  color: inherit;
 }
