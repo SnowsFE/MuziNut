@@ -29,13 +29,14 @@ export default function BestArtist() {
 
   const listRef = useRef<HTMLUListElement>(null);
 
+ 
   // 컴포넌트 렌더링 후 gsap으로 애니메이션 작업 추가
   useEffect(() => {
     if (listRef.current) {
       const items = gsap.utils.toArray(
         listRef.current.children
       ) as HTMLElement[]; // 타입 단언
-      const timeline = gsap.timeline({ repeat: -1, repeatDelay: 2 }); //무한 반복/각 반복 사이클 지연 시간
+      const timeline = gsap.timeline({ repeat: -1, repeatDelay: 2 }); // 무한 반복/각 반복 사이클 지연 시간
 
       timeline.call(() => {
         items.forEach((item) => {

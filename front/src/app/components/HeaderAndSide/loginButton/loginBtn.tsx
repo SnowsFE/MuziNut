@@ -58,6 +58,7 @@ type UserProfileProps = {
   onLogout: () => void;
 };
 
+
 const UserProfile = ({ userInfo, onLogout }: UserProfileProps) => {
   //사용자 정보가 들어오면 디테일 박스 열리게
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);

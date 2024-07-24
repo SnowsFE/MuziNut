@@ -120,3 +120,8 @@
   flex-direction: row;
   gap: 30px;
 }
+
+.list__contents__wrap > ul > li > a {
+  text-decoration: none;
+  color: inherit;
+}
