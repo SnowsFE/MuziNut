@@ -9,12 +9,12 @@ import search from "../../../../public/images/favicon.png";
 import { useMusicFetchData } from "../useHook";
 import MusicList from "./MusicList";
 
-export type MusicDataItem = {
-  songId: number;
-  albumImg: string;
-  title: string;
-  nickname: string;
-};
+// export type MusicDataItem = {
+//   songId: number;
+//   albumImg: string;
+//   title: string;
+//   nickname: string;
+// };
 
 export default function HotMusic10() {
   // use훅으로 데이터 가져오는 부분

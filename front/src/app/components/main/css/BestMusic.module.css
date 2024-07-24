@@ -69,3 +69,14 @@
   display: block;
   padding-top: 100%; /* 비율 유지 */
 }
+
+/* a태그 부분 라인, 색 제거 */
+.song a,
+.artist a {
+  text-decoration: none;
+  color: inherit;
+}
+.artist:hover,
+.song:hover {
+  text-decoration: underline;
+}

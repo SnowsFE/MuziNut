@@ -16,14 +16,13 @@ import styles from "./css/BestMusic.module.css";
 import Image from "next/image";
 import search from "../../../../public/images/favicon.png";
 import Link from "next/link";
-import { MusicDataItem } from "./HotMusic10";
 
-// export type MusicDataItem = {
-//   songId: number;
-//   albumImg: string;
-//   title: string;
-//   nickname: string;
-// };
+export type MusicDataItem = {
+  songId: number;
+  albumImg: string;
+  title: string;
+  nickname: string;
+};
 
 interface MusicListProps {
   musicChartData: MusicDataItem;
