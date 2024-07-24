@@ -11,6 +11,7 @@ import DarkMode from "../darkmode/globalstyle";
 import Link from "next/link";
 import LoginBtn from "./loginButton/loginBtn";
 import { useUser } from "../UserContext";
+import { useRouter } from "next/navigation";
 
 interface NavbarProps {
   toggleSidebar: () => void;
@@ -28,6 +29,28 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
 
   const { user } = useUser(); // UserContext로부터 현재 사용자 정보 가져오기
 
+  /* 검색 기능 */
+  const [searchTerm, setSearchTerm] = useState("");
+  const router = useRouter();
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // 폼 제출 시 페이지 새로 고침 방지
+    if (searchTerm.trim() === "") {
+      return; // 검색어가 비어 있으면 리디렉션 XX
+    }
+    // 검색어를 포함한 URL로 리디렉션
+    //encodeURIComponent- 인코딩하여 URL-safe한 형식으로 변환
+    
+    // router.push(`/details/search?query=${encodeURIComponent(searchTerm)}`);
+    router.push('/details/search?');
+    // 검색어 초기화
+    setSearchTerm("");
+  };
+
   return (
     <div className={styles.header__container}>
       {/* 왼쪽(메뉴 바, 로고) */}
@@ -42,11 +65,13 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
 
       {/* 가운데(검색 창) */}
       <div className={styles.search__section}>
-        <form action="/details/search" className={styles.search__bar}>
+        <form onSubmit={handleSearchSubmit} className={styles.search__bar}>
           <div>
             <input
               type="text"
               placeholder="찾으려는 음악을 검색하세요!"
+              value={searchTerm}
+              onChange={handleSearchChange}
             ></input>
           </div>
           <button className={styles.search__btn}>
