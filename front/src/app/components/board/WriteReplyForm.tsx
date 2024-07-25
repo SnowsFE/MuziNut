@@ -4,7 +4,7 @@ import { Submit } from "@/app/components/icon/icon";
 import { getToken, getRefreshToken, setToken } from "@/app/common/common";
 
 // 대댓글 폼
-const WriteReplyForm = () => {
+const WriteReplyForm: React.FC<{ commentId: any }> = ({ commentId }) => {
   const [reply, setReply] = useState(""); //작성할 댓글
   const [replyLength, setReplyLength] = useState(0); // 대댓글 길이 상태 추가
 
@@ -21,18 +21,22 @@ const WriteReplyForm = () => {
     if (reply.trim()) {
       const token = getToken();
       if (token) {
-        const response = await fetch("/api/comments", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ reply }),
-        });
+        const response = await fetch(
+          `http://localhost:8080/replies/${commentId}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: getToken(),
+            },
+            body: JSON.stringify({ content: reply }),
+          }
+        );
         if (response.ok) {
           setReply("");
           setReplyLength(0); // 댓글 제출 후 길이 초기화
           // 댓글 등록 후 추가적인 작업 (예: 댓글 목록 갱신)
+          location.reload();
         } else {
           alert("대댓글 등록에 실패했습니다.");
         }

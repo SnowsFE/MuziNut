@@ -20,12 +20,14 @@ interface BoardsDataProps {
 }
 
 interface CommentProps {
-  profileImg: string;
-  writer: string;
+  commentProfileImg: string;
+  commentWriter: string;
+  id: any;
   createdDt: string;
-  contents: string;
+  content: string;
   boardLikeStatus: boolean;
   likeCount: number;
+  replies: any[];
 }
 
 interface QuillProps {
@@ -65,10 +67,8 @@ const PostBox: React.FC = () => {
 
   const params = useParams();
   const id: any = params?.id;
-  // alert("초기 게시판 pk: " + id);
 
   useEffect(() => {
-    alert("token: " + authToken);
     const DetailBoards = async () => {
       try {
         if (id) {
@@ -109,7 +109,6 @@ const PostBox: React.FC = () => {
           });
 
           setComments(res.data.comments);
-          console.log("댓글들: " + comments);
 
           // 두 번째 요청을 첫 번째 요청의 결과를 사용하여 수행
           const resdata = await axios.get(
@@ -124,6 +123,8 @@ const PostBox: React.FC = () => {
 
     DetailBoards();
   }, []);
+
+  // console.log("댓글 pk: ", comments[0].id);
 
   const redirectToNotice = () => {
     window.location.href = "/notice";
@@ -156,12 +157,14 @@ const PostBox: React.FC = () => {
       {comments.map((comment, index) => (
         <Comments
           key={index}
-          profileImg={comment.profileImg}
-          writer={comment.writer}
+          profileImg={comment.commentProfileImg}
+          writer={comment.commentWriter}
           createdDt={comment.createdDt}
-          contents={comment.contents}
+          content={comment.content}
           boardLikeStatus={comment.boardLikeStatus}
           likeCount={comment.likeCount}
+          replies={comment.replies}
+          commentId={comment.id}
         />
       ))}
     </Container>

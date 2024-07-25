@@ -43,6 +43,7 @@ const WriteCommentForm: React.FC<CommentFormProps> = ({ boardId }) => {
           setComment("");
           setCommentLength(0); // 댓글 제출 후 길이 초기화
           // 댓글 등록 후 추가적인 작업 (예: 댓글 목록 갱신)
+          location.reload();
         } else {
           alert("댓글 등록에 실패했습니다.");
         }
