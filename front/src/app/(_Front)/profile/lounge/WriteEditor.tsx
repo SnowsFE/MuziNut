@@ -5,7 +5,6 @@ import styled, { keyframes, css } from "styled-components";
 import QuillToolbar from "./EditorOption";
 import Quill from "quill";
 import AxiosURL from "@/app/axios/url";
-import { useFileState } from "./loungeEdit";
 
 const Font = Quill.import("formats/font");
 Font.whitelist = ["esamanruLight", "esamanruMedium", "esamanruBold"];
@@ -25,10 +24,6 @@ const NoticeWriteQuill: React.FC<{
   const [title, setTitle] = useState<string>("");
   const [visible, setVisible] = useState<boolean>(true);
   const [id, setId] = useState<string | null>(null); // id 상태를 추가합니다.
-
-  const { quiilFiles } = useFileState((data) => {
-    quiilFiles;
-  });
 
   useEffect(() => {
     // 해시값을 읽어와서 id 상태를 설정합니다.
@@ -105,6 +100,7 @@ const NoticeWriteQuill: React.FC<{
     "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjQ2MDczMzh9.BbvfPZE8fzZNQNJdyq0XQz7GaIUYhhLUhoup35KwlfC-92MHXOi3jkILH19lFdDVQkuwtFWRlyRbVZQW8a8QUA";
 
   const handleSubmit = async () => {
+    // 내용이 비어있는 경우에 대한 검사
     if (content.trim() === "") {
       alert("내용을 입력해주세요");
       return;
@@ -126,12 +122,6 @@ const NoticeWriteQuill: React.FC<{
         : `${AxiosURL}/profile/lounge`;
       const method = id ? "PUT" : "POST";
 
-      // PUT 요청일 때 빈 content 상태를 확인
-      if (method === "PUT" && content.trim() === "") {
-        alert("수정할 내용이 없습니다.");
-        return;
-      }
-
       const response = await fetch(url, {
         method,
         headers: {
@@ -141,11 +131,11 @@ const NoticeWriteQuill: React.FC<{
       });
 
       if (response.ok) {
-        if (method === "POST") {
-          alert("글이 성공적으로 등록되었습니다.");
-        } else if (method === "PUT") {
-          alert("글이 성공적으로 수정되었습니다.");
-        }
+        alert(
+          method === "POST"
+            ? "글이 성공적으로 등록되었습니다."
+            : "글이 성공적으로 수정되었습니다."
+        );
 
         onPublish(content);
         setVisible(false);

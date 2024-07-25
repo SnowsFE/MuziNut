@@ -29,7 +29,6 @@ export default function BestArtist() {
 
   const listRef = useRef<HTMLUListElement>(null);
 
- 
   // 컴포넌트 렌더링 후 gsap으로 애니메이션 작업 추가
   useEffect(() => {
     if (listRef.current) {
