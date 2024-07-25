@@ -6,6 +6,7 @@ import Comments from "@/app/components/board/Comments";
 import WriterProfileInfo from "@/app/components/board/WriterProfileInfo";
 import WriteCommentForm from "@/app/components/board/WriteCommentForm";
 import AxiosURL from "@/app/axios/url";
+import { getRefreshToken, setToken, getToken } from "@/app/common/common";
 
 import { useParams } from "next/navigation";
 import axios from "axios";
@@ -57,16 +58,17 @@ const PostBox: React.FC = () => {
   });
 
   const [comments, setComments] = useState<CommentProps[]>([]); // 댓글 목록
-
   const [reply, setReply] = useState(""); // 대댓글
+  const [boardId, setBoardId] = useState(); //게시판 pk
 
-  const authToken =
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9BRE1JTiIsImV4cCI6MTcyNDQ3ODE4OH0.3z2IGByLdk3Q-khCsRjdgK4BtMZs-h51If5vYgF45rgegl8WjUfXoIMDzMsqFLVOquamuJ57dMplJEGevon4PQ";
+  const authToken = getToken();
 
-  const params = useParams<{ id: string }>();
-  const id = params?.id;
+  const params = useParams();
+  const id: any = params?.id;
+  // alert("초기 게시판 pk: " + id);
 
   useEffect(() => {
+    alert("token: " + authToken);
     const DetailBoards = async () => {
       try {
         if (id) {
@@ -74,10 +76,12 @@ const PostBox: React.FC = () => {
             `${AxiosURL}/community/admin-boards/${id}`,
             {
               headers: {
-                Authorization: `Bearer ${authToken}`,
+                Authorization: authToken,
               },
             }
           );
+
+          setBoardId(res.data.id);
 
           const profileData = {
             profileImg: res.data.profileImg,
@@ -105,6 +109,7 @@ const PostBox: React.FC = () => {
           });
 
           setComments(res.data.comments);
+          console.log("댓글들: " + comments);
 
           // 두 번째 요청을 첫 번째 요청의 결과를 사용하여 수행
           const resdata = await axios.get(
@@ -118,7 +123,7 @@ const PostBox: React.FC = () => {
     };
 
     DetailBoards();
-  }, [id]);
+  }, []);
 
   const redirectToNotice = () => {
     window.location.href = "/notice";
@@ -147,7 +152,7 @@ const PostBox: React.FC = () => {
           {boardsData.likeCount}
         </LikeButton>
       </Footer>
-      <WriteCommentForm comments={commentForm.comments} />
+      <WriteCommentForm boardId={boardId} />
       {comments.map((comment, index) => (
         <Comments
           key={index}
