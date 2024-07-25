@@ -39,6 +39,17 @@ export const useFileState = (onUpload: (data: any) => void) => {
     filename: string;
   }
 
+  interface CommentProps {
+    id: number;
+    likeCommentStatus: boolean;
+    content: string;
+    commentWriter: string;
+    commentProfileImg: string;
+    createdDt: string;
+    likeCount: number;
+    replies: string[];
+  }
+
   const [LoungeForm, setLoungeForm] = useState<LoungeProps[]>([]);
 
   // 이미지 사이즈 체크 함수
@@ -159,6 +170,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
   // 메인 Get 통신 데이터
   const [userId, setUserId] = useState(2);
   const [quiilFiles, setQuillFile] = useState<string[]>([]);
+  const [commentData, setCommentData] = useState<CommentProps[]>([]);
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -179,7 +191,16 @@ export const useFileState = (onUpload: (data: any) => void) => {
           temp.push(resdata.data);
         }
         setQuillFile(temp);
-        // console.log(temp);
+
+        let commenttemp: any[] = [];
+        for (var i = 0; i < res.data.loungesForms.length; i++) {
+          for (var j = 0; j < res.data.loungesForms[i].comments.length; j++) {
+            commenttemp.push(res.data.loungesForms[i].comments[j]);
+            console.log(res.data.loungesForms[i].comments[j]);
+          }
+        }
+
+        setCommentData(commenttemp);
       } catch (error) {
         console.error("프로필 데이터를 가져오는데 실패했습니다.", error);
       }
@@ -195,6 +216,8 @@ export const useFileState = (onUpload: (data: any) => void) => {
     quiilFiles,
     LoungeForm,
     setLoungeForm,
+    commentData,
+    setCommentData,
     handleBannerSubmit,
     handleProfileSubmit,
   };
