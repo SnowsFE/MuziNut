@@ -314,7 +314,7 @@ const UseridProfile: React.FC = () => {
                   </LoungeComment>
                 </LoungeLikeCommentContainer>
               )}
-              {openComments[index] && <OpenComment />}
+              {openComments[index] && <OpenComment loungeId={postId} />}
             </LoungeContainer>
           );
         })}
