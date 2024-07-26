@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import {
   MoneyIcon,
@@ -11,6 +11,8 @@ import {
 import { bestArtists, commentData, commentNumber } from "../bestartist";
 import { LikeIcon } from "../../../components/icon/icon";
 import Link from "next/link";
+import axios from "axios";
+import AxiosURL from "@/app/axios/url";
 
 interface ArtistProps {
   artist: {
@@ -26,21 +28,19 @@ interface ArtistProps {
 
 const BestPick: React.FC = () => {
   const [inputValue, setInputValue] = useState("");
+  const [artists, setArtists] = useState([]);
 
-  // const [artists, setArtists] = useState<ArtistProps['artist'][]>([]);
+  useEffect(() => {
+    const fetchArtists = async () => {
+      try {
+        const response = await axios.get(`${AxiosURL}/mypick/ranking`); // 백엔드 API 엔드포인트
+        // setArtists(response.data);
+        console.log(response.data);
+      } catch (error) {}
+    };
 
-  // useEffect(() => {
-  //   const fetchArtists = async () => {
-  //     try {
-  //       const response = await axios.get('YOUR_BACKEND_ENDPOINT'); // 백엔드 API 엔드포인트
-  //       setArtists(response.data);
-  //     } catch (error) {
-  //       console.error("Error fetching artists:", 에러);
-  //     }
-  //   };
-
-  //   fetchArtists();
-  // }, []);
+    fetchArtists();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -372,7 +372,7 @@ const ProfileImage = styled.img`
 // 아티스트 이름
 const ArtistName = styled.div`
   font-weight: bold;
-  font-size : 30px;
+  font-size: 30px;
   margin-bottom: 10px;
 `;
 

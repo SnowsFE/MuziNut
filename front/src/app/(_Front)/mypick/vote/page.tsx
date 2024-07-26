@@ -1,10 +1,13 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { StarIcon } from "../../../components/icon/icon";
 import Image from "next/image";
 import artist from "../../../../../public/images/BaseImg.png";
 import { MoneyIcon, VoteBox } from "../../../components/icon/icon";
+import AxiosURL from "@/app/axios/url";
+import { getRefreshToken, setToken, getToken } from "@/app/common/common";
+import axios from "axios";
 
 interface Artist {
   id: number;
@@ -24,12 +27,32 @@ const Vote: React.FC = () => {
     money: 1000,
     nut: 1000,
   });
+  const [vote, setVote] = useState(0);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
 
-  // 검색 후 투표 데이터 주는 방식 --------------------------------------------
+  useEffect(() => {
+    const getMyVote = async () => {
+      try {
+        if (getToken()) {
+          const res = await axios.get(`${AxiosURL}/mypick/remainVote`, {
+            headers: {
+              Authorization: getToken(),
+            },
+          });
+          setVote(res.data.remainVote);
+        }
+      } catch (error) {
+        console.error("데이터를 받지 못했습니다", error);
+      }
+    };
+
+    getMyVote();
+  }, []);
+
+  // 투표하기 기능
   const handleClickEvent = () => {
     if (artistData) {
       // artistData가 있는 경우에만 투표 가능
@@ -81,6 +104,7 @@ const Vote: React.FC = () => {
       <VoteSearch>
         <VoteInputMargin>
           <StarIcon />
+          {/* 검색창 */}
           <StyledInput
             type="text"
             placeholder="나의 아티스트 찾기"
@@ -118,18 +142,9 @@ const Vote: React.FC = () => {
             <VoteBoxStyle>
               <VoteBox />
             </VoteBoxStyle>
-            {giveData.money}
+            {vote}
           </VoteBoxData>
         </VoteMoney>
-        <VoteNut>
-          <VoteNutText>보유 넛츠</VoteNutText>
-          <VoteNutData>
-            <VoteNutStyle>
-              <MoneyIcon />
-            </VoteNutStyle>
-            {giveData.nut}
-          </VoteNutData>
-        </VoteNut>
       </VoteGive>
     </VoteContainer>
   );
