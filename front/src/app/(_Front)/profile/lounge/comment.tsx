@@ -1,17 +1,10 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { LikeIcon, CommentIcon } from "@/app/components/icon/icon";
+import { LikeIcon } from "@/app/components/icon/icon";
 import AxiosURL from "@/app/axios/url";
 import { useFileState } from "./loungeEdit";
 import axios from "axios";
-
-// 인터페이스 정의
-interface Reply {
-  profile: string;
-  name: string;
-  bodytext: string;
-  time: string;
-}
+import "react-toastify/dist/ReactToastify.css";
 
 interface CommentProps {
   id: number;
@@ -21,7 +14,6 @@ interface CommentProps {
   commentProfileImg: string;
   createdDt: string;
   likeCount: number;
-  replies: any[];
 }
 
 // 타임스탬프를 사람이 읽기 쉬운 형식으로 변환하는 함수
@@ -43,14 +35,15 @@ const timeAgo = (timestamp: string): string => {
   }
 };
 
-const OpenComment: React.FC = () => {
-  const { commentData } = useFileState((data: any) => {});
+const OpenComment: React.FC<{ loungeId: number }> = ({ loungeId }) => {
+  const { commentsByLounge, setCommentsByLounge } = useFileState(
+    (data: any) => {}
+  );
 
   const [comments, setComments] = useState<CommentProps[]>([]);
   const [newComment, setNewComment] = useState<string>("");
-  const [replyFormsVisible, setReplyFormsVisible] = useState<boolean[]>([]);
-  const [newReplies, setNewReplies] = useState<string[]>([]);
-  const [id, setId] = useState<string | null>(null);
+  const [ID, setID] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const authToken =
     "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjQ2MDczMzh9.BbvfPZE8fzZNQNJdyq0XQz7GaIUYhhLUhoup35KwlfC-92MHXOi3jkILH19lFdDVQkuwtFWRlyRbVZQW8a8QUA";
 
@@ -58,35 +51,21 @@ const OpenComment: React.FC = () => {
     const hash = window.location.hash;
     if (hash) {
       const newId = hash.replace("#", "");
-      setId(newId);
+      setID(newId);
     }
   }, []);
 
   useEffect(() => {
-    if (commentData) {
-      setComments(commentData);
-      setReplyFormsVisible(new Array(commentData.length).fill(false));
-      setNewReplies(new Array(commentData.length).fill(""));
+    if (commentsByLounge[loungeId]) {
+      setComments(commentsByLounge[loungeId]);
     }
-  }, [commentData]);
+  }, [commentsByLounge, loungeId]);
 
   const handleCommentSubmit = async () => {
-    console.log("Comment to submit:", newComment); // 디버깅용 로그 추가
-    console.log("ID:", id);
     if (newComment.trim()) {
       try {
-        if (!id) {
-          alert("ID가 설정되지 않았습니다.");
-          return;
-        }
-
-        console.log(
-          "Sending comment:",
-          JSON.stringify({ content: newComment })
-        ); // 디버깅용 로그 추가
-
         const response = await axios.post(
-          `${AxiosURL}/comments/${id}`,
+          `${AxiosURL}/comments/${loungeId}`,
           { content: newComment },
           {
             headers: {
@@ -97,19 +76,34 @@ const OpenComment: React.FC = () => {
         );
 
         if (response.status === 200 || response.status === 201) {
-          alert("댓글이 성공적으로 등록되었습니다.");
+          const newCommentData = response.data;
+
+          // 상태 업데이트
+          setCommentsByLounge((prev) => ({
+            ...prev,
+            [loungeId]: [...(prev[loungeId] || []), newCommentData],
+          }));
+
+          setComments((prevComments) => [...prevComments, newCommentData]);
+
           setNewComment("");
+          setIsModalOpen(false);
+          // 모달 닫기
+
+          // 잠시 대기 후 모달 다시 열기 및 알림
+          setTimeout(() => {
+            setIsModalOpen(false);
+            alert("댓글이 성공적으로 등록되었습니다.");
+          }, 300); // 300ms 후 모달 다시 열기
         } else {
           alert("댓글 등록에 실패했습니다. 오류: " + response.statusText);
         }
       } catch (error) {
         console.error("댓글 등록 중 오류 발생:", error);
         alert("댓글 등록 중 오류가 발생했습니다.");
-        window.location.reload();
       }
     } else {
       alert("댓글 내용을 입력해 주세요.");
-      return;
     }
   };
 
@@ -127,53 +121,30 @@ const OpenComment: React.FC = () => {
           <BestCommentBox onClick={handleCommentSubmit}>등록</BestCommentBox>
         </BestCommentContainer>
       </BestCommentContainerBox>
-      {comments.map((comment, index) => (
-        <BestCommentList key={comment.id}>
-          <BestCommentHeader>
-            <BestCommentProfile
-              src={`data:image/png;base64,${comment.commentProfileImg}`}
-            />
-            <BestCommentNickname>{comment.commentWriter}</BestCommentNickname>
-            <BestCommentTime>{timeAgo(comment.createdDt)}</BestCommentTime>
-          </BestCommentHeader>
-          <BestCommentBody>
-            <BestCommentText>{comment.content}</BestCommentText>
-            <BestCommentActions>
-              <BestCommentLike>
-                <LikeIcon /> {comment.likeCount}
-              </BestCommentLike>
-              <BestCommentComment onClick={() => handleReplyClick(index)}>
-                <CommentIcon />
-                {comment.replies.length} 댓글
-              </BestCommentComment>
-              <BestCommentReport>🚨</BestCommentReport>
-            </BestCommentActions>
-            {replyFormsVisible[index] && (
-              <ReplyForm>
-                <input
-                  type="text"
-                  placeholder="대댓글을 입력하세요"
-                  value={newReplies[index]}
-                  onChange={(e) => handleReplyChange(index, e.target.value)}
-                />
-                <BestCommentBox onClick={() => handleReplySubmit(index)}>
-                  등록
-                </BestCommentBox>
-              </ReplyForm>
-            )}
-            {comment.replies.map((reply) => (
-              <Reply key={reply.time}>
-                <ReplyHeader>
-                  <ReplyProfile src={reply.profile} />
-                  <ReplyNickname>{reply.name}</ReplyNickname>
-                  <ReplyTime>{timeAgo(reply.time)}</ReplyTime>
-                </ReplyHeader>
-                <ReplyBody>{reply.bodytext}</ReplyBody>
-              </Reply>
-            ))}
-          </BestCommentBody>
-        </BestCommentList>
-      ))}
+      {comments.length === 0 ? (
+        <NoCommentsMessage></NoCommentsMessage>
+      ) : (
+        comments.map((comment) => (
+          <BestCommentList key={comment.id}>
+            <BestCommentHeader>
+              <BestCommentProfile
+                src={`data:image/png;base64,${comment.commentProfileImg}`}
+              />
+              <BestCommentNickname>{comment.commentWriter}</BestCommentNickname>
+              <BestCommentTime>{timeAgo(comment.createdDt)}</BestCommentTime>
+            </BestCommentHeader>
+            <BestCommentBody>
+              <BestCommentText>{comment.content}</BestCommentText>
+              <BestCommentActions>
+                <BestCommentLike>
+                  <LikeIcon /> {comment.likeCount}
+                </BestCommentLike>
+                <BestCommentReport>🚨</BestCommentReport>
+              </BestCommentActions>
+            </BestCommentBody>
+          </BestCommentList>
+        ))
+      )}
     </BestCommentContainerList>
   );
 };
@@ -235,7 +206,6 @@ const BestCommentNickname = styled.div`
 // 베스트 픽 댓글 작성 시간
 const BestCommentTime = styled.div`
   font-size: 13px;
-  margin-top: 3px;
 `;
 
 // 베스트 픽 댓글 본문
@@ -358,54 +328,7 @@ const BestCommentBox = styled.button`
   }
 `;
 
-// 대댓글 폼 스타일
-const ReplyForm = styled.div`
-  display: flex;
-  padding: 10px 0;
-  input {
-    width: 100%;
-    outline: none;
-    border: none;
-    padding: 10px 0;
-    font-size: 14px;
-    background: transparent;
-    color: var(--text-color);
-    line-height: 1.5;
-  }
-`;
-
-// 대댓글 스타일
-const Reply = styled.div`
-  margin-top: 10px;
-  margin-bottom: 5px;
-  padding-left: 20px;
-  border-left: 2px solid #ddd;
-`;
-
-const ReplyHeader = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 7px;
-`;
-
-const ReplyProfile = styled.img`
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  object-fit: cover;
-`;
-
-const ReplyNickname = styled.div`
-  font-size: 10px;
-`;
-
-const ReplyTime = styled.div`
-  font-size: 10px;
-`;
-
-const ReplyBody = styled.div`
-  margin-left: 27px;
-  margin-top: 7px;
-  font-size: 14px;
-  font-family: "esamanru Medium";
+// 댓글이 없을 때 표시할 메시지 스타일
+const NoCommentsMessage = styled.p`
+  margin-top: 20px;
 `;
