@@ -1,13 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { LikeIcon } from "@/app/components/icon/icon";
+import { LikeIcon } from "@/app/components/LikePost/like";
 import Comments from "@/app/components/board/Comments";
 import WriterProfileInfo from "@/app/components/board/WriterProfileInfo";
 import WriteCommentForm from "@/app/components/board/WriteCommentForm";
 import AxiosURL from "@/app/axios/url";
 import { getRefreshToken, setToken, getToken } from "@/app/common/common";
-
 import { useParams } from "next/navigation";
 import axios from "axios";
 
@@ -59,11 +58,10 @@ const PostBox: React.FC = () => {
     Quill: "",
   });
 
-  const [comments, setComments] = useState<CommentProps[]>([]); // 댓글 목록
-  const [boardId, setBoardId] = useState<number | undefined>(undefined); // 게시판 pk
+  const [comments, setComments] = useState<CommentProps[]>([]);
+  const [boardId, setBoardId] = useState<number | undefined>(undefined);
 
   const authToken = getToken();
-
   const params = useParams();
   const id: any = params?.id;
 
@@ -77,11 +75,10 @@ const PostBox: React.FC = () => {
               headers: {
                 Authorization: authToken,
               },
-              responseType: "text", // 응답을 텍스트로 받기
+              responseType: "text",
             }
           );
 
-          // form-data에서 JSON 추출
           const boundary = res.data.split("\r\n")[0];
           const parts = res.data.split(boundary);
 
@@ -131,7 +128,6 @@ const PostBox: React.FC = () => {
 
           console.log("퀼파일네임", boardsData.quillFilename);
 
-          // 두 번째 요청을 첫 번째 요청의 결과를 사용하여 수행
           const resdata = await axios.get(
             `http://localhost:8080/boards/get-file?filename=${boardsData.quillFilename}`
           );
@@ -147,6 +143,16 @@ const PostBox: React.FC = () => {
 
   const redirectToNotice = () => {
     window.location.href = "/community/free-boards";
+  };
+
+  const handleLikeUpdate = (newLikeStatus: boolean) => {
+    setBoardsData((prevData) => ({
+      ...prevData,
+      boardLikeStatus: newLikeStatus,
+      likeCount: newLikeStatus
+        ? prevData.likeCount + 1
+        : prevData.likeCount - 1,
+    }));
   };
 
   return (
@@ -167,7 +173,12 @@ const PostBox: React.FC = () => {
       <Body dangerouslySetInnerHTML={{ __html: QuillData.Quill }} />
       <Footer>
         <LikeButton>
-          <LikeIcon /> {boardsData.boardLikeStatus ? true : false}
+          <LikeIcon
+            postId={id}
+            authToken={authToken}
+            initialLiked={boardsData.boardLikeStatus}
+            onLikeUpdate={handleLikeUpdate}
+          />
           {boardsData.likeCount}
         </LikeButton>
       </Footer>

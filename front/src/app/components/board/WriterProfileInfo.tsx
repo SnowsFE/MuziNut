@@ -66,7 +66,7 @@ const WriterProfileInfo: React.FC<WriterProfileInfoProps> = ({
           </Views>
         </TimeViewsContainer>
       </ProfileInfo>
-      <ShareContainer>
+      {/* <ShareContainer>
         <Image
           onClick={handleBookmarkClick}
           src={`data:image/png;base64,${isBookmark}`}
@@ -81,10 +81,11 @@ const WriterProfileInfo: React.FC<WriterProfileInfoProps> = ({
           height={32}
         />
       </ShareContainer>
-      {isBookmark}
-      <BookMarkIcon />
-      <Image src={threedot} alt="수정 삭제" />
-      수정 삭제기능 추가
+      {isBookmark} */}
+      <ShareContainer>
+        <BookMarkIcon />
+        <Image src={threedot} alt="수정 삭제" />
+      </ShareContainer>
     </ProfileContainer>
   );
 };

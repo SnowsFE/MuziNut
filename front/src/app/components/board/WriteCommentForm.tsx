@@ -80,10 +80,6 @@ const CommentsSection = styled.div`
   margin-top: 20px;
   font-family: "esamanru Medium";
 `;
-const CommentsCount = styled.div`
-  font-size: 14px;
-  margin-bottom: 10px;
-`;
 
 const CommentInputContainer = styled.div`
   display: flex;
@@ -103,6 +99,7 @@ const CommentInput = styled.textarea`
   line-height: 17px;
   resize: none;
   outline: none;
+  margin-bottom: 30px;
 
   &:focus {
     border-color: #b8b8b8;
@@ -113,7 +110,7 @@ const CommentInput = styled.textarea`
 const CommentSubmitButton = styled.button`
   position: absolute;
   right: 0;
-  bottom: 0;
+  bottom: 27px;
   background: none;
   border: none;
   cursor: pointer;
@@ -129,7 +126,7 @@ const CommentSubmitButton = styled.button`
 const CommentLength = styled.div`
   position: absolute;
   right: 45px;
-  bottom: 13px;
+  bottom: 40px;
   font-size: 12px;
   padding: 10px;
   color: #888;

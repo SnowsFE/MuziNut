@@ -110,33 +110,32 @@ const CommentContainer = styled.div`
   display: flex;
   align-items: center;
   position: relative;
-  padding-top: 30px;
-  padding-bottom: 20px;
+  padding-bottom: 10px;
   border-bottom: 1px solid #ddd;
   font-family: "esamanru Medium";
 `;
 
 //댓글 내용
 const Content = styled.span`
-  padding-right: 178px;
   margin-top: 7px;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #333;
 `;
 
 //댓글 좋아요 버튼
 const Option = styled.div`
   display: flex;
-  position: absolute;
-  right: 10px;
-  bottom: 1px;
   gap: 10px;
   border-radius: 20px;
   padding: 10px 10px;
-  margin-bottom: 15px;
   background-color: #f0f0f0;
   cursor: pointer;
   font-size: 12px;
   align-items: center;
   font-family: "esamanru Medium";
+  margin-left: auto;
 `;
 
 // 프로필 이미지
@@ -153,7 +152,7 @@ const ProfileImage = styled.img`
 const ProfileInfo = styled.div`
   display: flex;
   flex-direction: column;
-  padding-right: 20px;
+  padding-right: 10px;
   gap: 5px;
 `;
 

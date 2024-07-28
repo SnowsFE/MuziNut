@@ -21,8 +21,6 @@ const Reply: React.FC<ReplyProps> = ({
   replyProfileImg,
   createdDt,
 }) => {
-  // const { replyData } = useOutData();
-
   return (
     <>
       <ReplyContainer>
@@ -50,9 +48,8 @@ export default Reply;
 const ReplyContainer = styled.div`
   display: flex;
   align-items: center;
-  padding-top: 40px;
+  padding-top: 20px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #ddd;
   font-family: "esamanru Medium";
 `;
 
@@ -71,6 +68,7 @@ const ProfileInfo = styled.div`
   display: flex;
   flex-direction: column;
   gap: 5px;
+  margin-right: 10px;
 `;
 
 // 프로필 이름
@@ -93,7 +91,10 @@ const Time = styled.div`
 
 //댓글 내용
 const Content = styled.span`
-  padding-right: 178px;
-  padding-left: 15px;
+  width: 790px;
   margin-top: 7px;
+  padding: 15px 15px 10px 15px;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #333;
 `;
