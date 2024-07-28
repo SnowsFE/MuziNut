@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, ChangeEvent } from "react";
+import React, { useState, useEffect, ChangeEvent } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import AxiosUrl from "@/app/axios/url";
@@ -167,10 +167,11 @@ export const useFileState = (onUpload: (data: any) => void) => {
           params: { userId },
         });
         const data = response.data;
-        // console.log("프로필 데이터 가져옴:", data);
+        // const Album = data.albumTitle, data.mainSongAlbumImage
 
         setProfileInfo(data);
         setAlbumInfo(data);
+        // console.log("앨범정보:", data);
       } catch (error) {
         console.error("프로필 데이터를 가져오는데 실패했습니다.", error);
       }

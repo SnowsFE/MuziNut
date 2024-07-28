@@ -4,11 +4,12 @@ import styled from "styled-components";
 import Image from "next/image";
 import threedot from "../../../../../public/svgs/threedot.svg";
 import Link from "next/link";
-import { LikeIcon, CommentIcon } from "../../../components/icon/icon";
+import { CommentIcon } from "../../../components/icon/icon";
 import OpenComment from "./comment";
 import WriteEditor from "./WriteEditor";
 import { BannerData, ProfileData, useFileState } from "./loungeEdit";
 import ProfileEdit from "../profileEdit";
+import { LikeIcon } from "../../../components/LikePost/like";
 import AxiosURL from "@/app/axios/url";
 
 const UseridProfile: React.FC = () => {
@@ -305,7 +306,10 @@ const UseridProfile: React.FC = () => {
               {loungeItem && (
                 <LoungeLikeCommentContainer>
                   <LoungeLike>
-                    <LikeIcon />
+                    <LikeIcon
+                      postId={LoungeForm[index]?.id || 0}
+                      authToken={authToken}
+                    />
                     {loungeItem.like}
                   </LoungeLike>
                   <LoungeComment onClick={() => handleCommentToggle(index)}>

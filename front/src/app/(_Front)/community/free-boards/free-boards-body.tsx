@@ -9,6 +9,7 @@ import WriteQuill from "./writequill";
 const FreeBoardsBody: React.FC = () => {
   const [selected, setSelected] = useState<string>("최신순");
   const [writeVisible, setWriteVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const handleSelect = (option: string) => {
     setSelected(option);
@@ -16,6 +17,10 @@ const FreeBoardsBody: React.FC = () => {
 
   const openWriteForm = () => {
     setWriteVisible(true);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
   };
 
   return (
@@ -42,11 +47,15 @@ const FreeBoardsBody: React.FC = () => {
         </FreeBoardsOptions>
         <SearchContainer>
           <Write onClick={openWriteForm}>글쓰기</Write>
-          <ControllerSearch placeholder="게시글 검색" />
+          <ControllerSearch
+            placeholder="게시글 바로 검색"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
           <SearchIcon />
         </SearchContainer>
       </FreeBoardsController>
-      <FreeBoardsPost selected={selected} />
+      <FreeBoardsPost selected={selected} searchQuery={searchQuery} />
       {writeVisible && (
         <WriteQuill
           onPublish={() => setWriteVisible(false)}

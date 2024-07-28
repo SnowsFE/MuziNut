@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { LikeIcon } from "@/app/components/icon/icon";
+import { CommentLikeIcon } from "@/app/components/LikePost/like";
 import AxiosURL from "@/app/axios/url";
 import { useFileState } from "./loungeEdit";
 import axios from "axios";
@@ -35,7 +35,10 @@ const timeAgo = (timestamp: string): string => {
   }
 };
 
-const OpenComment: React.FC<{ loungeId: number }> = ({ loungeId }) => {
+const OpenComment: React.FC<{
+  loungeId: number;
+  onCommentSubmit?: () => void;
+}> = ({ loungeId }) => {
   const { commentsByLounge, setCommentsByLounge } = useFileState(
     (data: any) => {}
   );
@@ -43,7 +46,7 @@ const OpenComment: React.FC<{ loungeId: number }> = ({ loungeId }) => {
   const [comments, setComments] = useState<CommentProps[]>([]);
   const [newComment, setNewComment] = useState<string>("");
   const [ID, setID] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const authToken =
     "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjQ2MDczMzh9.BbvfPZE8fzZNQNJdyq0XQz7GaIUYhhLUhoup35KwlfC-92MHXOi3jkILH19lFdDVQkuwtFWRlyRbVZQW8a8QUA";
 
@@ -87,14 +90,9 @@ const OpenComment: React.FC<{ loungeId: number }> = ({ loungeId }) => {
           setComments((prevComments) => [...prevComments, newCommentData]);
 
           setNewComment("");
-          setIsModalOpen(false);
-          // 모달 닫기
 
-          // 잠시 대기 후 모달 다시 열기 및 알림
-          setTimeout(() => {
-            setIsModalOpen(false);
-            alert("댓글이 성공적으로 등록되었습니다.");
-          }, 300); // 300ms 후 모달 다시 열기
+          alert("댓글 작성이 완료되었습니다.");
+          window.location.reload();
         } else {
           alert("댓글 등록에 실패했습니다. 오류: " + response.statusText);
         }
@@ -137,7 +135,12 @@ const OpenComment: React.FC<{ loungeId: number }> = ({ loungeId }) => {
               <BestCommentText>{comment.content}</BestCommentText>
               <BestCommentActions>
                 <BestCommentLike>
-                  <LikeIcon /> {comment.likeCount}
+                  <CommentLikeIcon
+                    commentId={comment.id}
+                    authToken={authToken}
+                    initialLiked={comment.likeCommentStatus}
+                  />
+                  {comment.likeCount}
                 </BestCommentLike>
                 <BestCommentReport>🚨</BestCommentReport>
               </BestCommentActions>

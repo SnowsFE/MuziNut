@@ -31,7 +31,8 @@
     ".next/types/**/*.ts",
     "src/app/components/usedarkmode",
     "src/app/(_Front)/mypick/components",
-    "src/app/components/SelectPlayBtn"
+    "src/app/components/SelectPlayBtn",
+    "src/app/components/LikePost"
   ],
   "exclude": ["node_modules"]
 }

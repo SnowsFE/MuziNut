@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
-import Link from "next/link";
+import AxiosURL from "@/app/axios/url";
+import { useRouter } from "next/navigation";
 
 interface Post {
   id: number;
@@ -12,73 +13,106 @@ interface Post {
   like: number;
 }
 
-interface FreeBoardsPostProps {
+interface NoticePostProps {
   selected: string;
+  searchQuery: string;
 }
 
-const FreeBoardsPost: React.FC<FreeBoardsPostProps> = ({ selected }) => {
-  const posts: Post[] = [];
-
+const FreeBoardsPost: React.FC<NoticePostProps> = ({
+  selected,
+  searchQuery,
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 10;
-  const [sortedPosts, setSortedPosts] = useState<Post[]>(posts); // 초기값으로 모든 게시물을 포함한 상태를 설정
+  const [freeBoardsForms, setfreeBoardsForms] = useState<Post[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // 데이터를 저장할 상태를 useState를 이용해 초기화
-  const [getData, setgetData] = useState<Post[]>([]);
+  const router = useRouter();
 
-  // PostData 함수를 useEffect 내에서 호출하여 데이터를 가져옴
+  const authToken =
+    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9BRE1JTiIsImV4cCI6MTcyNDQ3ODE4OH0.3z2IGByLdk3Q-khCsRjdgK4BtMZs-h51If5vYgF45rgegl8WjUfXoIMDzMsqFLVOquamuJ57dMplJEGevon4PQ";
+
+  const fetchData = async (page: number) => {
+    setIsLoading(true);
+    try {
+      const res = await axios.get(`${AxiosURL}/community/free-boards`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+        params: {
+          page: page - 1, // API가 0부터 시작하는 페이지 번호를 사용하는 경우
+          size: postsPerPage,
+        },
+      });
+
+      const { freeBoardsForms, totalPage } = res.data;
+
+      setfreeBoardsForms(freeBoardsForms || []);
+      setTotalPages(totalPage || 1);
+
+      console.log("totalPage:", totalPage);
+      console.log("freeBoardsForms:", freeBoardsForms);
+      console.log("res.data:", res.data);
+    } catch (error) {
+      console.error("데이터를 불러오는 중 오류가 발생했습니다", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get(
-          "http://localhost:8080/community/free-boards"
-        );
-        setgetData(res.data);
-      } catch (error) {
-        console.error("데이터를 불러오지 못했습니다", error);
-      }
-    };
+    fetchData(currentPage);
+  }, [currentPage, selected]);
 
-    fetchData();
-  }, []);
+  const sortPosts = (criterion: string, posts: Post[] | undefined): Post[] => {
+    if (!posts || !Array.isArray(posts)) {
+      return [];
+    }
 
-  // 정렬 함수
-  const sortPosts = (criterion: string): Post[] => {
     switch (criterion) {
       case "인기순":
-        return [...posts].sort((a, b) => b.view - a.view);
+        return posts.slice().sort((a, b) => b.view - a.view);
       case "최신순":
-        return [...posts].sort(
-          (a, b) =>
-            new Date(b.createdDt).getTime() - new Date(a.createdDt).getTime()
-        );
+        return posts
+          .slice()
+          .sort(
+            (a, b) =>
+              new Date(b.createdDt).getTime() - new Date(a.createdDt).getTime()
+          );
       case "좋아요순":
-        return [...posts].sort((a, b) => b.like - a.like);
+        return posts.slice().sort((a, b) => b.like - a.like);
       default:
         return posts;
     }
   };
 
-  useEffect(() => {
-    // 선택된 정렬 기준에 따라 게시물을 정렬하여 상태 업데이트
-    const sorted = sortPosts(selected);
-    setSortedPosts(sorted);
-    setCurrentPage(1); // 페이지를 첫 번째 페이지로 초기화
-  }, [selected]); // selected 값이 변경될 때마다 호출
+  const filterPostsBySearchQuery = (posts: Post[], query: string): Post[] => {
+    if (!query) return posts;
+    return posts.filter((post) =>
+      post.title.toLowerCase().includes(query.toLowerCase())
+    );
+  };
 
-  // 현재 페이지에 해당하는 게시글을 계산
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = sortedPosts.slice(indexOfFirstPost, indexOfLastPost);
-
-  // 페이지 번호를 계산
-  const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(sortedPosts.length / postsPerPage); i++) {
-    pageNumbers.push(i);
-  }
+  const sortedPosts = sortPosts(selected, freeBoardsForms);
+  const filteredPosts = filterPostsBySearchQuery(sortedPosts, searchQuery);
 
   const handlePageClick = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
   };
 
   return (
@@ -86,27 +120,37 @@ const FreeBoardsPost: React.FC<FreeBoardsPostProps> = ({ selected }) => {
       <DarkBackground />
       <Content>
         <Header>
-          <HeaderItem>번호</HeaderItem>
           <HeaderItem>제목</HeaderItem>
           <HeaderItem>작성자</HeaderItem>
           <HeaderItem>작성일</HeaderItem>
           <HeaderItem>조회수</HeaderItem>
           <HeaderItem>좋아요</HeaderItem>
         </Header>
-        {currentPosts.map((post) => (
-          <Link key={post.id} href={`/free-boards/${post.id}`} passHref>
-            <Post>
+
+        {isLoading ? (
+          <LoadingMessage>로딩 중...</LoadingMessage>
+        ) : freeBoardsForms.length === 0 ? (
+          <NoDataMessage>게시글이 없습니다!</NoDataMessage>
+        ) : filteredPosts.length === 0 ? (
+          <NoDataMessage>검색 결과가 없습니다!</NoDataMessage>
+        ) : (
+          filteredPosts.map((post) => (
+            <Post
+              key={post.id}
+              onClick={() => router.push(`/community/free-boards/${post.id}`)}
+            >
               <PostItem>{post.title}</PostItem>
               <PostItem>{post.writer}</PostItem>
               <PostItem>{post.createdDt}</PostItem>
               <PostItem>{post.view}</PostItem>
               <PostItem>{post.like}</PostItem>
             </Post>
-          </Link>
-        ))}
+          ))
+        )}
         <PageNation>
-          <PageButton onClick={() => setCurrentPage(1)}>{"<<"}</PageButton>
-          {pageNumbers.map((number) => (
+          <PageButton onClick={() => handlePageClick(1)}>{"<<"}</PageButton>
+          <PageButton onClick={handlePrevPage}>{"<"}</PageButton>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
             <PageButton
               key={number}
               onClick={() => handlePageClick(number)}
@@ -115,7 +159,8 @@ const FreeBoardsPost: React.FC<FreeBoardsPostProps> = ({ selected }) => {
               {number}
             </PageButton>
           ))}
-          <PageButton onClick={() => setCurrentPage(pageNumbers.length)}>
+          <PageButton onClick={handleNextPage}>{">"}</PageButton>
+          <PageButton onClick={() => handlePageClick(totalPages)}>
             {">>"}
           </PageButton>
         </PageNation>
@@ -164,6 +209,9 @@ const HeaderItem = styled.div`
   flex: 1;
   text-align: center;
   font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const Post = styled.div`
@@ -182,6 +230,9 @@ const PostItem = styled.div`
   text-align: center;
   font-size: 13px;
   font-family: "esamanru Medium";
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const PageNation = styled.div`
@@ -207,4 +258,20 @@ const PageButton = styled.div<{ isActive?: boolean }>`
     background-color: #ddd;
   }
   color: black;
+`;
+
+// 로딩 메시지
+const LoadingMessage = styled.div`
+  padding: 40px 0 5px 0;
+  text-align: center;
+  font-size: 20px;
+  color: #16be78;
+`;
+
+// 데이터 없음 메시지
+const NoDataMessage = styled.div`
+  padding: 40px 0 5px 0;
+  text-align: center;
+  font-size: 20px;
+  color: #16be78;
 `;

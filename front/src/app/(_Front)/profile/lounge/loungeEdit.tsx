@@ -173,7 +173,6 @@ export const useFileState = (onUpload: (data: any) => void) => {
   // 메인 Get 통신 데이터
   const [userId, setUserId] = useState(2);
   const [quiilFiles, setQuillFile] = useState<string[]>([]);
-  const [commentData, setCommentData] = useState<CommentProps[]>([]);
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -184,6 +183,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
 
         setProfileInfo(res.data);
         setLoungeForm(res.data.loungesForms);
+        console.log(res.data);
 
         // 두 번째 요청을 첫 번째 요청의 결과를 사용하여 수행
         let temp: string[] = [];

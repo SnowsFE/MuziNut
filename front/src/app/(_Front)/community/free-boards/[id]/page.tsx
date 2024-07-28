@@ -3,8 +3,9 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 import { Headers } from "../../header";
+import PostBox from "./postbox";
 
-const HeaderBar: React.FC = () => {
+const FreeBoardsID: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("free-boards");
 
   return (
@@ -44,11 +45,12 @@ const HeaderBar: React.FC = () => {
           </StyledLink>
         </SelectContainer>
       </SelectBar>
+      <PostBox />
     </FreeBoardsContainer>
   );
 };
 
-export default HeaderBar;
+export default FreeBoardsID;
 
 // 마이페이지 전체를 감싸는 컨테이너
 const FreeBoardsContainer = styled.div``;
