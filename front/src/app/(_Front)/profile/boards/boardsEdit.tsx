@@ -155,10 +155,8 @@ export const useFileState = (onUpload: (data: any) => void) => {
     boardsData: boardsData[];
   }
 
-  const params = useParams();
-  console.log("params:", params); // 추가된 로그
-  const id: any = params?.id;
   const router = useRouter();
+  const id = router.query;
 
   const [userId, setUserId] = useState(1);
   const [boards, setBoards] = useState<boardsForm>({ boardsData: [] });
@@ -201,6 +199,8 @@ export const useFileState = (onUpload: (data: any) => void) => {
         }));
 
         setBoards({ boardsData: getboards });
+
+        console.log("받아온 데이터", getboards);
       } catch (error) {
         console.error("프로필 데이터를 가져오는데 실패했습니다.", error);
       }
@@ -210,17 +210,12 @@ export const useFileState = (onUpload: (data: any) => void) => {
     fetchPostDetails();
   }, [userId, id]);
 
-  const navigateToBoard = (boardId: number) => {
-    router.push(`/notice/${boardId}`);
-  };
-
   return {
     files,
     profileInfo,
     handleBannerSubmit,
     handleProfileSubmit,
     boards,
-    navigateToBoard,
   };
 };
 

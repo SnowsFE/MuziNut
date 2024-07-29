@@ -7,14 +7,14 @@ interface LikeIconProps {
   postId: number;
   authToken: string;
   initialLiked?: boolean;
-  onLikeUpdate: (newLikeStatus: boolean) => void;
+  // onLikeUpdate: (newLikeStatus: boolean) => void;
 }
 
 const LikeIcon: React.FC<LikeIconProps> = ({
   postId,
   authToken,
   initialLiked = false,
-  onLikeUpdate,
+  // onLikeUpdate,
 }) => {
   const [liked, setLiked] = useState<boolean>(initialLiked);
 
@@ -31,7 +31,7 @@ const LikeIcon: React.FC<LikeIconProps> = ({
     const newLikedStatus = !liked;
     setLiked(newLikedStatus);
     localStorage.setItem(`like-${postId}`, JSON.stringify(newLikedStatus));
-    onLikeUpdate(newLikedStatus);
+    // onLikeUpdate(newLikedStatus);
 
     try {
       await axios.post(

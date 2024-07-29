@@ -25,7 +25,7 @@ const UseridProfile: React.FC = () => {
     }
   };
 
-  const { profileInfo, boards, navigateToBoard } = useFileState((data) => {
+  const { profileInfo, boards } = useFileState((data) => {
     onUpload({
       profileBannerImgName: data.profileBannerImgName,
       profileImgName: data.profileImgName,
@@ -126,11 +126,9 @@ const UseridProfile: React.FC = () => {
           <BoardsTitle>게시글</BoardsTitle>
           <BoardsContainer>
             {boards.boardsData ? (
-              boards.boardsData.slice(0, boardVisible).map((board) => (
-                <Box key={board.id} onClick={() => navigateToBoard(board.id)}>
-                  {board.boardTitle}
-                </Box>
-              ))
+              boards.boardsData
+                .slice(0, boardVisible)
+                .map((board) => <Box key={board.id}>{board.boardTitle}</Box>)
             ) : (
               <p>게시글이 없습니다.</p>
             )}

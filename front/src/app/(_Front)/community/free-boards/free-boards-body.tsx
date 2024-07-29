@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { FaSearch } from "react-icons/fa";
 import FreeBoardsPost from "./free-boards-post";
@@ -11,12 +12,30 @@ const FreeBoardsBody: React.FC = () => {
   const [writeVisible, setWriteVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
+  const router = useRouter();
+
   const handleSelect = (option: string) => {
     setSelected(option);
   };
 
+  useEffect(() => {
+    const queryParams: any = {
+      인기순: "HOT",
+      최신순: "RECENT",
+      좋아요순: "LIKE",
+    };
+
+    router.push(`?sort=${queryParams[selected]}`);
+  }, [router, selected]);
+
   const openWriteForm = () => {
-    setWriteVisible(true);
+    const token = localStorage.getItem("token");
+    if (token) {
+      setWriteVisible(true);
+    } else {
+      alert("로그인이 필요합니다.");
+      router.push("/member/login");
+    }
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
