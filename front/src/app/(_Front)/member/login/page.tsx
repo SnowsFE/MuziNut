@@ -9,7 +9,7 @@ import google from "@/../../public/social/google.png";
 import AuthForm from "@/app/components/loginFormAuth/AuthForm";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { UserInfo, useUser } from "@/app/components/UserContext";
+import { useUser } from "@/app/components/UserContext";
 import axios from "axios";
 import { setToken } from "@/app/common/common";
 
@@ -35,7 +35,7 @@ const LoginPage = () => {
   // 비밀번호에 스페이스(공백) 금지
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     // 입력 필드에서 스페이스바를 눌렀을 때
-    if (e.key === ' ') {
+    if (e.key === " ") {
       e.preventDefault(); // 공백 금지
     }
   };
@@ -72,8 +72,8 @@ const LoginPage = () => {
           useremail: formData.useremail,
         });
 
-        console.log(response.data.profileImg);
-        console.log(response.data.nickname);
+        console.log("사용자 이미지", response.data.profileImg);
+        console.log("사용자 닉네임", response.data.nickname);
 
         router.push("/"); // 회원가입 성공 시 메인 페이지로 이동
       }
@@ -88,11 +88,11 @@ const LoginPage = () => {
         if (error.response.status === 401) {
           alert("일치하는 사용자 정보가 없습니다.");
           return;
-        }  if (error.response.status === 400) {
+        }
+        if (error.response.status === 400) {
           setError("(3-100사이)글자를 입력해주세요");
           return;
-        }
-        else {
+        } else {
           alert("[error] 서버와 통신 오류 발생.");
         }
       } else {
