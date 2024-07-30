@@ -3,6 +3,7 @@ import styled from "styled-components";
 import axios from "axios";
 import AxiosURL from "@/app/axios/url";
 import { useRouter } from "next/navigation";
+import { getToken } from "@/app/common/common";
 
 interface Post {
   id: number;
@@ -30,16 +31,12 @@ const FreeBoardsPost: React.FC<NoticePostProps> = ({
 
   const router = useRouter();
 
-  const authToken =
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9BRE1JTiIsImV4cCI6MTcyNDQ3ODE4OH0.3z2IGByLdk3Q-khCsRjdgK4BtMZs-h51If5vYgF45rgegl8WjUfXoIMDzMsqFLVOquamuJ57dMplJEGevon4PQ";
+  const authToken = getToken();
 
   const fetchData = async (page: number) => {
     setIsLoading(true);
     try {
       const res = await axios.get(`${AxiosURL}/community/free-boards`, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
         params: {
           page: page - 1, // API가 0부터 시작하는 페이지 번호를 사용하는 경우
           size: postsPerPage,

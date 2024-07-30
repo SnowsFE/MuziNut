@@ -6,7 +6,7 @@ import Comments from "@/app/components/board/Comments";
 import WriterProfileInfo from "@/app/components/board/WriterProfileInfo";
 import WriteCommentForm from "@/app/components/board/WriteCommentForm";
 import AxiosURL from "@/app/axios/url";
-import { getRefreshToken, setToken, getToken } from "@/app/common/common";
+import { getToken } from "@/app/common/common";
 import { useParams } from "next/navigation";
 import axios from "axios";
 
@@ -45,6 +45,7 @@ const PostBox: React.FC = () => {
   const [profileInfo, setProfileInfo] = useState({
     profileImg: "",
     writer: "",
+    writerId: "",
     createdDt: "",
     view: 0,
     isBookmark: false,
@@ -72,9 +73,6 @@ const PostBox: React.FC = () => {
           const res = await axios.get(
             `${AxiosURL}/community/free-boards/${id}`,
             {
-              headers: {
-                Authorization: authToken,
-              },
               responseType: "text",
             }
           );
@@ -94,19 +92,18 @@ const PostBox: React.FC = () => {
 
           const data = JSON.parse(jsonData.trim());
 
-          console.log("받은 데이터:", data);
+          console.log("받은 데이터:", data.writerId);
 
           setBoardId(data.id);
 
           const profileData = {
             profileImg: data.profileImg,
             writer: data.writer,
+            writerId: data.writerId,
             createdDt: data.createdDt,
             view: data.view,
             isBookmark: data.isBookmark,
           };
-
-          console.log("프로필데이터", profileData);
 
           setProfileInfo(profileData);
 
@@ -126,8 +123,6 @@ const PostBox: React.FC = () => {
 
           setComments(data.comments);
 
-          console.log("퀼파일네임", boardsData.quillFilename);
-
           const resdata = await axios.get(
             `http://localhost:8080/boards/get-file?filename=${boardsData.quillFilename}`
           );
@@ -145,16 +140,6 @@ const PostBox: React.FC = () => {
     window.location.href = "/community/free-boards";
   };
 
-  const handleLikeUpdate = (newLikeStatus: boolean) => {
-    setBoardsData((prevData) => ({
-      ...prevData,
-      boardLikeStatus: newLikeStatus,
-      likeCount: newLikeStatus
-        ? prevData.likeCount + 1
-        : prevData.likeCount - 1,
-    }));
-  };
-
   return (
     <Container>
       <Header>
@@ -165,19 +150,18 @@ const PostBox: React.FC = () => {
         <WriterProfileInfo
           profileImg={profileInfo.profileImg}
           writer={profileInfo.writer}
+          writerId={profileInfo.writerId}
           createdDt={profileInfo.createdDt}
           view={profileInfo.view}
           isBookmark={profileInfo.isBookmark ? true : false}
         />
       </Header>
-      <Body dangerouslySetInnerHTML={{ __html: QuillData.Quill }} />
+      <Body dangerouslySetInnerHTML={{ __html: QuillData }} />
       <Footer>
         <LikeButton>
           <LikeIcon
-            postId={id}
-            authToken={authToken}
+            postId={boardsData.id}
             initialLiked={boardsData.boardLikeStatus}
-            onLikeUpdate={handleLikeUpdate}
           />
           {boardsData.likeCount}
         </LikeButton>

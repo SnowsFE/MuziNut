@@ -2,21 +2,19 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import AxiosURL from "@/app/axios/url";
+import { getToken } from "@/app/common/common";
 
 interface LikeIconProps {
   postId: number;
-  authToken: string;
   initialLiked?: boolean;
-  // onLikeUpdate: (newLikeStatus: boolean) => void;
 }
 
 const LikeIcon: React.FC<LikeIconProps> = ({
   postId,
-  authToken,
   initialLiked = false,
-  // onLikeUpdate,
 }) => {
   const [liked, setLiked] = useState<boolean>(initialLiked);
+  const authToken = getToken;
 
   useEffect(() => {
     const savedLikedStatus = localStorage.getItem(`like-${postId}`);
@@ -31,7 +29,6 @@ const LikeIcon: React.FC<LikeIconProps> = ({
     const newLikedStatus = !liked;
     setLiked(newLikedStatus);
     localStorage.setItem(`like-${postId}`, JSON.stringify(newLikedStatus));
-    // onLikeUpdate(newLikedStatus);
 
     try {
       await axios.post(

@@ -2,6 +2,7 @@ import React, { useState, useEffect, ChangeEvent } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import AxiosUrl from "@/app/axios/url";
+import { getToken } from "@/app/common/common";
 
 // useFileState 훅과 초기 데이터
 export const useFileState = (onUpload: (data: any) => void) => {
@@ -21,6 +22,21 @@ export const useFileState = (onUpload: (data: any) => void) => {
     intro: string;
   }
 
+  interface albumInfoProps {
+    mainSongAlbumImage: string;
+    songTitle: string;
+    albumTitle: string;
+    genre: string;
+    lyricist: string;
+    composer: string;
+    likeCount: number;
+  }
+
+  interface albumArrayInfoProps {
+    albumImage: string;
+    albumTitle: string;
+  }
+
   const [profileInfo, setProfileInfo] = useState<profileInfoProps>({
     profileBannerImgName: "",
     profileImgName: "",
@@ -30,9 +46,8 @@ export const useFileState = (onUpload: (data: any) => void) => {
     intro: "자기소개를 입력하세요",
   });
 
-  const [albumInfo, setAlbumInfo] = useState({
+  const [albumInfo, setAlbumInfo] = useState<albumInfoProps>({
     mainSongAlbumImage: "",
-    albumImage: "",
     songTitle: "곡 명",
     albumTitle: "앨범제목",
     genre: "장르",
@@ -40,6 +55,10 @@ export const useFileState = (onUpload: (data: any) => void) => {
     composer: "작곡가",
     likeCount: 0,
   });
+
+  const [albumArrayInfo, setAlbumArrayInfo] = useState<albumArrayInfoProps[]>(
+    []
+  );
 
   // 이미지 사이즈 체크 함수
   const checkImageSize = (file: File, maxWidth: number, maxHeight: number) => {
@@ -60,8 +79,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
     });
   };
 
-  const authToken =
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjQ2MDczMzh9.BbvfPZE8fzZNQNJdyq0XQz7GaIUYhhLUhoup35KwlfC-92MHXOi3jkILH19lFdDVQkuwtFWRlyRbVZQW8a8QUA";
+  const authToken = getToken();
 
   const handleBannerSubmit = async (
     e: ChangeEvent<HTMLInputElement>,
@@ -97,11 +115,10 @@ export const useFileState = (onUpload: (data: any) => void) => {
           {
             headers: {
               "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${authToken}`,
+              Authorization: `${authToken}`,
             },
           }
         );
-        console.log(res.data);
         onUpload({ [key]: res.data }); // 업로드 성공 시 데이터 처리
         window.location.reload(); // 페이지 새로고침 (필요에 따라 변경)
       } catch (error) {
@@ -142,7 +159,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
           {
             headers: {
               "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${authToken}`,
+              Authorization: `${authToken}`,
             },
           }
         );
@@ -158,7 +175,16 @@ export const useFileState = (onUpload: (data: any) => void) => {
   };
 
   // 메인 Get 통신 데이터
-  const [userId, setUserId] = useState(2); // 초기 userId 값을 설정합니다.
+  // const [userId, setUserId] = useState<string>();
+
+  // useEffect(() => {
+  //   const UserCheck = localStorage.getItem("nickname");
+  //   if (UserCheck) {
+  //     setUserId(UserCheck);
+  //   }
+  // }, []);
+
+  const [userId, setUserId] = useState(2);
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -167,24 +193,45 @@ export const useFileState = (onUpload: (data: any) => void) => {
           params: { userId },
         });
         const data = response.data;
-        // const Album = data.albumTitle, data.mainSongAlbumImage
 
-        setProfileInfo(data);
-        setAlbumInfo(data);
-        // console.log("앨범정보:", data);
+        setProfileInfo({
+          profileBannerImgName: data.profileBannerImgName,
+          profileImgName: data.profileImgName,
+          nickname: data.nickname,
+          followingCount: data.followingCount,
+          followersCount: data.followersCount,
+          intro: data.intro,
+        });
+
+        setAlbumInfo({
+          mainSongAlbumImage: data.mainSongAlbumImage,
+          songTitle: data.songTitle,
+          albumTitle: data.albumTitle,
+          genre: data.genre,
+          lyricist: data.lyricist,
+          composer: data.composer,
+          likeCount: data.likeCount,
+        });
+
+        let AlbumData: any = [];
+        for (var i = 0; i < data.profileAlbumDtos.length; i++) {
+          AlbumData.push(data.profileAlbumDtos[i]);
+          console.log(data.profileAlbumDtos[i]);
+        }
+
+        setAlbumArrayInfo(AlbumData);
       } catch (error) {
         console.error("프로필 데이터를 가져오는데 실패했습니다.", error);
       }
     };
 
     fetchProfileData();
-  }, [userId]); // userId가 변경될 때마다 useEffect가 실행됩니다.
+  }, [userId]);
 
   return {
-    files,
     profileInfo,
     albumInfo,
-    setProfileInfo,
+    albumArrayInfo,
     handleBannerSubmit,
     handleProfileSubmit,
   };

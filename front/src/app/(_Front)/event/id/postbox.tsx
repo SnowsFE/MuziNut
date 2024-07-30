@@ -1,100 +1,130 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Submit } from "@/app/components/icon/icon";
-import {
-  MiniViewIcon,
-  LikeIcon,
-  BookMarkIcon,
-} from "@/app/components/icon/icon";
-import Image from "next/image";
-import threedot from "../../../../../public/svgs/threedot.svg";
+import { LikeIcon } from "@/app/components/icon/icon";
+import Comments from "../../../components/board/Comments";
+import WriterProfileInfo from "../../../components/board/WriterProfileInfo";
+import WriteCommentForm from "../../../components/board/WriteCommentForm";
+import AxiosURL from "@/app/axios/url";
+import { getToken } from "@/app/common/common";
 
-interface PostProps {
+import { useParams } from "next/navigation";
+import axios from "axios";
+
+interface BoardsDataProps {
+  id: number;
   title: string;
-  writer: string;
+  quillFilename: string;
+  boardLikeStatus: boolean;
+  likeCount: number;
+}
+
+interface CommentProps {
+  commentProfileImg: string;
+  commentWriter: string;
+  id: any;
   createdDt: string;
-  view: number;
-  like: number;
-  image: string;
-  write: string;
+  content: string;
+  boardLikeStatus: boolean;
+  likeCount: number;
+  replies: any[];
 }
 
-interface UserProfile {
-  nickname: string;
-  profileImage: string;
+interface QuillProps {
+  Quill: string;
 }
-
-const Data: PostProps = {
-  title: "게시글 제목",
-  writer: "작성자 이름",
-  createdDt: "2024-07-06",
-  view: 1234,
-  like: 567,
-  image: "http://stimg.afreecatv.com/LOGO/ma/maluckitty/maluckitty.jpg",
-  write: "<p>본문 내용입니다.</p>",
-};
 
 const PostBox: React.FC = () => {
-  const { title, writer, createdDt, view, like, image, write } = Data;
-  const [comment, setComment] = useState("");
-  const [commentLength, setCommentLength] = useState(0); // 댓글 길이 상태 추가
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [boardsData, setBoardsData] = useState<BoardsDataProps>({
+    id: 0,
+    title: "",
+    quillFilename: "",
+    boardLikeStatus: false,
+    likeCount: 0,
+  });
+
+  const [profileInfo, setProfileInfo] = useState({
+    profileImg: "",
+    writer: "",
+    createdDt: "",
+    view: 0,
+    isBookmark: false,
+  });
+
+  const [commentForm, setCommentForm] = useState({
+    comments: 0,
+  });
+
+  const [QuillData, setQuillData] = useState<QuillProps>({
+    Quill: "",
+  });
+
+  const [comments, setComments] = useState<CommentProps[]>([]); // 댓글 목록
+  const [boardId, setBoardId] = useState(); //게시판 pk
+
+  const authToken = getToken();
+
+  const params = useParams();
+  const id: any = params?.id;
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      const token = localStorage.getItem("userToken");
-      if (token) {
-        const response = await fetch("/api/user-profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (response.ok) {
-          const data: UserProfile = await response.json();
-          setUserProfile(data);
+    const DetailBoards = async () => {
+      try {
+        if (id) {
+          const res = await axios.get(
+            `${AxiosURL}/community/event-boards/${id}`,
+            {
+              headers: {
+                Authorization: authToken,
+              },
+            }
+          );
+
+          setBoardId(res.data.id);
+
+          const profileData = {
+            profileImg: res.data.profileImg,
+            writer: res.data.writer,
+            createdDt: res.data.createdDt,
+            view: res.data.view,
+            isBookmark: res.data.isBookmark,
+          };
+
+          setProfileInfo(profileData);
+
+          const boardsData = {
+            id: res.data.id,
+            title: res.data.title,
+            quillFilename: res.data.quillFilename,
+            boardLikeStatus: res.data.boardLikeStatus,
+            likeCount: res.data.likeCount,
+          };
+
+          setBoardsData(boardsData);
+
+          console.log(res.data.quillFilename);
+          setCommentForm({
+            comments: res.data.comments,
+          });
+
+          setComments(res.data.comments);
+
+          // 두 번째 요청을 첫 번째 요청의 결과를 사용하여 수행
+          const resdata = await axios.get(
+            `http://localhost:8080/boards/get-file?filename=${boardsData.quillFilename}`
+          );
+          setQuillData(resdata.data);
         }
+      } catch (error) {
+        console.error("데이터를 받지 못했습니다", error);
       }
     };
 
-    fetchUserProfile();
+    DetailBoards();
   }, []);
 
   const redirectToEvent = () => {
     window.location.href = "/event";
-  };
-
-  const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const text = e.target.value;
-    // 최대 글자 수 체크
-    if (text.length <= 500) {
-      setComment(text);
-      setCommentLength(text.length); // 입력된 글자 수 업데이트
-    }
-  };
-
-  const handleCommentSubmit = async () => {
-    if (comment.trim()) {
-      const token = localStorage.getItem("userToken");
-      if (token) {
-        const response = await fetch("/api/comments", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ comment }),
-        });
-        if (response.ok) {
-          setComment("");
-          setCommentLength(0); // 댓글 제출 후 길이 초기화
-          // 댓글 등록 후 추가적인 작업 (예: 댓글 목록 갱신)
-        } else {
-          alert("댓글 등록에 실패했습니다.");
-        }
-      } else {
-        alert("로그인이 필요합니다.");
-      }
-    }
   };
 
   return (
@@ -103,51 +133,44 @@ const PostBox: React.FC = () => {
         <ListContainer>
           <ListButton onClick={redirectToEvent}>이벤트 &gt;</ListButton>
         </ListContainer>
-        <Title>{title}</Title>
-        <ProfileContainer>
-          <ProfileImage src={image} alt="프로필 이미지" />
-          <ProfileInfo>
-            <ProfileName>{writer}</ProfileName>
-            <TimeViewsContainer>
-              <Time>{createdDt}</Time>
-              <Views>
-                <MiniViewIcon /> {view}
-              </Views>
-            </TimeViewsContainer>
-          </ProfileInfo>
-          <ShareContainer>
-            <BookMarkIcon />
-            <Image src={threedot} alt="공유하기, 신고하기"></Image>
-          </ShareContainer>
-        </ProfileContainer>
+        <Title>{boardsData.title}</Title>
+        <WriterProfileInfo
+          profileImg={profileInfo.profileImg}
+          writer={profileInfo.writer}
+          createdDt={profileInfo.createdDt}
+          view={profileInfo.view}
+          isBookmark={profileInfo.isBookmark ? true : false}
+        />
       </Header>
-      <Body dangerouslySetInnerHTML={{ __html: write }} />
+      <Body dangerouslySetInnerHTML={{ __html: QuillData }} />
+      {/* 본문 내용 출력 */}
       <Footer>
         <LikeButton>
-          <LikeIcon /> {like}
+          <LikeIcon /> {boardsData.boardLikeStatus ? true : false}
+          {boardsData.likeCount}
         </LikeButton>
       </Footer>
-      <CommentsSection>
-        <CommentsCount>댓글 0개</CommentsCount>
-        <CommentInputContainer>
-          <CommentInput
-            value={comment}
-            onChange={handleCommentChange}
-            placeholder="댓글을 입력하세요..."
-            maxLength={500} // 최대 입력 글자 수
-          />
-          <CommentSubmitButton onClick={handleCommentSubmit}>
-            <Submit />
-          </CommentSubmitButton>
-          <CommentLength>{commentLength}/500</CommentLength>
-        </CommentInputContainer>
-      </CommentsSection>
+      <WriteCommentForm boardId={boardId} />
+      {comments.map((comment, index) => (
+        <Comments
+          key={index}
+          profileImg={comment.commentProfileImg}
+          writer={comment.commentWriter}
+          createdDt={comment.createdDt}
+          content={comment.content}
+          boardLikeStatus={comment.boardLikeStatus}
+          likeCount={comment.likeCount}
+          replies={comment.replies}
+          commentId={comment.id}
+        />
+      ))}
     </Container>
   );
 };
 
 export default PostBox;
 
+// ------------------------------------------ 스타일드 컴포넌트-------------------------------------------------------------
 // 감싸는 컨테이너
 const Container = styled.div`
   margin: 24px 0;
@@ -195,82 +218,17 @@ const Title = styled.h1`
   font-family: "esamanru Medium";
 `;
 
-// 프로필 컨테이너
-const ProfileContainer = styled.div`
-  display: flex;
-  align-items: center;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #ddd;
-  font-family: "esamanru Medium";
-`;
-
-// 프로필 이미지
-const ProfileImage = styled.img`
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  margin-right: 10px;
-`;
-
-// 프로필 정보
-const ProfileInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-`;
-
-// 프로필 이름
-const ProfileName = styled.div`
-  font-size: 14px;
-  font-weight: bold;
-`;
-
-// 시간과 조회수 컨테이너
-const TimeViewsContainer = styled.div`
-  display: flex;
-  gap: 10px;
-`;
-
-// 업로드 시간
-const Time = styled.div`
-  font-size: 12px;
-  color: #888;
-`;
-
-// 조회수
-const Views = styled.div`
-  display: flex;
-  font-size: 12px;
-  color: #888;
-
-  img {
-    width: 24px;
-    height: 24px;
-  }
-`;
-
-// 북마크와 삼각바 (공유하기, 신고하기) 컨테이너
-const ShareContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin-left: auto;
-  gap: 3px;
-  cursor: pointer;
-
-  img {
-    width: 24px;
-    height: 32px;
-    &:hover {
-      background-color: #e7e7e7; /* 배경색을 설정 */
-      border-radius: 8px;
-    }
-  }
-`;
-
 // 바디
 const Body = styled.div`
   font-family: "esamanru Medium";
   min-height: 500px;
+
+  img {
+    margin-top: 5px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
 `;
 
 // 푸터
@@ -294,63 +252,4 @@ const LikeButton = styled.button`
   cursor: pointer;
   font-size: 12px;
   font-family: "esamanru Medium";
-`;
-
-const CommentsSection = styled.div`
-  margin-top: 20px;
-  font-family: "esamanru Medium";
-`;
-const CommentsCount = styled.div`
-  font-size: 14px;
-  margin-bottom: 10px;
-`;
-
-const CommentInputContainer = styled.div`
-  display: flex;
-  align-items: center;
-  position: relative;
-  width: 100%;
-`;
-
-const CommentInput = styled.textarea`
-  width: 100%;
-  height: 100px;
-  border-radius: 12px;
-  border: 1px solid #ddd;
-  padding: 10px;
-  font-family: "esamanru Light";
-  font-size: 14px;
-  line-height: 17px;
-  resize: none;
-  outline: none;
-
-  &:focus {
-    border-color: #b8b8b8;
-  }
-`;
-
-// 댓글 제출 버튼
-const CommentSubmitButton = styled.button`
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  background: none;
-  border: none;
-  cursor: pointer;
-  outline: none;
-  padding: 10px;
-
-  &:hover {
-    opacity: 0.8;
-  }
-`;
-
-// 댓글 길이 표시
-const CommentLength = styled.div`
-  position: absolute;
-  right: 45px;
-  bottom: 13px;
-  font-size: 12px;
-  padding: 10px;
-  color: #888;
 `;

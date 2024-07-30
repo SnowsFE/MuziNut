@@ -48,9 +48,10 @@ export default Reply;
 const ReplyContainer = styled.div`
   display: flex;
   align-items: center;
-  padding-top: 20px;
+  padding-top: 10px;
   padding-bottom: 10px;
   font-family: "esamanru Medium";
+  min-width: 200px;
 `;
 
 // 프로필 이미지
@@ -91,8 +92,7 @@ const Time = styled.div`
 
 //댓글 내용
 const Content = styled.span`
-  width: 790px;
-  margin-top: 7px;
+  margin-top: 9px;
   padding: 15px 15px 10px 15px;
   border-radius: 5px;
   font-size: 14px;

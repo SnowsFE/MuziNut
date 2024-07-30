@@ -6,6 +6,7 @@ import styled, { keyframes, css } from "styled-components";
 import QuillToolbar from "../profile/lounge/EditorOption";
 import Quill from "quill";
 import AxiosURL from "@/app/axios/url";
+import { getToken, getRefreshToken } from "@/app/common/common";
 
 const Font = Quill.import("formats/font");
 Font.whitelist = ["esamanruLight", "esamanruMedium", "esamanruBold"];
@@ -88,9 +89,6 @@ const NoticeWriteQuill: React.FC<{
     input.click();
   };
 
-  const token =
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9BRE1JTiIsImV4cCI6MTcyNDQ3ODE4OH0.3z2IGByLdk3Q-khCsRjdgK4BtMZs-h51If5vYgF45rgegl8WjUfXoIMDzMsqFLVOquamuJ57dMplJEGevon4PQ";
-
   const handleSubmit = async () => {
     if ((title.trim() === "" || null) && (content.trim() === "" || null)) {
       alert("작성하고 싶은 글을 작성해 주세요");
@@ -107,6 +105,20 @@ const NoticeWriteQuill: React.FC<{
       return;
     }
 
+    const authToken = getToken();
+
+    if (!authToken) {
+      try {
+        getRefreshToken();
+      } catch (error) {
+        console.error("새로운 토큰을 가져오는 데 실패했습니다:", error);
+        return;
+      }
+    }
+
+    // 새로 갱신된 토큰을 다시 가져옴
+    const newAuthToken = getToken();
+
     const formData = new FormData();
     formData.append(
       "form",
@@ -120,11 +132,12 @@ const NoticeWriteQuill: React.FC<{
       const response = await fetch(`${AxiosURL}/community/admin-boards`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `${newAuthToken}`,
         },
         body: formData,
       });
 
+      console.log("인증토큰", newAuthToken);
       if (response.ok) {
         console.log("글이 성공적으로 등록되었습니다.");
 

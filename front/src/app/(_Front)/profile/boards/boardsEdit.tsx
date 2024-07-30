@@ -146,39 +146,17 @@ export const useFileState = (onUpload: (data: any) => void) => {
   };
 
   interface boardsData {
-    boardType(boardType: any, id: number): void;
     id: number;
     boardTitle: string;
+    boardType: string;
   }
 
   interface boardsForm {
     boardsData: boardsData[];
   }
 
-  const router = useRouter();
-  const id = router.query;
-
   const [userId, setUserId] = useState(1);
   const [boards, setBoards] = useState<boardsForm>({ boardsData: [] });
-
-  const fetchPostDetails = async () => {
-    if (id) {
-      // id가 존재할 때만 호출
-      try {
-        const res = await axios.get(`${AxiosUrl}/profile/community/${id}`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${authToken}`,
-          },
-        });
-        console.log("게시물 상세 데이터:", res.data);
-      } catch (error) {
-        console.error("게시물 상세 데이터를 가져오는데 실패했습니다.", error);
-      }
-    } else {
-      console.error("게시물 ID가 없습니다.");
-    }
-  };
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -196,19 +174,17 @@ export const useFileState = (onUpload: (data: any) => void) => {
         let getboards: boardsData[] = res.data.boards.map((board: any) => ({
           id: board.id,
           boardTitle: board.boardTitle,
+          boardType: board.boardType,
         }));
 
         setBoards({ boardsData: getboards });
-
-        console.log("받아온 데이터", getboards);
       } catch (error) {
         console.error("프로필 데이터를 가져오는데 실패했습니다.", error);
       }
     };
 
     fetchProfileData();
-    fetchPostDetails();
-  }, [userId, id]);
+  }, [userId]);
 
   return {
     files,

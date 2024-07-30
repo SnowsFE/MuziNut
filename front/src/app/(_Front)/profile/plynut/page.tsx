@@ -144,7 +144,41 @@ const UseridProfile: React.FC<PlynutDataProps> = () => {
   };
 
   return (
-    <ProfileContainer>
+    <>
+      <OverlayBox>
+        <OverlayMessage>준비중인 페이지 입니다</OverlayMessage>
+        <SelectBox>
+          <SelectBar2>
+            <SelectContainer2>
+              <StyledLink2
+                href={"/profile"}
+                onClick={() => setSelectedTab("main")}
+              >
+                <SelectItem2 selected={selectedTab === "main"}>
+                  메인
+                </SelectItem2>
+              </StyledLink2>
+              <StyledLink2
+                href={"/profile/lounge"}
+                onClick={() => setSelectedTab("lounge")}
+              >
+                <SelectItem2 selected={selectedTab === "lounge"}>
+                  라운지
+                </SelectItem2>
+              </StyledLink2>
+              <StyledLink2
+                href={"/profile/boards"}
+                onClick={() => setSelectedTab("boards")}
+              >
+                <SelectItem2 selected={selectedTab === "boards"}>
+                  게시글
+                </SelectItem2>
+              </StyledLink2>
+            </SelectContainer2>
+          </SelectBar2>
+        </SelectBox>
+      </OverlayBox>
+      {/* <ProfileContainer> */}
       <Banner>
         <Image src={bannerUrl} alt="banner-image" width={1280} height={210} />
         <BannerData onUpload={onUpload} />
@@ -162,6 +196,7 @@ const UseridProfile: React.FC<PlynutDataProps> = () => {
           <ProfileDescription>{profileInfo.intro}</ProfileDescription>
         </ProfileInfo>
       </Profile>
+
       <SelectBar>
         <SelectContainer>
           <StyledLink href={"/profile"} onClick={() => setSelectedTab("main")}>
@@ -199,88 +234,174 @@ const UseridProfile: React.FC<PlynutDataProps> = () => {
           </StyledLink>
         </SelectContainer>
       </SelectBar>
-      {addPlynut && (
-        <ModalOverlay>
-          <ModalContent>
-            <h2>플리넛 추가</h2>
-            <AddPlyNutContent>
-              <InputLabel2>
-                제목
-                <InputField2
-                  name="addplynut"
-                  value={title}
-                  onChange={handleTitleChange}
-                  style={{ borderColor: titleError ? "red" : "#ccc" }}
-                />
-                {titleError && (
-                  <NameErrorMessage>{titleError}</NameErrorMessage>
-                )}
-              </InputLabel2>
-            </AddPlyNutContent>
-            <ButtonContainer>
-              <CloseButton
-                onClick={closePlyNut}
-                style={{ marginRight: "10px" }}
-              >
-                닫기
-              </CloseButton>
-              <SaveButton disabled={!isFormValid} onClick={PlyNutDatas}>
-                추가
-              </SaveButton>
-            </ButtonContainer>
-          </ModalContent>
-        </ModalOverlay>
-      )}
-      <PlyNutContainer>
-        <PlyNutTitle>내 플리넛</PlyNutTitle>
-        <PlyNutBox>
-          {PlyNutData.slice(0, PlyNutVisible).map((PlyNut, index) => (
-            <Box key={PlyNut.id} onClick={() => handlePlyNutClick(PlyNut.id)}>
-              {PlyNut.title}
-            </Box>
-          ))}
-        </PlyNutBox>
-      </PlyNutContainer>
-      {selectedPlyNutId !== null && (
-        <TracksContainer>
-          <ul>
-            <li>앨범</li>
-            <li>아티스트</li>
-            <li>곡명</li>
-            <li>삭제하기</li>
-          </ul>
-          {tracks.length > 0 ? (
-            <TracksList>
-              {tracks.map((track) => (
-                <TrackItem key={track.id}>
-                  <TrackDetail>{track.album}</TrackDetail>
-                  <TrackDetail>{track.artist}</TrackDetail>
-                  <TrackDetail>{track.title}</TrackDetail>
-                  <DeleteButton>삭제하기</DeleteButton>
-                </TrackItem>
-              ))}
-            </TracksList>
-          ) : (
-            <p>곡이 없습니다.</p>
-          )}
-        </TracksContainer>
-      )}
-      <ProfileEditForm
-        profileInfo={profileInfo}
-        onChange={handleProfileInfoChange}
-        onSubmit={handleSubmit}
-        onCancel={closeEditForm}
-        visible={editFormVisible}
-      />
-    </ProfileContainer>
+      {/*}
+        {addPlynut && (
+          <ModalOverlay>
+            <ModalContent>
+              <h2>플리넛 추가</h2>
+              <AddPlyNutContent>
+                <InputLabel2>
+                  제목
+                  <InputField2
+                    name="addplynut"
+                    value={title}
+                    onChange={handleTitleChange}
+                    style={{ borderColor: titleError ? "red" : "#ccc" }}
+                  />
+                  {titleError && (
+                    <NameErrorMessage>{titleError}</NameErrorMessage>
+                  )}
+                </InputLabel2>
+              </AddPlyNutContent>
+              <ButtonContainer>
+                <CloseButton
+                  onClick={closePlyNut}
+                  style={{ marginRight: "10px" }}
+                >
+                  닫기
+                </CloseButton>
+                <SaveButton disabled={!isFormValid} onClick={PlyNutDatas}>
+                  추가
+                </SaveButton>
+              </ButtonContainer>
+            </ModalContent>
+          </ModalOverlay>
+        )}
+        <PlyNutContainer>
+          <PlyNutTitle>내 플리넛</PlyNutTitle>
+          <PlyNutBox>
+            {PlyNutData.slice(0, PlyNutVisible).map((PlyNut, index) => (
+              <Box key={PlyNut.id} onClick={() => handlePlyNutClick(PlyNut.id)}>
+                {PlyNut.title}
+              </Box>
+            ))}
+          </PlyNutBox>
+        </PlyNutContainer>
+        {selectedPlyNutId !== null && (
+          <TracksContainer>
+            <ul>
+              <li>앨범</li>
+              <li>아티스트</li>
+              <li>곡명</li>
+              <li>삭제하기</li>
+            </ul>
+            {tracks.length > 0 ? (
+              <TracksList>
+                {tracks.map((track) => (
+                  <TrackItem key={track.id}>
+                    <TrackDetail>{track.album}</TrackDetail>
+                    <TrackDetail>{track.artist}</TrackDetail>
+                    <TrackDetail>{track.title}</TrackDetail>
+                    <DeleteButton>삭제하기</DeleteButton>
+                  </TrackItem>
+                ))}
+              </TracksList>
+            ) : (
+              <p>곡이 없습니다.</p>
+            )}
+          </TracksContainer>
+        )}
+        <ProfileEditForm
+          profileInfo={profileInfo}
+          onChange={handleProfileInfoChange}
+          onSubmit={handleSubmit}
+          onCancel={closeEditForm}
+          visible={editFormVisible}
+        />
+      </ProfileContainer> */}
+    </>
   );
 };
 
 export default UseridProfile;
 
-// 마이페이지 전체를 감싸는 컨테이너
+// 플리넛 데이터 준비중
+const SelectBar2 = styled.div`
+  padding-right: calc(50% - 642px);
+  padding-left: calc(50% - 642px);
+  padding-top: 16px;
+  display: flex;
+  gap: 10px;
+  font-size: 16px;
+`;
+
+// 메인 라운지를 나란히 하기위한 Flex 박스 컨테이너
+const SelectContainer2 = styled.div`
+  width: 100%;
+  display: flex;
+  gap: 15px;
+  border-bottom: 1px solid #ccc;
+  position: relative;
+
+  :last-child {
+    margin-left: auto;
+  }
+
+  img {
+    position: absolute;
+    right: 0;
+    top: -10px;
+    padding: 7px;
+
+    &:hover {
+      background-color: #e7e7e7;
+      border-radius: 8px;
+    }
+  }
+`;
+
+// 선택된 항목에 하단 밑줄을 추가하는 스타일
+const SelectItem2 = styled.div<{ selected: boolean }>`
+  padding-bottom: 10px;
+  position: relative;
+  cursor: pointer;
+
+  &:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--text-color);
+    transform: scaleX(${(props) => (props.selected ? 1 : 0)});
+    transition: transform 0.3s ease;
+  }
+`;
+
+// 메인 라운지 링크 태그 스타일을 주기위한 요소 추가
+const StyledLink2 = styled(Link)`
+  color: #16be78;
+  text-decoration: none;
+`;
+// 플리넛 데이터 준비중
+
+const SelectBox = styled.div`
+  margin-bottom: 150px;
+`;
+const OverlayBox = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8); // 반투명한 검정색 배경
+  z-index: 1000; // 높은 z-index 값으로 다른 요소들 위에 표시
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #16be78;
+  font-size: 50px;
+  font-family: "esamanru bold";
+  pointer-events: auto; // 오버레이 메시지 클릭 가능
+`;
+const OverlayMessage = styled.div`
+  position: absolute;
+`;
+
 const ProfileContainer = styled.div`
   position: relative;
+  pointer-events: none; // 오버레이 메시지 외의 다른 요소 클릭 불가
 `;
 
 // 배너

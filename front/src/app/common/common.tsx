@@ -40,7 +40,6 @@ const TokenInfo = () => {
         // 리프레시 토큰이 만료된 경우
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("token");
-        window.location.href = "/login"; //로그인 경로로 리다이랙트
       }
     };
 

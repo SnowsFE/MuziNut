@@ -1,3 +1,4 @@
+"use client";
 import React, { useRef, useState, useEffect, useMemo } from "react";
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
@@ -5,6 +6,7 @@ import styled, { keyframes, css } from "styled-components";
 import QuillToolbar from "../profile/lounge/EditorOption";
 import Quill from "quill";
 import AxiosURL from "@/app/axios/url";
+import { getToken } from "@/app/common/common";
 
 const Font = Quill.import("formats/font");
 Font.whitelist = ["esamanruLight", "esamanruMedium", "esamanruBold"];
@@ -87,10 +89,24 @@ const EventWriteQuill: React.FC<{
     input.click();
   };
 
-  const token =
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9BRE1JTiIsImV4cCI6MTcyNDQ3ODE4OH0.3z2IGByLdk3Q-khCsRjdgK4BtMZs-h51If5vYgF45rgegl8WjUfXoIMDzMsqFLVOquamuJ57dMplJEGevon4PQ";
+  const authToken = getToken();
 
   const handleSubmit = async () => {
+    if ((title.trim() === "" || null) && (content.trim() === "" || null)) {
+      alert("작성하고 싶은 글을 작성해 주세요");
+      return;
+    }
+
+    if (title.trim() === "") {
+      alert("제목을 입력해주세요");
+      return;
+    }
+
+    if (content.trim() === "") {
+      alert("내용을 입력해주세요");
+      return;
+    }
+
     const formData = new FormData();
     formData.append(
       "form",
@@ -101,10 +117,10 @@ const EventWriteQuill: React.FC<{
     formData.append("quillFile", contentBlob);
 
     try {
-      const response = await fetch(`${AxiosURL}/community/admin-boards`, {
+      const response = await fetch(`${AxiosURL}/community/event-boards`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `${authToken}`,
         },
         body: formData,
       });

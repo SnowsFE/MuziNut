@@ -1,23 +1,17 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import styled, { keyframes } from "styled-components";
 import Image from "next/image";
 import Link from "next/link";
 import { BannerData, ProfileData, useFileState } from "./mainEdit";
 import { BaseImgBox } from "@/app/components/icon/icon";
 import ProfileEdit from "./profileEdit";
+import Spinner from "@/app/components/LodingSpinner";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("main");
   const [profileBannerImgName, setProfileBannerImgName] = useState<string>("");
   const [profileImgName, setProfileImgName] = useState<string>("");
-  const [albumImageURLs, setAlbumImageURLs] = useState<string[]>([]);
-
-  // 백엔드에서 받은 이미지 URL 상태 관리
-  const [mainSongAlbumImageUrl, setMainSongAlbumImageUrl] = useState<
-    string | null
-  >(null);
-  const [albumImageUrl, setAlbumImageUrl] = useState<string | null>(null);
 
   const onUpload = (data: {
     profileBannerImgName?: string | object;
@@ -33,15 +27,7 @@ const UseridProfile: React.FC = () => {
     }
   };
 
-  const { profileInfo, albumInfo } = useFileState((data) => {
-    setMainSongAlbumImageUrl(data.mainSongAlbumImageURL);
-    setAlbumImageUrl(data.albumImageURL);
-
-    // albumImageURL 배열에 이미지 URL 추가
-    if (data.albumImageURL) {
-      setAlbumImageURLs((prevURLs) => [...prevURLs, data.albumImageURL]);
-    }
-
+  const { profileInfo, albumInfo, albumArrayInfo } = useFileState((data) => {
     onUpload({
       profileBannerImgName: data.profileBannerImgName,
       profileImgName: data.profileImgName,
@@ -55,25 +41,31 @@ const UseridProfile: React.FC = () => {
     }
   }, [profileInfo]);
 
+  const limitedAlbums = albumArrayInfo.slice(0, 5); // 최대 5곡
+
   return (
     <ProfileContainer>
       <Banner>
-        <Image
-          src={`data:image/png;base64,${profileBannerImgName}`}
-          alt="배너 이미지"
-          width={1280}
-          height={210}
-        />
+        <Suspense fallback={<Spinner />}>
+          <Image
+            src={`data:image/png;base64,${profileBannerImgName}`}
+            alt="배너 이미지"
+            width={1280}
+            height={210}
+          />
+        </Suspense>
         <BannerData onUpload={onUpload} />
       </Banner>
       <Profile>
         <ProfileEdit />
-        <Image
-          src={`data:image/png;base64,${profileImgName}`}
-          alt="프로필 이미지"
-          width={160}
-          height={160}
-        />
+        <Suspense fallback={<Spinner />}>
+          <Image
+            src={`data:image/png;base64,${profileImgName}`}
+            alt="프로필 이미지"
+            width={160}
+            height={160}
+          />
+        </Suspense>
         <ProfileData onUpload={onUpload} />
         <ProfileInfo>
           <ProfileName>{profileInfo.nickname}</ProfileName>
@@ -119,49 +111,55 @@ const UseridProfile: React.FC = () => {
         </SelectContainer>
       </SelectBar>
       <MainMusicContainer>
-        {mainSongAlbumImageUrl ? (
-          <>
+        <Suspense fallback={<Spinner />}>
+          {albumInfo.mainSongAlbumImage ? (
+            <>
+              <QuestionContainer>
+                <Image
+                  src={`data:image/png;base64,${albumInfo.mainSongAlbumImage}`}
+                  alt="main-song"
+                  width={1280}
+                  height={720}
+                />
+              </QuestionContainer>
+              <AlbumInfoBox>
+                <Like>💚 {albumInfo.likeCount}</Like>
+                <AlbumInformation>
+                  <Info1>{albumInfo.songTitle}</Info1>
+                  <Info2>{albumInfo.genre}</Info2>
+                  <AlbumMusician>
+                    <AlbumLyricist>작사 : {albumInfo.lyricist}</AlbumLyricist>
+                    <AlbumComposer>작곡 : {albumInfo.composer}</AlbumComposer>
+                  </AlbumMusician>
+                </AlbumInformation>
+              </AlbumInfoBox>
+            </>
+          ) : (
             <QuestionContainer>
-              <Image
-                src={`data:image/png;base64,${mainSongAlbumImageUrl}`}
-                alt="main-song"
-              />
+              <BaseImgBox />
+              <MusicTitle>나만의 앨범을 만들어 보세요</MusicTitle>
             </QuestionContainer>
-            <AlbumInfoBox>
-              <Like>💚 {albumInfo.likeCount}</Like>
-              <AlbumInformation>
-                <Info1>{albumInfo.songTitle}</Info1>
-                <Info2>{albumInfo.genre}</Info2>
-                <AlbumMusician>
-                  <AlbumLyricist>작사 : {albumInfo.lyricist}</AlbumLyricist>
-                  <AlbumComposer>작곡 : {albumInfo.composer}</AlbumComposer>
-                </AlbumMusician>
-              </AlbumInformation>
-            </AlbumInfoBox>
-          </>
-        ) : (
-          <QuestionContainer>
-            <BaseImgBox />
-            <MusicTitle>나만의 앨범을 만들어 보세요</MusicTitle>
-          </QuestionContainer>
-        )}
+          )}
+        </Suspense>
       </MainMusicContainer>
       <BodyAlbum>
-        {albumImageURLs.length > 0 && (
-          <AlbumList>
-            {albumImageURLs.map((url, index) => (
-              <AlbumItem key={index}>
-                <Image
-                  src={`data:image/png;base64,${url}`}
-                  alt={`albumImage${index}`}
-                  width={200}
-                  height={200}
-                />
-                <AlbumTitle>Album Title</AlbumTitle>
-              </AlbumItem>
-            ))}
-          </AlbumList>
-        )}
+        <Suspense fallback={<Spinner />}>
+          {limitedAlbums.length > 0 && (
+            <AlbumList>
+              {limitedAlbums.map((album, index) => (
+                <AlbumItem key={index}>
+                  <Image
+                    src={`data:image/png;base64,${album.albumImage}`}
+                    alt={`albumImage${index}`}
+                    width={200}
+                    height={200}
+                  />
+                  <AlbumTitle>{album.albumTitle}</AlbumTitle>
+                </AlbumItem>
+              ))}
+            </AlbumList>
+          )}
+        </Suspense>
       </BodyAlbum>
     </ProfileContainer>
   );
@@ -294,6 +292,8 @@ const MainMusicContainer = styled.div`
   gap: 5%;
   border-bottom: 1px solid #ccc;
 
+  padding: 25px 0 22px 0;
+
   img {
     border: none;
     border-radius: 8px;
@@ -316,6 +316,13 @@ const QuestionContainer = styled.div`
   max-width: 50%;
   max-height: auto;
   height: auto;
+
+  img {
+    max-width: 610px;
+    max-height: 343px;
+    min-width: 610px;
+    min-height: 343px;
+  }
 `;
 
 // 그림자 애니메이션
@@ -340,7 +347,7 @@ const AlbumInfoBox = styled.div`
   align-items: flex-start;
   width: 100%;
   padding: 20px;
-  margin-right: 55px;
+  /* margin-right: 55px; */
   border-radius: 8px;
   box-shadow: 0 2px 12px var(--text-color);
   transition: 0.3s ease;
@@ -409,8 +416,7 @@ const BodyAlbum = styled.div`
 // 앨범 목록
 const AlbumList = styled.div`
   display: flex;
-  justify-content: space-between;
-  padding: 10px 35px 0px 35px;
+  padding: 15px 35px 0 34px;
 `;
 
 // 앨범 설명
@@ -425,19 +431,12 @@ const AlbumItem = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 0 0 2rem 0;
+  padding: 0 0 1.75em 0;
+  margin: 0 54px 0 0;
+  gap: 30px;
 
   img {
     border-radius: 12px;
   }
 `;
-
-// 프로필 에디터
-const EditForm = styled.div`
-  position: absolute;
-  right: 0;
-  top: 52px;
-  cursor: pointer;
-`;
-
 // -------------------------------------------------------------------------------------------------------

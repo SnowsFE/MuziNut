@@ -5,7 +5,7 @@ import AxiosURL from "@/app/axios/url";
 import { useFileState } from "./mainEdit";
 
 const ProfileEdit: React.FC = () => {
-  const { profileInfo, setProfileInfo } = useFileState((data) => {
+  const { profileInfo } = useFileState((data) => {
     console.log("Uploaded data:", data);
   });
 

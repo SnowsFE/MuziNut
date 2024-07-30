@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Submit } from "@/app/components/icon/icon";
-import { getRefreshToken, setToken, getToken } from "@/app/common/common";
+import { getToken } from "@/app/common/common";
+import { useParams } from "next/navigation";
 
 interface CommentFormProps {
   boardId: any;
@@ -12,8 +13,8 @@ const WriteCommentForm: React.FC<CommentFormProps> = ({ boardId }) => {
   const [comment, setComment] = useState(""); //작성할 댓글
   const [commentLength, setCommentLength] = useState(0); // 댓글 길이 상태 추가
 
-  // alert("게시판 pk: " + boardId);
-  // console.log("게시판 pk: " + boardId);
+  const params: any = useParams();
+  const id = params.id;
 
   const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const text = e.target.value;
@@ -28,17 +29,14 @@ const WriteCommentForm: React.FC<CommentFormProps> = ({ boardId }) => {
     if (comment.trim()) {
       const token = getToken();
       if (token) {
-        const response = await fetch(
-          `http://localhost:8080/comments/${boardId}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: getToken(),
-            },
-            body: JSON.stringify({ content: comment }),
-          }
-        );
+        const response = await fetch(`http://localhost:8080/comments/${id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: getToken(),
+          },
+          body: JSON.stringify({ content: comment }),
+        });
         if (response.ok) {
           setComment("");
           setCommentLength(0); // 댓글 제출 후 길이 초기화

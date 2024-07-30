@@ -6,7 +6,7 @@ import Comments from "../../../components/board/Comments";
 import WriterProfileInfo from "../../../components/board/WriterProfileInfo";
 import WriteCommentForm from "../../../components/board/WriteCommentForm";
 import AxiosURL from "@/app/axios/url";
-import { getRefreshToken, setToken, getToken } from "@/app/common/common";
+import { getToken } from "@/app/common/common";
 
 import { useParams } from "next/navigation";
 import axios from "axios";

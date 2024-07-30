@@ -6,6 +6,7 @@ import styled, { keyframes, css } from "styled-components";
 import QuillToolbar from "../../profile/lounge/EditorOption";
 import Quill from "quill";
 import AxiosURL from "@/app/axios/url";
+import { getToken } from "@/app/common/common";
 
 const Font = Quill.import("formats/font");
 Font.whitelist = ["esamanruLight", "esamanruMedium", "esamanruBold"];
@@ -88,8 +89,7 @@ const NoticeWriteQuill: React.FC<{
     input.click();
   };
 
-  const token =
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9BRE1JTiIsImV4cCI6MTcyNDQ3ODE4OH0.3z2IGByLdk3Q-khCsRjdgK4BtMZs-h51If5vYgF45rgegl8WjUfXoIMDzMsqFLVOquamuJ57dMplJEGevon4PQ";
+  const authToken = getToken();
 
   const handleSubmit = async () => {
     if ((title.trim() === "" || null) && (content.trim() === "" || null)) {
@@ -120,7 +120,7 @@ const NoticeWriteQuill: React.FC<{
       const response = await fetch(`${AxiosURL}/community/free-boards`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `${authToken}`,
         },
         body: formData,
       });

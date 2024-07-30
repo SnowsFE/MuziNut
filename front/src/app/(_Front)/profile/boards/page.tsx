@@ -5,13 +5,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { BannerData, ProfileData, useFileState } from "./boardsEdit";
 import ProfileEdit from "../profileEdit";
+import { useRouter } from "next/navigation";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("boards");
   const [profileBannerImgName, setProfileBannerImgName] = useState<string>("");
   const [profileImgName, setProfileImgName] = useState<string>("");
   const [boardVisible, setBoardVisible] = useState(5);
-  const [bookmarkVisible, setBookmarkVisible] = useState(5);
+  const [showMore, setShowMore] = useState(true);
 
   const onUpload = (data: {
     profileBannerImgName?: string | object;
@@ -41,19 +42,54 @@ const UseridProfile: React.FC = () => {
 
   // 게시글 더보기 함수
   const AddBoard = () => {
-    if (boardVisible + 5 > boards.boardsData.length) {
-      setBoardVisible(5);
+    if (showMore) {
+      // 더보기 상태일 때
+      if (boardVisible + 5 >= boards.boardsData.length) {
+        setBoardVisible(boards.boardsData.length); // 모든 게시글을 표시
+        setShowMore(false); // 더보기 상태 해제
+      } else {
+        setBoardVisible((prev) => prev + 5); // 게시글 수 증가
+      }
     } else {
-      setBoardVisible(boardVisible + 5);
+      // 처음으로 돌아가기 상태일 때
+      setBoardVisible(5); // 초기 상태로 돌아감
+      setShowMore(true); // 다시 더보기 상태로 변경
     }
   };
 
-  // 북마크한 게시글 더보기 함수
+  // 게시글 더보기 함수
   const AddBookMark = () => {
-    if (bookmarkVisible + 5 > bookmark.length) {
-      setBookmarkVisible(5);
+    if (showMore) {
+      // 더보기 상태일 때
+      if (boardVisible + 5 >= boards.boardsData.length) {
+        setBoardVisible(boards.boardsData.length); // 모든 게시글을 표시
+        setShowMore(false); // 더보기 상태 해제
+      } else {
+        setBoardVisible((prev) => prev + 5); // 게시글 수 증가
+      }
     } else {
-      setBookmarkVisible(bookmarkVisible + 5);
+      // 처음으로 돌아가기 상태일 때
+      setBoardVisible(5); // 초기 상태로 돌아감
+      setShowMore(true); // 다시 더보기 상태로 변경
+    }
+  };
+
+  const router = useRouter();
+
+  const handleClick = (id: number) => {
+    const board = boards.boardsData.find((board) => board.id === id);
+    if (board) {
+      if (board.boardType === "FreeBoard") {
+        router.push(`/community/free-boards/${board.id}`);
+      } else if (board.boardType === "RecruitBoard") {
+        router.push(`/community/recruit-boards/${board.id}`);
+      } else if (board.boardType === "AdminBoard") {
+        router.push(`/notice/${board.id}`);
+      } else if (board.boardType === "EventBoard") {
+        router.push(`/event/${board.id}`);
+      }
+
+      console.log("게시글 번호:", board.id);
     }
   };
 
@@ -126,26 +162,41 @@ const UseridProfile: React.FC = () => {
           <BoardsTitle>게시글</BoardsTitle>
           <BoardsContainer>
             {boards.boardsData ? (
-              boards.boardsData
-                .slice(0, boardVisible)
-                .map((board) => <Box key={board.id}>{board.boardTitle}</Box>)
+              boards.boardsData.slice(0, boardVisible).map((board) => (
+                <Box key={board.id} onClick={() => handleClick(board.id)}>
+                  {board.boardTitle}
+                </Box>
+              ))
             ) : (
               <p>게시글이 없습니다.</p>
             )}
           </BoardsContainer>
           <BoardsAdd>
-            <p onClick={AddBoard}>더보기</p>
+            <p onClick={AddBoard}>
+              {showMore ? "더보기" : "처음으로 돌아가기"}
+            </p>{" "}
           </BoardsAdd>
         </BoardsBoards>
 
         <BoardsBoards style={{ marginTop: "50px" }}>
           <BoardsTitle>북마크한 게시글</BoardsTitle>
           <BoardsContainer>
-            {/* {bookmark.slice(0, bookmarkVisible).map((bookmark, index) => (
-              <Box key={index}>{bookmark.bookmarkTitle}</Box>
-            ))} */}
+            {boards.boardsData ? (
+              boards.boardsData.slice(0, boardVisible).map((board) => (
+                <Box key={board.id} onClick={() => handleClick(board.id)}>
+                  {board.boardTitle}
+                </Box>
+              ))
+            ) : (
+              <p>게시글이 없습니다.</p>
+            )}
           </BoardsContainer>
-          <BoardsAdd>{/* <p onClick={AddBookMark}>더보기</p> */}</BoardsAdd>
+          <BoardsAdd>
+            <p onClick={AddBookMark}>
+              {showMore ? "더보기" : "처음으로 돌아가기"}
+            </p>{" "}
+            {/* 버튼 텍스트 조건부 렌더링 */}
+          </BoardsAdd>
         </BoardsBoards>
       </Boards>
     </ProfileContainer>

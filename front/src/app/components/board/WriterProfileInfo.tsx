@@ -5,7 +5,7 @@ import { MiniViewIcon, BookMarkIcon } from "@/app/components/icon/icon";
 import React from "react";
 import Image from "next/image";
 import axios from "axios";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import AxiosURL from "@/app/axios/url";
 import { TokenInfo } from "@/app/common/common";
 
@@ -13,6 +13,7 @@ import { TokenInfo } from "@/app/common/common";
 interface WriterProfileInfoProps {
   profileImg: string;
   writer: string;
+  writerId: string;
   createdDt: string;
   view: number;
   isBookmark: boolean;
@@ -21,6 +22,7 @@ interface WriterProfileInfoProps {
 const WriterProfileInfo: React.FC<WriterProfileInfoProps> = ({
   profileImg,
   writer,
+  writerId,
   createdDt,
   view,
   isBookmark,
@@ -30,30 +32,37 @@ const WriterProfileInfo: React.FC<WriterProfileInfoProps> = ({
   const params = useParams<{ id: string }>();
   const id = params?.id;
 
-  const handleBookmarkClick = async () => {
-    try {
-      if (id && authToken) {
-        const response = await axios.post(
-          `${AxiosURL}/bookmark/${id}`,
-          {
-            isBookmark, // 유저 정보에 따라 북마크 상태 결정
-          },
-          {
-            headers: {
-              Authorization: authToken,
-            },
-          }
-        );
-        console.log("북마크 클릭: ", response.data);
-      }
-    } catch (error) {
-      console.error("북마크 요청 실패: ", error);
-    }
+  // const handleBookmarkClick = async () => {
+  //   try {
+  //     if (id && authToken) {
+  //       const response = await axios.post(
+  //         `${AxiosURL}/bookmark/${id}`,
+  //         {
+  //           isBookmark, // 유저 정보에 따라 북마크 상태 결정
+  //         },
+  //         {
+  //           headers: {
+  //             Authorization: authToken,
+  //           },
+  //         }
+  //       );
+  //       console.log("북마크 클릭: ", response.data);
+  //     }
+  //   } catch (error) {
+  //     console.error("북마크 요청 실패: ", error);
+  //   }
+  // };
+
+  const router = useRouter();
+
+  const userMove = () => {
+    router.push(`/profile?userId=${writerId}`);
   };
 
   return (
     <ProfileContainer>
       <ProfileImage
+        onClick={userMove}
         src={`data:image/png;base64,${profileImg}`}
         alt="프로필 이미지"
       />

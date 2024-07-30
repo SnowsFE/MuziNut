@@ -39,11 +39,14 @@ const Comments: React.FC<CommentProps> = ({
   }); //서버로 부터 받아온 댓글들 (대댓글 포함)
   let [modal, setModal] = useState(false); //대댓글 모달창
 
+  const authToken = getToken();
+
   const likeButtonHandler = async () => {
-    alert("댓글 좋아요 클릭");
     const response = await axios
       .post(`http://localhost:8080/comment-like/${commentId}`, {
-        headers: { Authorization: getToken() },
+        headers: {
+          Authorization: `${authToken}`,
+        },
       })
       .catch(function (error) {
         if (error.response.data.status == 401) {
@@ -74,8 +77,8 @@ const Comments: React.FC<CommentProps> = ({
         <Option>
           <LikeButton onClick={likeButtonHandler}>
             <LikeIcon />
-            {comments.boardLikeStatus ? true : false}
-            <LikeCount>{comments.likeCount}</LikeCount>
+            {boardLikeStatus ? true : false}
+            <LikeCount>{likeCount}</LikeCount>
           </LikeButton>
           <span> | </span>
           <ReplyButton onClick={replyButtonHandler}>
@@ -110,17 +113,17 @@ const CommentContainer = styled.div`
   display: flex;
   align-items: center;
   position: relative;
-  padding-bottom: 10px;
+  padding: 10px 0;
   border-bottom: 1px solid #ddd;
   font-family: "esamanru Medium";
 `;
 
 //댓글 내용
 const Content = styled.span`
-  margin-top: 7px;
-  padding: 10px 15px;
+  margin-top: 19px;
+  padding: 5px 15px;
   border-radius: 5px;
-  font-size: 16px;
+  font-size: 14px;
   color: #333;
 `;
 
@@ -129,7 +132,7 @@ const Option = styled.div`
   display: flex;
   gap: 10px;
   border-radius: 20px;
-  padding: 10px 10px;
+  padding: 6px 8px;
   background-color: #f0f0f0;
   cursor: pointer;
   font-size: 12px;
@@ -154,6 +157,8 @@ const ProfileInfo = styled.div`
   flex-direction: column;
   padding-right: 10px;
   gap: 5px;
+  min-width: 200px;
+  max-width: 200px;
 `;
 
 // 프로필 이름

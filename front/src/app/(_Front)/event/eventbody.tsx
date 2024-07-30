@@ -1,22 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { FaSearch } from "react-icons/fa";
 import EventPost from "./eventpost";
 import Image from "next/image";
 import Eventbanner from "../../../../public/images/eventbanner.png";
 import WriteQuill from "./eventwritequill";
+import { useRouter } from "next/navigation";
 
 const EventBody: React.FC = () => {
   const [selected, setSelected] = useState<string>("최신순");
   const [writeVisible, setWriteVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
+  const router = useRouter();
+
   const handleSelect = (option: string) => {
     setSelected(option);
   };
 
+  useEffect(() => {
+    const queryParams: any = {
+      인기순: "HOT",
+      최신순: "RECENT",
+      좋아요순: "LIKE",
+    };
+
+    router.push(`?sort=${queryParams[selected]}`);
+  }, [router, selected]);
+
   const openWriteForm = () => {
-    setWriteVisible(true);
+    const token = localStorage.getItem("token");
+    if (token) {
+      setWriteVisible(true);
+    } else {
+      alert("로그인이 필요합니다.");
+      router.push("/member/login");
+    }
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
