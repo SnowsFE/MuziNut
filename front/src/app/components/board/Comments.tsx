@@ -113,7 +113,7 @@ const CommentContainer = styled.div`
   display: flex;
   align-items: center;
   position: relative;
-  padding: 10px 0;
+  padding: 15px 0;
   border-bottom: 1px solid #ddd;
   font-family: "esamanru Medium";
 `;

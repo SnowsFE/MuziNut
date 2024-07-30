@@ -4,7 +4,6 @@ import { CommentLikeIcon } from "@/app/components/LikePost/like";
 import AxiosURL from "@/app/axios/url";
 import { useFileState } from "./loungeEdit";
 import axios from "axios";
-import "react-toastify/dist/ReactToastify.css";
 
 interface CommentProps {
   id: number;

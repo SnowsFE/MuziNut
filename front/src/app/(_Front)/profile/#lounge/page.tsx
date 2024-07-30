@@ -11,6 +11,7 @@ import { BannerData, ProfileData, useFileState } from "./loungeEdit";
 import ProfileEdit from "../profileEdit";
 import { LikeIcon } from "../../../components/LikePost/like";
 import AxiosURL from "@/app/axios/url";
+import { getToken } from "@/app/common/common";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("lounge");
@@ -136,8 +137,7 @@ const UseridProfile: React.FC = () => {
     setWriteVisible(true);
   };
 
-  const authToken =
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjQ2MDczMzh9.BbvfPZE8fzZNQNJdyq0XQz7GaIUYhhLUhoup35KwlfC-92MHXOi3jkILH19lFdDVQkuwtFWRlyRbVZQW8a8QUA";
+  const authToken = getToken();
 
   const handleDelete = async (index: number) => {
     const postId = LoungeForm[index]?.id;
@@ -148,7 +148,7 @@ const UseridProfile: React.FC = () => {
         const response = await fetch(`${AxiosURL}/profile/lounge/${postId}`, {
           method: "DELETE",
           headers: {
-            Authorization: `Bearer ${authToken}`,
+            Authorization: `${authToken}`,
           },
         });
 
@@ -222,32 +222,32 @@ const UseridProfile: React.FC = () => {
       </Profile>
       <SelectBar>
         <SelectContainer>
-          <StyledLink href={"/profile"} onClick={() => setSelectedTab("main")}>
-            <SelectItem selected={selectedTab === "main"}>메인</SelectItem>
+          <StyledLink href={"/profile"} onClick={() => setSelectedTab("#main")}>
+            <SelectItem selected={selectedTab === "#main"}>메인</SelectItem>
           </StyledLink>
           <StyledLink
-            href={"/profile/lounge"}
-            onClick={() => setSelectedTab("lounge")}
+            href={"/profile#lounge"}
+            onClick={() => setSelectedTab("#lounge")}
           >
-            <SelectItem selected={selectedTab === "lounge"}>라운지</SelectItem>
+            <SelectItem selected={selectedTab === "#lounge"}>라운지</SelectItem>
           </StyledLink>
           <StyledLink
-            href={"/profile/boards"}
-            onClick={() => setSelectedTab("boards")}
+            href={"/profile#boards"}
+            onClick={() => setSelectedTab("#boards")}
           >
-            <SelectItem selected={selectedTab === "boards"}>게시글</SelectItem>
+            <SelectItem selected={selectedTab === "#boards"}>게시글</SelectItem>
           </StyledLink>
           <StyledLink
-            href={"/profile/plynut"}
-            onClick={() => setSelectedTab("plynut")}
+            href={"/profile#plynut"}
+            onClick={() => setSelectedTab("#plynut")}
           >
-            <SelectItem selected={selectedTab === "plynut"}>플리넛</SelectItem>
+            <SelectItem selected={selectedTab === "#plynut"}>플리넛</SelectItem>
           </StyledLink>
           <StyledLink
-            href={"/profile/nuts"}
-            onClick={() => setSelectedTab("nuts")}
+            href={"/profile#nuts"}
+            onClick={() => setSelectedTab("#nuts")}
           >
-            <SelectItem selected={selectedTab === "nuts"}>넛츠</SelectItem>
+            <SelectItem selected={selectedTab === "#nuts"}>넛츠</SelectItem>
           </StyledLink>
           <Write onClick={handleWriteClick}>Talk</Write>
         </SelectContainer>
@@ -306,10 +306,7 @@ const UseridProfile: React.FC = () => {
               {loungeItem && (
                 <LoungeLikeCommentContainer>
                   <LoungeLike>
-                    <LikeIcon
-                      postId={LoungeForm[index]?.id || 0}
-                      authToken={authToken}
-                    />
+                    <LikeIcon postId={LoungeForm[index]?.id || 0} />
                     {loungeItem.like}
                   </LoungeLike>
                   <LoungeComment onClick={() => handleCommentToggle(index)}>

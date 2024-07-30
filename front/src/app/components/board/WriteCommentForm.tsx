@@ -97,7 +97,7 @@ const CommentInput = styled.textarea`
   line-height: 17px;
   resize: none;
   outline: none;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 
   &:focus {
     border-color: #b8b8b8;
@@ -108,7 +108,7 @@ const CommentInput = styled.textarea`
 const CommentSubmitButton = styled.button`
   position: absolute;
   right: 0;
-  bottom: 27px;
+  bottom: 7px;
   background: none;
   border: none;
   cursor: pointer;
@@ -124,7 +124,7 @@ const CommentSubmitButton = styled.button`
 const CommentLength = styled.div`
   position: absolute;
   right: 45px;
-  bottom: 40px;
+  bottom: 20px;
   font-size: 12px;
   padding: 10px;
   color: #888;

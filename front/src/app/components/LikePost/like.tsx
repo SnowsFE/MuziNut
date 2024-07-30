@@ -14,7 +14,7 @@ const LikeIcon: React.FC<LikeIconProps> = ({
   initialLiked = false,
 }) => {
   const [liked, setLiked] = useState<boolean>(initialLiked);
-  const authToken = getToken;
+  const authToken = getToken();
 
   useEffect(() => {
     const savedLikedStatus = localStorage.getItem(`like-${postId}`);
@@ -36,7 +36,7 @@ const LikeIcon: React.FC<LikeIconProps> = ({
         { liked: newLikedStatus },
         {
           headers: {
-            Authorization: `Bearer ${authToken}`,
+            Authorization: `${authToken}`,
             "Content-Type": "application/json",
           },
         }
@@ -100,7 +100,7 @@ const CommentLikeIcon: React.FC<CommentLikeIconProps> = ({
         { liked: newLikedStatus },
         {
           headers: {
-            Authorization: `Bearer ${authToken}`,
+            Authorization: `${authToken}`,
             "Content-Type": "application/json",
           },
         }
