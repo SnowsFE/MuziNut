@@ -2,7 +2,7 @@ import React, { useState, useEffect, ChangeEvent } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import AxiosUrl from "@/app/axios/url";
-import { useParams, useRouter } from "next/navigation";
+import { getToken } from "@/app/common/common";
 
 // useFileState 훅과 초기 데이터
 export const useFileState = (onUpload: (data: any) => void) => {
@@ -48,8 +48,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
     });
   };
 
-  const authToken =
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9BRE1JTiIsImV4cCI6MTcyNTU3OTkwM30.0SZCYcOZBnbRwO0JhMdJqrMZJx7h4ty3y9WK1tGIXWNl8yf45Hau01I7H0-t0JVfAjPn3FLcSMGli_0eRqcQwQ";
+  const authToken = getToken();
 
   const handleBannerSubmit = async (
     e: ChangeEvent<HTMLInputElement>,
@@ -85,7 +84,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
           {
             headers: {
               "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${authToken}`,
+              Authorization: `${authToken}`,
             },
           }
         );
@@ -130,7 +129,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
           {
             headers: {
               "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${authToken}`,
+              Authorization: `${authToken}`,
             },
           }
         );
@@ -155,7 +154,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
     boardsData: boardsData[];
   }
 
-  const [userId, setUserId] = useState(1);
+  const [userId, setUserId] = useState(2);
   const [boards, setBoards] = useState<boardsForm>({ boardsData: [] });
 
   useEffect(() => {
@@ -165,7 +164,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
           params: { userId },
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authToken}`,
+            Authorization: `${authToken}`,
           },
         });
 

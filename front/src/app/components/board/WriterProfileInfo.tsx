@@ -7,7 +7,7 @@ import Image from "next/image";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import AxiosURL from "@/app/axios/url";
-import { getToken, TokenInfo } from "@/app/common/common";
+import { getToken } from "@/app/common/common";
 
 // 글 작성 프로필
 interface WriterProfileInfoProps {

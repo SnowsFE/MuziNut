@@ -222,32 +222,32 @@ const UseridProfile: React.FC = () => {
       </Profile>
       <SelectBar>
         <SelectContainer>
-          <StyledLink href={"/profile"} onClick={() => setSelectedTab("#main")}>
-            <SelectItem selected={selectedTab === "#main"}>메인</SelectItem>
+          <StyledLink href={"/profile"} onClick={() => setSelectedTab("main")}>
+            <SelectItem selected={selectedTab === "main"}>메인</SelectItem>
           </StyledLink>
           <StyledLink
-            href={"/profile#lounge"}
-            onClick={() => setSelectedTab("#lounge")}
+            href={"/profile/lounge"}
+            onClick={() => setSelectedTab("lounge")}
           >
-            <SelectItem selected={selectedTab === "#lounge"}>라운지</SelectItem>
+            <SelectItem selected={selectedTab === "lounge"}>라운지</SelectItem>
           </StyledLink>
           <StyledLink
-            href={"/profile#boards"}
-            onClick={() => setSelectedTab("#boards")}
+            href={"/profile/boards"}
+            onClick={() => setSelectedTab("boards")}
           >
-            <SelectItem selected={selectedTab === "#boards"}>게시글</SelectItem>
+            <SelectItem selected={selectedTab === "boards"}>게시글</SelectItem>
           </StyledLink>
           <StyledLink
-            href={"/profile#plynut"}
-            onClick={() => setSelectedTab("#plynut")}
+            href={"/profile/plynut"}
+            onClick={() => setSelectedTab("plynut")}
           >
-            <SelectItem selected={selectedTab === "#plynut"}>플리넛</SelectItem>
+            <SelectItem selected={selectedTab === "plynut"}>플리넛</SelectItem>
           </StyledLink>
           <StyledLink
-            href={"/profile#nuts"}
-            onClick={() => setSelectedTab("#nuts")}
+            href={"/profile/nuts"}
+            onClick={() => setSelectedTab("nuts")}
           >
-            <SelectItem selected={selectedTab === "#nuts"}>넛츠</SelectItem>
+            <SelectItem selected={selectedTab === "nuts"}>넛츠</SelectItem>
           </StyledLink>
           <Write onClick={handleWriteClick}>Talk</Write>
         </SelectContainer>

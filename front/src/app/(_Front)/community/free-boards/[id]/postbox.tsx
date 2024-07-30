@@ -8,7 +8,6 @@ import WriteCommentForm from "@/app/components/board/WriteCommentForm";
 import AxiosURL from "@/app/axios/url";
 import { useParams } from "next/navigation";
 import axios from "axios";
-import { getToken } from "@/app/common/common";
 
 interface BoardsDataProps {
   id: number;

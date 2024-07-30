@@ -3,7 +3,7 @@ import React, { useRef, useState, useEffect, useMemo } from "react";
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
 import styled, { keyframes, css } from "styled-components";
-import QuillToolbar from "../../profile#/#lounge/EditorOption";
+import QuillToolbar from "../../profile/lounge/EditorOption";
 import Quill from "quill";
 import AxiosURL from "@/app/axios/url";
 import { getToken } from "@/app/common/common";

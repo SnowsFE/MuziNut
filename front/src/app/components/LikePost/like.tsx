@@ -66,16 +66,15 @@ const LikeIcon: React.FC<LikeIconProps> = ({
 
 interface CommentLikeIconProps {
   commentId: number;
-  authToken: string;
   initialLiked?: boolean;
 }
 
 const CommentLikeIcon: React.FC<CommentLikeIconProps> = ({
   commentId,
-  authToken,
   initialLiked = false,
 }) => {
   const [liked, setLiked] = useState<boolean>(initialLiked);
+  const authToken = getToken();
 
   useEffect(() => {
     const savedLikedStatus = localStorage.getItem(`comment-like-${commentId}`);
