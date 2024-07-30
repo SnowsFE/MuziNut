@@ -46,11 +46,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         // 파싱 오류가 -> 로컬 스토리지에서 데이터 삭제
         console.error("Error parsing user:", error);
         localStorage.removeItem("user");
-        window.location.href = "/login"; // 로그인 경로로 리디렉트
       }
     } else {
       console.log("로컬스토리지에 사용자 정보가 없습니다!!");
-      window.location.href = "/login"; // 로그인 경로로 리디렉트
     }
   }, []);
 
