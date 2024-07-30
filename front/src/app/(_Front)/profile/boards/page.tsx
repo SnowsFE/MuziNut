@@ -1,40 +1,47 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import Login from "../../../../../public/images/login.png";
-import banner from "../../../../../public/images/banner.png";
 import Link from "next/link";
-import { BoardData, BookMarkBoardData } from "../userdata";
 import { BannerData, ProfileData, useFileState } from "./boardsEdit";
 import ProfileEdit from "../profileEdit";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("boards");
+  const [profileBannerImgName, setProfileBannerImgName] = useState<string>("");
+  const [profileImgName, setProfileImgName] = useState<string>("");
   const [boardVisible, setBoardVisible] = useState(5);
   const [bookmarkVisible, setBookmarkVisible] = useState(5);
-  const [bannerUrl, setBannerUrl] = useState<string>(banner.src);
-  const [profileUrl, setProfileUrl] = useState<string>(Login.src);
-  const [editFormVisible, setEditFormVisible] = useState(false);
 
-  // onUpload 함수 정의
-  const onUpload = (data: { bannerUrl?: string; profileUrl?: string }) => {
-    if (data.bannerUrl) {
-      console.log("배너 이미지가 변경되었습니다:", data.bannerUrl);
-      setBannerUrl(data.bannerUrl);
+  const onUpload = (data: {
+    profileBannerImgName?: string | object;
+    profileImgName?: string | object;
+  }) => {
+    if (typeof data.profileBannerImgName === "string") {
+      setProfileBannerImgName(data.profileBannerImgName);
     }
-    if (data.profileUrl) {
-      console.log("프로필 이미지가 변경되었습니다:", data.profileUrl);
-      setProfileUrl(data.profileUrl);
+    if (typeof data.profileImgName === "string") {
+      setProfileImgName(data.profileImgName);
     }
   };
 
-  // useFileState 훅을 이용하여 상태와 함수들을 가져옵니다.
-  const { profileInfo } = useFileState(onUpload);
+  const { profileInfo, boards } = useFileState((data) => {
+    onUpload({
+      profileBannerImgName: data.profileBannerImgName,
+      profileImgName: data.profileImgName,
+    });
+  });
+
+  useEffect(() => {
+    if (profileInfo) {
+      setProfileBannerImgName(profileInfo.profileBannerImgName || "");
+      setProfileImgName(profileInfo.profileImgName || "");
+    }
+  }, [profileInfo]);
 
   // 게시글 더보기 함수
   const AddBoard = () => {
-    if (boardVisible + 5 > BoardData.length) {
+    if (boardVisible + 5 > boards.boardsData.length) {
       setBoardVisible(5);
     } else {
       setBoardVisible(boardVisible + 5);
@@ -43,7 +50,7 @@ const UseridProfile: React.FC = () => {
 
   // 북마크한 게시글 더보기 함수
   const AddBookMark = () => {
-    if (bookmarkVisible + 5 > BookMarkBoardData.length) {
+    if (bookmarkVisible + 5 > bookmark.length) {
       setBookmarkVisible(5);
     } else {
       setBookmarkVisible(bookmarkVisible + 5);
@@ -53,12 +60,22 @@ const UseridProfile: React.FC = () => {
   return (
     <ProfileContainer>
       <Banner>
-        <Image src={bannerUrl} alt="banner-image" width={1280} height={210} />
+        <Image
+          src={`data:image/png;base64,${profileBannerImgName}`}
+          alt="배너 이미지"
+          width={1280}
+          height={210}
+        />
         <BannerData onUpload={onUpload} />
       </Banner>
       <Profile>
         <ProfileEdit />
-        <Image src={profileUrl} alt="profile-image" width={160} height={160} />
+        <Image
+          src={`data:image/png;base64,${profileImgName}`}
+          alt="프로필 이미지"
+          width={160}
+          height={160}
+        />
         <ProfileData onUpload={onUpload} />
         <ProfileInfo>
           <ProfileName>{profileInfo.nickname}</ProfileName>
@@ -66,7 +83,9 @@ const UseridProfile: React.FC = () => {
             팔로잉 {profileInfo.followingCount} &nbsp; 팔로워{" "}
             {profileInfo.followersCount}
           </FollowInfo>
-          <ProfileDescription>{profileInfo.intro}</ProfileDescription>
+          <ProfileDescription>
+            {profileInfo.intro || "자기소개를 입력하세요"}
+          </ProfileDescription>
         </ProfileInfo>
       </Profile>
       <SelectBar>
@@ -106,9 +125,13 @@ const UseridProfile: React.FC = () => {
         <BoardsBoards>
           <BoardsTitle>게시글</BoardsTitle>
           <BoardsContainer>
-            {BoardData.slice(0, boardVisible).map((boards, index) => (
-              <Box key={index}>{boards.board}</Box>
-            ))}
+            {boards.boardsData ? (
+              boards.boardsData
+                .slice(0, boardVisible)
+                .map((board) => <Box key={board.id}>{board.boardTitle}</Box>)
+            ) : (
+              <p>게시글이 없습니다.</p>
+            )}
           </BoardsContainer>
           <BoardsAdd>
             <p onClick={AddBoard}>더보기</p>
@@ -118,15 +141,11 @@ const UseridProfile: React.FC = () => {
         <BoardsBoards style={{ marginTop: "50px" }}>
           <BoardsTitle>북마크한 게시글</BoardsTitle>
           <BoardsContainer>
-            {BookMarkBoardData.slice(0, bookmarkVisible).map(
-              (bookmarkboards, index) => (
-                <Box key={index}>{bookmarkboards.bookmarkboard}</Box>
-              )
-            )}
+            {/* {bookmark.slice(0, bookmarkVisible).map((bookmark, index) => (
+              <Box key={index}>{bookmark.bookmarkTitle}</Box>
+            ))} */}
           </BoardsContainer>
-          <BoardsAdd>
-            <p onClick={AddBookMark}>더보기</p>
-          </BoardsAdd>
+          <BoardsAdd>{/* <p onClick={AddBookMark}>더보기</p> */}</BoardsAdd>
         </BoardsBoards>
       </Boards>
     </ProfileContainer>
@@ -290,6 +309,7 @@ const BoardsContainer = styled.div`
   grid-template-columns: repeat(5, 1fr);
   gap: 20px;
   font-size: 14px;
+  cursor: pointer;
 `;
 
 // 박스 스타일

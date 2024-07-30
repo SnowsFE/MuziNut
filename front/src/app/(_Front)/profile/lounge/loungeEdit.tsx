@@ -37,9 +37,23 @@ export const useFileState = (onUpload: (data: any) => void) => {
     like: number;
     commentSize: number;
     filename: string;
+    comments: CommentProps[];
+  }
+
+  interface CommentProps {
+    id: number;
+    likeCommentStatus: boolean;
+    content: string;
+    commentWriter: string;
+    commentProfileImg: string;
+    createdDt: string;
+    likeCount: number;
   }
 
   const [LoungeForm, setLoungeForm] = useState<LoungeProps[]>([]);
+  const [commentsByLounge, setCommentsByLounge] = useState<{
+    [key: number]: CommentProps[];
+  }>({});
 
   // 이미지 사이즈 체크 함수
   const checkImageSize = (file: File, maxWidth: number, maxHeight: number) => {
@@ -169,6 +183,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
 
         setProfileInfo(res.data);
         setLoungeForm(res.data.loungesForms);
+        console.log(res.data);
 
         // 두 번째 요청을 첫 번째 요청의 결과를 사용하여 수행
         let temp: string[] = [];
@@ -179,7 +194,12 @@ export const useFileState = (onUpload: (data: any) => void) => {
           temp.push(resdata.data);
         }
         setQuillFile(temp);
-        // console.log(temp);
+
+        const newCommentsByLounge: { [key: number]: CommentProps[] } = {};
+        res.data.loungesForms.forEach((lounge: LoungeProps) => {
+          newCommentsByLounge[lounge.id] = lounge.comments;
+        });
+        setCommentsByLounge(newCommentsByLounge);
       } catch (error) {
         console.error("프로필 데이터를 가져오는데 실패했습니다.", error);
       }
@@ -189,12 +209,11 @@ export const useFileState = (onUpload: (data: any) => void) => {
   }, [userId]);
 
   return {
-    files,
     profileInfo,
-    setProfileInfo,
     quiilFiles,
     LoungeForm,
-    setLoungeForm,
+    commentsByLounge,
+    setCommentsByLounge,
     handleBannerSubmit,
     handleProfileSubmit,
   };

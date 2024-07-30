@@ -394,12 +394,8 @@ export const BaseImgBox = () => {
 };
 
 export const ReplyIcon = () => {
-  const handleReplyClick = () => {
-    alert("대댓글 작성 누름!");
-  };
-
   return (
-    <Reply onClick={handleReplyClick}>
+    <Reply>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         version="1.1"

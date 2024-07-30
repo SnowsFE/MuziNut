@@ -4,18 +4,30 @@ import { LikeIcon, ReplyIcon } from "@/app/components/icon/icon";
 import Reply from "@/app/components/board/Reply";
 import WriteReplyForm from "../board/WriteReplyForm";
 import axios from "axios";
+import { getToken } from "@/app/common/common";
 
 // 댓글 컴포넌트
 interface CommentProps {
   profileImg: string;
   writer: string;
   createdDt: string;
-  contents: string;
+  content: string;
   boardLikeStatus: boolean;
   likeCount: number;
+  replies: any[];
+  commentId: any;
 }
 
-const Comments: React.FC<CommentProps> = ({}) => {
+const Comments: React.FC<CommentProps> = ({
+  profileImg,
+  writer,
+  createdDt,
+  content,
+  boardLikeStatus,
+  likeCount,
+  commentId,
+  replies,
+}) => {
   const [comment, setComment] = useState({}); //사용자가 작성하는 댓글
   const [comments, setComments] = useState({
     profileImg: "",
@@ -29,16 +41,16 @@ const Comments: React.FC<CommentProps> = ({}) => {
 
   const likeButtonHandler = async () => {
     alert("댓글 좋아요 클릭");
-    // Todo 댓글에 대한 pk 를 받아와서 좋아요 전송할 것
     const response = await axios
-      .post(`http://localhost:8080/comment-like/${comment}`, {
-        headers: { Authorization: `Bearer token` },
+      .post(`http://localhost:8080/comment-like/${commentId}`, {
+        headers: { Authorization: getToken() },
       })
       .catch(function (error) {
         if (error.response.data.status == 401) {
           alert("만료된 토큰입니다"); //Todo 리프레시 토큰 전송
         }
-      });
+      })
+      .then((response) => {});
   };
 
   const replyButtonHandler = () => {
@@ -49,16 +61,16 @@ const Comments: React.FC<CommentProps> = ({}) => {
     <>
       <CommentContainer>
         <ProfileImage
-          src={`data:image/png;base64,${comments.profileImg}`}
+          src={`data:image/png;base64,${profileImg}`}
           alt="프로필 이미지"
         />
         <ProfileInfo>
-          <ProfileName>{comments.writer}</ProfileName>
+          <ProfileName>{writer}</ProfileName>
           <TimeViewsContainer>
-            <Time>{comments.createdDt}</Time>
+            <Time>{createdDt}</Time>
           </TimeViewsContainer>
         </ProfileInfo>
-        <Content>{comments.contents}</Content>
+        <Content>{content}</Content>
         <Option>
           <LikeButton onClick={likeButtonHandler}>
             <LikeIcon />
@@ -71,11 +83,22 @@ const Comments: React.FC<CommentProps> = ({}) => {
           </ReplyButton>
         </Option>
         {/* 대댓글 모달창 */}
-        {modal == true ? <WriteReplyForm></WriteReplyForm> : null}
+        {modal == true ? (
+          <WriteReplyForm commentId={commentId}></WriteReplyForm>
+        ) : null}
         {/* 대댓글 리스트 */}
       </CommentContainer>
 
-      <Reply />
+      {replies.map((reply, index) => (
+        <Reply
+          key={index}
+          id={reply.id}
+          content={reply.content}
+          replyWriter={reply.replyWriter}
+          replyProfileImg={reply.replyProfileImg}
+          createdDt={reply.createdDt}
+        />
+      ))}
     </>
   );
 };
@@ -87,33 +110,32 @@ const CommentContainer = styled.div`
   display: flex;
   align-items: center;
   position: relative;
-  padding-top: 30px;
-  padding-bottom: 20px;
+  padding-bottom: 10px;
   border-bottom: 1px solid #ddd;
   font-family: "esamanru Medium";
 `;
 
 //댓글 내용
 const Content = styled.span`
-  padding-right: 178px;
   margin-top: 7px;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #333;
 `;
 
 //댓글 좋아요 버튼
 const Option = styled.div`
   display: flex;
-  position: absolute;
-  right: 10px;
-  bottom: 1px;
   gap: 10px;
   border-radius: 20px;
   padding: 10px 10px;
-  margin-bottom: 15px;
   background-color: #f0f0f0;
   cursor: pointer;
   font-size: 12px;
   align-items: center;
   font-family: "esamanru Medium";
+  margin-left: auto;
 `;
 
 // 프로필 이미지
@@ -130,7 +152,7 @@ const ProfileImage = styled.img`
 const ProfileInfo = styled.div`
   display: flex;
   flex-direction: column;
-  padding-right: 20px;
+  padding-right: 10px;
   gap: 5px;
 `;
 

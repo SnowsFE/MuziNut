@@ -4,20 +4,39 @@ import { redirect } from "next/navigation";
 import { LikeIcon, ReplyIcon } from "@/app/components/icon/icon";
 import { useOutData } from "./AxiosData";
 
+// 대댓글 컴포넌트
+interface ReplyProps {
+  replyProfileImg: string;
+  replyWriter: string;
+  createdDt: string;
+  content: string;
+  id: any;
+}
+
 // 대댓글 내용
-const Reply = () => {
-  const { replyData } = useOutData();
+const Reply: React.FC<ReplyProps> = ({
+  id,
+  content,
+  replyWriter,
+  replyProfileImg,
+  createdDt,
+}) => {
   return (
     <>
       <ReplyContainer>
         <ReplyIcon />
-        <ProfileImage src={replyData.ReplyProfileImg} alt="프로필 이미지" />
+
+        <ProfileImage
+          src={`data:image/png;base64,${replyProfileImg}`}
+          alt="프로필 이미지"
+        />
         <ProfileInfo>
-          <ProfileName>{replyData.ReplyWriter}</ProfileName>
+          <ProfileName>{replyWriter}</ProfileName>
           <TimeViewsContainer>
-            <Time>{replyData.ReplycreatedDt}</Time>
+            <Time>{createdDt}</Time>
           </TimeViewsContainer>
         </ProfileInfo>
+        <Content>{content}</Content>
       </ReplyContainer>
     </>
   );
@@ -29,9 +48,8 @@ export default Reply;
 const ReplyContainer = styled.div`
   display: flex;
   align-items: center;
-  padding-top: 40px;
+  padding-top: 20px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #ddd;
   font-family: "esamanru Medium";
 `;
 
@@ -50,6 +68,7 @@ const ProfileInfo = styled.div`
   display: flex;
   flex-direction: column;
   gap: 5px;
+  margin-right: 10px;
 `;
 
 // 프로필 이름
@@ -68,4 +87,14 @@ const TimeViewsContainer = styled.div`
 const Time = styled.div`
   font-size: 12px;
   color: #888;
+`;
+
+//댓글 내용
+const Content = styled.span`
+  width: 790px;
+  margin-top: 7px;
+  padding: 15px 15px 10px 15px;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #333;
 `;

@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef, ChangeEvent } from "react";
+import React, { useState, useEffect, ChangeEvent } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import AxiosUrl from "@/app/axios/url";
+import { useParams, useRouter } from "next/navigation";
 
 // useFileState 훅과 초기 데이터
 export const useFileState = (onUpload: (data: any) => void) => {
@@ -48,7 +49,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
   };
 
   const authToken =
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjQ2MDczMzh9.BbvfPZE8fzZNQNJdyq0XQz7GaIUYhhLUhoup35KwlfC-92MHXOi3jkILH19lFdDVQkuwtFWRlyRbVZQW8a8QUA";
+    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9BRE1JTiIsImV4cCI6MTcyNTU3OTkwM30.0SZCYcOZBnbRwO0JhMdJqrMZJx7h4ty3y9WK1tGIXWNl8yf45Hau01I7H0-t0JVfAjPn3FLcSMGli_0eRqcQwQ";
 
   const handleBannerSubmit = async (
     e: ChangeEvent<HTMLInputElement>,
@@ -144,33 +145,77 @@ export const useFileState = (onUpload: (data: any) => void) => {
     }
   };
 
-  // 메인 Get 통신 데이터
-  const [userId, setUserId] = useState(4); // 초기 userId 값을 설정합니다.
+  interface boardsData {
+    boardType(boardType: any, id: number): void;
+    id: number;
+    boardTitle: string;
+  }
+
+  interface boardsForm {
+    boardsData: boardsData[];
+  }
+
+  const router = useRouter();
+  const id = router.query;
+
+  const [userId, setUserId] = useState(1);
+  const [boards, setBoards] = useState<boardsForm>({ boardsData: [] });
+
+  const fetchPostDetails = async () => {
+    if (id) {
+      // id가 존재할 때만 호출
+      try {
+        const res = await axios.get(`${AxiosUrl}/profile/community/${id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+        console.log("게시물 상세 데이터:", res.data);
+      } catch (error) {
+        console.error("게시물 상세 데이터를 가져오는데 실패했습니다.", error);
+      }
+    } else {
+      console.error("게시물 ID가 없습니다.");
+    }
+  };
 
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const response = await axios.get(`${AxiosUrl}/profile/board`, {
+        const res = await axios.get(`${AxiosUrl}/profile/board`, {
           params: { userId },
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${authToken}`,
+          },
         });
-        const data = response.data;
-        console.log("프로필 데이터 가져옴:", data);
 
-        setProfileInfo(data);
+        setProfileInfo(res.data);
+
+        let getboards: boardsData[] = res.data.boards.map((board: any) => ({
+          id: board.id,
+          boardTitle: board.boardTitle,
+        }));
+
+        setBoards({ boardsData: getboards });
+
+        console.log("받아온 데이터", getboards);
       } catch (error) {
         console.error("프로필 데이터를 가져오는데 실패했습니다.", error);
       }
     };
 
     fetchProfileData();
-  }, [userId]); // userId가 변경될 때마다 useEffect가 실행됩니다.
+    fetchPostDetails();
+  }, [userId, id]);
 
   return {
     files,
     profileInfo,
-    setProfileInfo,
     handleBannerSubmit,
     handleProfileSubmit,
+    boards,
   };
 };
 

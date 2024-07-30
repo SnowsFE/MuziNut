@@ -1,13 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { LikeIcon } from "@/app/components/icon/icon";
-import Comments from "../../../components/board/Comments";
-import WriterProfileInfo from "../../../components/board/WriterProfileInfo";
-import WriteCommentForm from "../../../components/board/WriteCommentForm";
+import { LikeIcon } from "@/app/components/LikePost/like";
+import Comments from "@/app/components/board/Comments";
+import WriterProfileInfo from "@/app/components/board/WriterProfileInfo";
+import WriteCommentForm from "@/app/components/board/WriteCommentForm";
 import AxiosURL from "@/app/axios/url";
 import { getRefreshToken, setToken, getToken } from "@/app/common/common";
-
 import { useParams } from "next/navigation";
 import axios from "axios";
 
@@ -59,11 +58,10 @@ const PostBox: React.FC = () => {
     Quill: "",
   });
 
-  const [comments, setComments] = useState<CommentProps[]>([]); // 댓글 목록
-  const [boardId, setBoardId] = useState(); //게시판 pk
+  const [comments, setComments] = useState<CommentProps[]>([]);
+  const [boardId, setBoardId] = useState<number | undefined>(undefined);
 
   const authToken = getToken();
-
   const params = useParams();
   const id: any = params?.id;
 
@@ -72,44 +70,64 @@ const PostBox: React.FC = () => {
       try {
         if (id) {
           const res = await axios.get(
-            `${AxiosURL}/community/admin-boards/${id}`,
+            `${AxiosURL}/community/free-boards/${id}`,
             {
               headers: {
                 Authorization: authToken,
               },
+              responseType: "text",
             }
           );
 
-          setBoardId(res.data.id);
+          const boundary = res.data.split("\r\n")[0];
+          const parts = res.data.split(boundary);
+
+          let jsonData = "";
+          for (let part of parts) {
+            if (part.includes("Content-Type: application/json")) {
+              jsonData = part.split("\r\n\r\n")[1];
+              break;
+            }
+          }
+
+          if (!jsonData) throw new Error("JSON 데이터가 없습니다.");
+
+          const data = JSON.parse(jsonData.trim());
+
+          console.log("받은 데이터:", data);
+
+          setBoardId(data.id);
 
           const profileData = {
-            profileImg: res.data.profileImg,
-            writer: res.data.writer,
-            createdDt: res.data.createdDt,
-            view: res.data.view,
-            isBookmark: res.data.isBookmark,
+            profileImg: data.profileImg,
+            writer: data.writer,
+            createdDt: data.createdDt,
+            view: data.view,
+            isBookmark: data.isBookmark,
           };
+
+          console.log("프로필데이터", profileData);
 
           setProfileInfo(profileData);
 
           const boardsData = {
-            id: res.data.id,
-            title: res.data.title,
-            quillFilename: res.data.quillFilename,
-            boardLikeStatus: res.data.boardLikeStatus,
-            likeCount: res.data.likeCount,
+            id: data.id,
+            title: data.title,
+            quillFilename: data.quillFilename,
+            boardLikeStatus: data.boardLikeStatus,
+            likeCount: data.likeCount,
           };
 
           setBoardsData(boardsData);
 
-          console.log(res.data.quillFilename);
           setCommentForm({
-            comments: res.data.comments,
+            comments: data.comments,
           });
 
-          setComments(res.data.comments);
+          setComments(data.comments);
 
-          // 두 번째 요청을 첫 번째 요청의 결과를 사용하여 수행
+          console.log("퀼파일네임", boardsData.quillFilename);
+
           const resdata = await axios.get(
             `http://localhost:8080/boards/get-file?filename=${boardsData.quillFilename}`
           );
@@ -121,17 +139,27 @@ const PostBox: React.FC = () => {
     };
 
     DetailBoards();
-  }, []);
+  }, [id, authToken]);
 
   const redirectToNotice = () => {
-    window.location.href = "/notice";
+    window.location.href = "/community/free-boards";
+  };
+
+  const handleLikeUpdate = (newLikeStatus: boolean) => {
+    setBoardsData((prevData) => ({
+      ...prevData,
+      boardLikeStatus: newLikeStatus,
+      likeCount: newLikeStatus
+        ? prevData.likeCount + 1
+        : prevData.likeCount - 1,
+    }));
   };
 
   return (
     <Container>
       <Header>
         <ListContainer>
-          <ListButton onClick={redirectToNotice}>공지사항 &gt;</ListButton>
+          <ListButton onClick={redirectToNotice}>자유 게시판 &gt;</ListButton>
         </ListContainer>
         <Title>{boardsData.title}</Title>
         <WriterProfileInfo
@@ -142,28 +170,36 @@ const PostBox: React.FC = () => {
           isBookmark={profileInfo.isBookmark ? true : false}
         />
       </Header>
-      <Body dangerouslySetInnerHTML={{ __html: QuillData }} />
-      {/* 본문 내용 출력 */}
+      <Body dangerouslySetInnerHTML={{ __html: QuillData.Quill }} />
       <Footer>
         <LikeButton>
-          <LikeIcon /> {boardsData.boardLikeStatus ? true : false}
+          <LikeIcon
+            postId={id}
+            authToken={authToken}
+            initialLiked={boardsData.boardLikeStatus}
+            onLikeUpdate={handleLikeUpdate}
+          />
           {boardsData.likeCount}
         </LikeButton>
       </Footer>
       <WriteCommentForm boardId={boardId} />
-      {comments.map((comment, index) => (
-        <Comments
-          key={index}
-          profileImg={comment.commentProfileImg}
-          writer={comment.commentWriter}
-          createdDt={comment.createdDt}
-          content={comment.content}
-          boardLikeStatus={comment.boardLikeStatus}
-          likeCount={comment.likeCount}
-          replies={comment.replies}
-          commentId={comment.id}
-        />
-      ))}
+      {comments && comments.length > 0 ? (
+        comments.map((comment, index) => (
+          <Comments
+            key={index}
+            profileImg={comment.commentProfileImg}
+            writer={comment.commentWriter}
+            createdDt={comment.createdDt}
+            content={comment.content}
+            boardLikeStatus={comment.boardLikeStatus}
+            likeCount={comment.likeCount}
+            replies={comment.replies}
+            commentId={comment.id}
+          />
+        ))
+      ) : (
+        <p>댓글이 없습니다.</p>
+      )}
     </Container>
   );
 };

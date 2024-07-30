@@ -1,38 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { commentNumber } from "../../mypick/bestartist";
-import { LikeIcon, CommentIcon } from "@/app/components/icon/icon";
-
-interface Reply {
-  profile: string;
-  name: string;
-  bodytext: string;
-  time: string;
-}
+import { CommentLikeIcon } from "@/app/components/LikePost/like";
+import AxiosURL from "@/app/axios/url";
+import { useFileState } from "./loungeEdit";
+import axios from "axios";
+import "react-toastify/dist/ReactToastify.css";
 
 interface CommentProps {
   id: number;
-  name: string;
-  profile: string;
-  time: string; // 타임스탬프 형식으로 변경
-  bodytext: string;
-  like: number;
-  comment: number;
-  replies: Reply[];
+  likeCommentStatus: boolean;
+  content: string;
+  commentWriter: string;
+  commentProfileImg: string;
+  createdDt: string;
+  likeCount: number;
 }
-
-const commentData: CommentProps[] = [
-  {
-    id: 0,
-    name: "",
-    profile: "",
-    time: "",
-    bodytext: "",
-    like: 0,
-    comment: 0,
-    replies: [],
-  },
-];
 
 // 타임스탬프를 사람이 읽기 쉬운 형식으로 변환하는 함수
 const timeAgo = (timestamp: string): string => {
@@ -53,114 +35,124 @@ const timeAgo = (timestamp: string): string => {
   }
 };
 
-const handleCommentClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-  e.currentTarget.blur(); // 댓글 등록 버튼에서 포커스 효과 제거를 도와주는 효과
-  alert("댓글이 등록되었습니다!");
-};
-
-const OpenComment: React.FC = () => {
-  const [comments, setComments] = useState(commentData);
-  const [replyFormsVisible, setReplyFormsVisible] = useState<boolean[]>(
-    commentData.map(() => false) // 모든 리플폼을 처음부터 보이도록 설정
-  );
-  const [newReplies, setNewReplies] = useState<string[]>(
-    commentData.map(() => "")
+const OpenComment: React.FC<{
+  loungeId: number;
+  onCommentSubmit?: () => void;
+}> = ({ loungeId }) => {
+  const { commentsByLounge, setCommentsByLounge } = useFileState(
+    (data: any) => {}
   );
 
-  const handleReplyClick = (index: number) => {
-    setReplyFormsVisible((prev) =>
-      prev.map((visible, i) => (i === index ? !visible : visible))
-    );
-  };
+  const [comments, setComments] = useState<CommentProps[]>([]);
+  const [newComment, setNewComment] = useState<string>("");
+  const [ID, setID] = useState<string | null>(null);
 
-  const handleReplyChange = (index: number, value: string) => {
-    setNewReplies((prev) =>
-      prev.map((reply, i) => (i === index ? value : reply))
-    );
-  };
+  const authToken =
+    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjQ2MDczMzh9.BbvfPZE8fzZNQNJdyq0XQz7GaIUYhhLUhoup35KwlfC-92MHXOi3jkILH19lFdDVQkuwtFWRlyRbVZQW8a8QUA";
 
-  const handleReplySubmit = (index: number) => {
-    const newReply = newReplies[index];
-    if (newReply.trim()) {
-      const newReplyData: Reply = {
-        profile: "",
-        name: "",
-        bodytext: newReply,
-        time: new Date().toISOString(),
-      };
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+      const newId = hash.replace("#", "");
+      setID(newId);
+    }
+  }, []);
 
-      const updatedComments = comments.map((comment, i) =>
-        i === index
-          ? { ...comment, replies: [...comment.replies, newReplyData] }
-          : comment
-      );
+  useEffect(() => {
+    if (commentsByLounge[loungeId]) {
+      setComments(commentsByLounge[loungeId]);
+    }
+  }, [commentsByLounge, loungeId]);
 
-      setComments(updatedComments);
-      setNewReplies((prev) =>
-        prev.map((reply, i) => (i === index ? "" : reply))
-      );
+  const handleCommentSubmit = async () => {
+    if (newComment.trim()) {
+      try {
+        const response = await axios.post(
+          `${AxiosURL}/comments/${loungeId}`,
+          { content: newComment },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.status === 200 || response.status === 201) {
+          const newCommentData = response.data;
+
+          // 상태 업데이트
+          setCommentsByLounge((prev) => ({
+            ...prev,
+            [loungeId]: [...(prev[loungeId] || []), newCommentData],
+          }));
+
+          setComments((prevComments) => [...prevComments, newCommentData]);
+
+          setNewComment("");
+
+          alert("댓글 작성이 완료되었습니다.");
+          window.location.reload();
+        } else {
+          alert("댓글 등록에 실패했습니다. 오류: " + response.statusText);
+        }
+      } catch (error) {
+        console.error("댓글 등록 중 오류 발생:", error);
+        alert("댓글 등록 중 오류가 발생했습니다.");
+      }
+    } else {
+      alert("댓글 내용을 입력해 주세요.");
     }
   };
 
   return (
     <BestCommentContainerList>
       <BestCommentContainerBox>
-        <BestComment>댓글 {commentNumber.comment}</BestComment>
+        <BestComment>댓글 {comments.length}</BestComment>
         <BestCommentContainer>
-          <input type="text" placeholder="댓글을 입력하세요"></input>
-          <BestCommentBox onClick={handleCommentClick}>등록</BestCommentBox>
+          <input
+            type="text"
+            placeholder="댓글을 입력하세요"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+          />
+          <BestCommentBox onClick={handleCommentSubmit}>등록</BestCommentBox>
         </BestCommentContainer>
       </BestCommentContainerBox>
-      {comments.map((comment, index) => (
-        <BestCommentList key={comment.id}>
-          <BestCommentHeader>
-            <BestCommentProfile src={comment.profile} />
-            <BestCommentNickname>{comment.name}</BestCommentNickname>
-            <BestCommentTime>{timeAgo(comment.time)}</BestCommentTime>
-          </BestCommentHeader>
-          <BestCommentBody>
-            <BestCommentText>{comment.bodytext}</BestCommentText>
-            <BestCommentActions>
-              <BestCommentLike>
-                <LikeIcon /> {comment.like}
-              </BestCommentLike>
-              <BestCommentComment onClick={() => handleReplyClick(index)}>
-                <CommentIcon />
-                {comment.comment}
-              </BestCommentComment>
-              <BestCommentReport>🚨</BestCommentReport>
-            </BestCommentActions>
-            {replyFormsVisible[index] && (
-              <ReplyForm>
-                <input
-                  type="text"
-                  placeholder="대댓글을 입력하세요"
-                  value={newReplies[index]}
-                  onChange={(e) => handleReplyChange(index, e.target.value)}
-                />
-                <BestCommentBox onClick={() => handleReplySubmit(index)}>
-                  등록
-                </BestCommentBox>
-              </ReplyForm>
-            )}
-            {comment.replies.map((reply) => (
-              <Reply key={reply.profile}>
-                <ReplyHeader>
-                  <ReplyProfile src={comment.profile} />
-                  <ReplyNickname>{reply.name}</ReplyNickname>
-                  <ReplyTime>{timeAgo(reply.time)}</ReplyTime>
-                </ReplyHeader>
-                <ReplyBody>{reply.bodytext}</ReplyBody>
-              </Reply>
-            ))}
-          </BestCommentBody>
-        </BestCommentList>
-      ))}
+      {comments.length === 0 ? (
+        <NoCommentsMessage></NoCommentsMessage>
+      ) : (
+        comments.map((comment) => (
+          <BestCommentList key={comment.id}>
+            <BestCommentHeader>
+              <BestCommentProfile
+                src={`data:image/png;base64,${comment.commentProfileImg}`}
+              />
+              <BestCommentNickname>{comment.commentWriter}</BestCommentNickname>
+              <BestCommentTime>{timeAgo(comment.createdDt)}</BestCommentTime>
+            </BestCommentHeader>
+            <BestCommentBody>
+              <BestCommentText>{comment.content}</BestCommentText>
+              <BestCommentActions>
+                <BestCommentLike>
+                  <CommentLikeIcon
+                    commentId={comment.id}
+                    authToken={authToken}
+                    initialLiked={comment.likeCommentStatus}
+                  />
+                  {comment.likeCount}
+                </BestCommentLike>
+                <BestCommentReport>🚨</BestCommentReport>
+              </BestCommentActions>
+            </BestCommentBody>
+          </BestCommentList>
+        ))
+      )}
     </BestCommentContainerList>
   );
 };
 
-export { OpenComment };
+export default OpenComment;
 
 // 베스트 픽 댓글 컨테이너를 감싸는 박스와 댓글 목록을 합친 박스
 const BestCommentContainerList = styled.div`
@@ -231,7 +223,6 @@ const BestCommentText = styled.div`
   padding: 5px 0;
   font-size: 14px;
   font-family: "esamanru Medium";
-  margin-left: 33px;
 `;
 
 // 베스트 픽 댓글 작동
@@ -340,54 +331,7 @@ const BestCommentBox = styled.button`
   }
 `;
 
-// 대댓글 폼 스타일
-const ReplyForm = styled.div`
-  display: flex;
-  padding: 10px 0;
-  input {
-    width: 100%;
-    outline: none;
-    border: none;
-    padding: 10px 0;
-    font-size: 14px;
-    background: transparent;
-    color: var(--text-color);
-    line-height: 1.5;
-  }
-`;
-
-// 대댓글 스타일
-const Reply = styled.div`
-  margin-top: 10px;
-  margin-bottom: 5px;
-  padding-left: 20px;
-  border-left: 2px solid #ddd;
-`;
-
-const ReplyHeader = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 7px;
-`;
-
-const ReplyProfile = styled.img`
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  object-fit: cover;
-`;
-
-const ReplyNickname = styled.div`
-  font-size: 10px;
-`;
-
-const ReplyTime = styled.div`
-  font-size: 10px;
-`;
-
-const ReplyBody = styled.div`
-  margin-left: 27px;
-  margin-top: 7px;
-  font-size: 14px;
-  font-family: "esamanru Medium";
+// 댓글이 없을 때 표시할 메시지 스타일
+const NoCommentsMessage = styled.p`
+  margin-top: 20px;
 `;

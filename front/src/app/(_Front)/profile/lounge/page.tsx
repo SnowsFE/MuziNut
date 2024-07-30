@@ -4,11 +4,12 @@ import styled from "styled-components";
 import Image from "next/image";
 import threedot from "../../../../../public/svgs/threedot.svg";
 import Link from "next/link";
-import { LikeIcon, CommentIcon } from "../../../components/icon/icon";
-import { OpenComment } from "./comment";
+import { CommentIcon } from "../../../components/icon/icon";
+import OpenComment from "./comment";
 import WriteEditor from "./WriteEditor";
 import { BannerData, ProfileData, useFileState } from "./loungeEdit";
 import ProfileEdit from "../profileEdit";
+import { LikeIcon } from "../../../components/LikePost/like";
 import AxiosURL from "@/app/axios/url";
 
 const UseridProfile: React.FC = () => {
@@ -154,7 +155,7 @@ const UseridProfile: React.FC = () => {
         if (response.ok) {
           // 성공적으로 삭제된 경우
           alert("게시글이 성공적으로 삭제되었습니다.");
-          window.history.replaceState(null, "", "/profile/lounge");
+          window.location.reload();
 
           const updatedContent = LoungePost.filter((_, i) => i !== index);
           setLoungePost(updatedContent);
@@ -174,6 +175,18 @@ const UseridProfile: React.FC = () => {
         alert("게시글 삭제 중 오류가 발생했습니다.");
       }
     }
+  };
+
+  const handlePostClick = (postId: number) => {
+    const url = `/profile/lounge#${postId}`;
+    window.history.replaceState(null, "", url);
+
+    setTimeout(() => {
+      const element = document.getElementById(postId.toString());
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }, 0);
   };
 
   return (
@@ -244,7 +257,11 @@ const UseridProfile: React.FC = () => {
           const loungeItem = LoungeForm[index];
           const postId = loungeItem?.id; // 게시글 ID를 가져옵니다.
           return (
-            <LoungeContainer key={postId} id={postId.toString()}>
+            <LoungeContainer
+              key={postId}
+              id={postId.toString()}
+              onClick={() => handlePostClick(postId)}
+            >
               <LoungeProfileInfo>
                 <LoungeProfileImage>
                   <Image
@@ -262,7 +279,10 @@ const UseridProfile: React.FC = () => {
                   ref={(el) => {
                     threedotRefs.current[index] = el;
                   }}
-                  onClick={() => handleThreeDotClick(index, postId)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleThreeDotClick(index, postId);
+                  }}
                 >
                   <Image
                     src={threedot}
@@ -286,7 +306,10 @@ const UseridProfile: React.FC = () => {
               {loungeItem && (
                 <LoungeLikeCommentContainer>
                   <LoungeLike>
-                    <LikeIcon />
+                    <LikeIcon
+                      postId={LoungeForm[index]?.id || 0}
+                      authToken={authToken}
+                    />
                     {loungeItem.like}
                   </LoungeLike>
                   <LoungeComment onClick={() => handleCommentToggle(index)}>
@@ -295,7 +318,7 @@ const UseridProfile: React.FC = () => {
                   </LoungeComment>
                 </LoungeLikeCommentContainer>
               )}
-              {openComments[index] && <OpenComment />}
+              {openComments[index] && <OpenComment loungeId={postId} />}
             </LoungeContainer>
           );
         })}
