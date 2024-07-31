@@ -127,6 +127,7 @@ const CommentContainer = styled.div`
 
 //댓글 내용
 const Content = styled.span`
+  max-width: 820px;
   margin-top: 19px;
   padding: 5px 15px;
   border-radius: 5px;

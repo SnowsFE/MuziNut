@@ -66,6 +66,7 @@ const ProfileImage = styled.img`
 
 // 프로필 정보
 const ProfileInfo = styled.div`
+  min-width: 200px;
   display: flex;
   flex-direction: column;
   gap: 5px;

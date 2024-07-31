@@ -2,14 +2,24 @@
 import styled from "styled-components";
 import threedot from "../../../../public/svgs/threedot.svg";
 import { MiniViewIcon } from "@/app/components/icon/icon";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import AxiosURL from "@/app/axios/url";
 import { getToken } from "@/app/common/common";
+import NoticeWriteQuill from "../../(_Front)/community/free-boards/writequill";
 
 // 글 작성 프로필
+interface WriterProfileInfoProps {
+  profileImg: string;
+  writer: string;
+  writerId: string;
+  createdDt: string;
+  view: number;
+  isBookmark: boolean;
+}
+
 interface WriterProfileInfoProps {
   profileImg: string;
   writer: string;
@@ -27,10 +37,14 @@ const WriterProfileInfo: React.FC<WriterProfileInfoProps> = ({
   view,
   isBookmark: initialIsBookmark,
 }) => {
+  const quillRef = useRef<any>(null);
   const [isBookmark, setIsBookmark] = useState<boolean>(initialIsBookmark);
   const authToken = getToken(); // 토큰을 추출합니다.
   const params = useParams<{ id: string }>();
   const id = params?.id;
+  const [editContent, setEditContent] = useState<string>("");
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [BoardsModal, setBoardsModal] = useState(false);
 
   useEffect(() => {
     const savedBookmarkStatus = localStorage.getItem(`bookmark-${id}`);
@@ -52,7 +66,7 @@ const WriterProfileInfo: React.FC<WriterProfileInfoProps> = ({
         const response = await axios.post(
           `${AxiosURL}/bookmark/${id}`,
           {
-            isBookmark: newBookmarkStatus, // 유저 정보에 따라 북마크 상태 결정
+            isBookmark: newBookmarkStatus,
           },
           {
             headers: {
@@ -95,28 +109,45 @@ const WriterProfileInfo: React.FC<WriterProfileInfoProps> = ({
   };
 
   const BoardsDelete = async () => {
-    try {
-      await axios.delete(`${AxiosURL}/community/free-boards/${id}`, {
-        headers: {
-          Authorization: `${authToken}`,
-        },
-      });
-    } catch {
-      console.log("게시글이 삭제되지 않았습니다");
+    if (window.confirm("정말로 게시글을 삭제하시겠습니까?")) {
+      try {
+        await axios.delete(`${AxiosURL}/community/free-boards/${id}`, {
+          headers: {
+            Authorization: `${authToken}`,
+          },
+        });
+        location.href = "/community/free-boards";
+      } catch {
+        console.log("게시글이 삭제되지 않았습니다");
+      }
+    } else {
+      console.log("게시글 삭제가 취소되었습니다.");
     }
   };
 
-  const [BoardsModal, setBoardsModal] = useState(false);
-  const openModal = () => {
-    setBoardsModal(true);
+  const toggleModal = () => {
+    setBoardsModal(!BoardsModal);
   };
 
-  const closeModal = () => {
-    setBoardsModal(false);
-  };
+  const modalRef = useRef<HTMLDivElement>(null);
 
-  const [editContent, setEditContent] = useState<string>("");
-  const [isEditing, setIsEditing] = useState<boolean>(false);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
+        setBoardsModal(false);
+        setIsEditing(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <ProfileContainer>
@@ -136,42 +167,43 @@ const WriterProfileInfo: React.FC<WriterProfileInfoProps> = ({
       </ProfileInfo>
       <ShareContainer>
         <BookMarkIcon />
-        <Image onClick={openModal} src={threedot} alt="수정 삭제" />
+        <Image onClick={toggleModal} src={threedot} alt="수정, 삭제" />
       </ShareContainer>
 
       {BoardsModal && (
         <ModalOverlay>
-          <ModalContent>
-            <button
+          <ModalContent ref={modalRef}>
+            <label
               onClick={() => {
                 setIsEditing(true);
-                closeModal();
+                toggleModal();
               }}
             >
-              수정하기
-            </button>
-            <button
+              수정
+            </label>
+            |
+            <label
               onClick={() => {
                 BoardsDelete();
-                closeModal();
+                toggleModal();
               }}
             >
-              삭제하기
-            </button>
-            <button onClick={closeModal}>닫기</button>
+              삭제
+            </label>
           </ModalContent>
         </ModalOverlay>
       )}
 
       {isEditing && (
-        <EditModal>
-          <textarea
-            value={editContent}
-            onChange={(e) => setEditContent(e.target.value)}
+        <>
+          <NoticeWriteQuill
+            ref={quillRef}
+            onPublish={(content) => console.log(content)}
+            onClose={() => console.log("닫기")}
+            initialContent={editContent}
+            boardId={id} // 현재 게시글 ID를 전달
           />
-          <button onClick={handleEditSubmit}>수정하기</button>
-          <button onClick={() => setIsEditing(false)}>취소</button>
-        </EditModal>
+        </>
       )}
     </ProfileContainer>
   );
@@ -181,6 +213,7 @@ export default WriterProfileInfo;
 
 // 프로필 컨테이너
 const ProfileContainer = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   padding-bottom: 10px;
@@ -261,24 +294,33 @@ const BookMark = styled.div`
 `;
 
 const ModalOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
 const ModalContent = styled.div`
-  background: white;
-  padding: 20px;
+  position: absolute;
   border-radius: 8px;
-  text-align: center;
+  right: -170px;
+  border: 1px solid #ccc;
+  padding: 20px 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  width: 100px;
+  gap: 10px;
+  font-family: "esamanru Bold";
+  font-size: 13px;
+  cursor: pointer;
+
+  label {
+    &:hover {
+      transform: scale(1.05);
+    }
+    cursor: pointer;
+  }
 `;
 
-const EditModal = styled.div`
-  /* 모달 스타일 추가 */
-`;
+const EditModal = styled.div``;
