@@ -158,7 +158,7 @@ const PostBox: React.FC = () => {
         <LikeButton>
           <LikeIcon
             postId={boardsData.id}
-            initialLiked={boardsData.boardLikeStatus}
+            initialLiked={boardsData.boardLikeStatus ? true : false}
           />
           {boardsData.likeCount}
         </LikeButton>
@@ -171,7 +171,6 @@ const PostBox: React.FC = () => {
           writer={comment.commentWriter}
           createdDt={comment.createdDt}
           content={comment.content}
-          boardLikeStatus={comment.boardLikeStatus}
           likeCount={comment.likeCount}
           replies={comment.replies}
           commentId={comment.id}

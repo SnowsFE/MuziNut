@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { LikeIcon, ReplyIcon } from "@/app/components/icon/icon";
+import { ReplyIcon } from "@/app/components/icon/icon";
 import Reply from "@/app/components/board/Reply";
 import WriteReplyForm from "../board/WriteReplyForm";
 import axios from "axios";
@@ -14,7 +14,7 @@ interface CommentProps {
   writer: string;
   createdDt: string;
   content: string;
-  boardLikeStatus: boolean;
+  // boardLikeStatus: boolean;
   likeCount: number;
   replies: any[];
   commentId: any;
@@ -25,44 +25,44 @@ const Comments: React.FC<CommentProps> = ({
   writer,
   createdDt,
   content,
-  boardLikeStatus,
+  // boardLikeStatus,
   likeCount,
   commentId,
   replies,
 }) => {
   let [modal, setModal] = useState(false); //대댓글 모달창
 
-  const authToken = getToken();
+  // const authToken = getToken();
 
-  const likeButtonHandler = async () => {
-    try {
-      const response = await axios.post(
-        `${AxiosURL}/comment-like/${commentId}`,
-        {},
-        {
-          headers: {
-            Authorization: `${authToken}`,
-          },
-        }
-      );
-      // 성공적으로 요청이 완료된 경우의 처리
-      console.log(response.data);
-    } catch (error) {
-      // error가 AxiosError인지 확인하고 타입을 명시적으로 변환
-      if (axios.isAxiosError(error)) {
-        if (error.response && error.response.status === 401) {
-          alert("만료된 토큰입니다"); // Todo: 리프레시 토큰 전송
-        } else if (error.response && error.response.status === 403) {
-          alert("권한이 없습니다");
-        } else {
-          console.error("Error:", error);
-        }
-      } else {
-        // AxiosError가 아닌 다른 에러 처리
-        console.error("Unexpected error:", error);
-      }
-    }
-  };
+  // const likeButtonHandler = async () => {
+  //   try {
+  //     const response = await axios.post(
+  //       `${AxiosURL}/comment-like/${commentId}`,
+  //       {},
+  //       {
+  //         headers: {
+  //           Authorization: `${authToken}`,
+  //         },
+  //       }
+  //     );
+  //     // 성공적으로 요청이 완료된 경우의 처리
+  //     console.log(response.data);
+  //   } catch (error) {
+  //     // error가 AxiosError인지 확인하고 타입을 명시적으로 변환
+  //     if (axios.isAxiosError(error)) {
+  //       if (error.response && error.response.status === 401) {
+  //         alert("만료된 토큰입니다"); // Todo: 리프레시 토큰 전송
+  //       } else if (error.response && error.response.status === 403) {
+  //         alert("권한이 없습니다");
+  //       } else {
+  //         console.error("Error:", error);
+  //       }
+  //     } else {
+  //       // AxiosError가 아닌 다른 에러 처리
+  //       console.error("Unexpected error:", error);
+  //     }
+  //   }
+  // };
 
   const replyButtonHandler = () => {
     modal == true ? setModal(false) : setModal(true);
