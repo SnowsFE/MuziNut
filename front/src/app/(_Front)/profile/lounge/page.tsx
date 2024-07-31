@@ -286,7 +286,7 @@ const UseridProfile: React.FC = () => {
                 >
                   <Image
                     src={threedot}
-                    alt="공유하기, 신고하기 기능"
+                    alt="수정, 삭제"
                     width={24}
                     height={24}
                   />
