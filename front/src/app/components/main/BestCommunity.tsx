@@ -11,6 +11,16 @@ const listItems = [
   { id: 5, titleName: "게시판 이름", authorName: "작성자", views: 100 }
 ];
 */
+const modifyPath = (dtype: string): string => {
+  switch (dtype) {
+    case "FreeBoard":
+      return "free-boards";
+    case "RecruitBoard":
+      return "recruit-boards";
+    default:
+      return dtype;
+  }
+};
 
 export default function BestCommunity() {
   // use훅으로 데이터 가져오는 부분
@@ -37,25 +47,28 @@ export default function BestCommunity() {
         <div className={styles.communityList__container}>
           <div className={styles.list__contents__wrap}>
             <ul>
-              {listItems.map((item, index) => (
-                <li key={item.boardId}>
-                  <a href={`/community/${item.dtype}/${item.boardId}`}>
-                    <LinkSytle>
-                      <div className={styles.list__container}>
-                        <div className={styles.list__title}>
-                          <span>
-                            {index + 1}. {item.title}
-                          </span>
+              {listItems.map((item, index) => {
+                const modifiedPath = modifyPath(item.dtype);
+                return (
+                  <li key={item.boardId}>
+                    <a href={`/community/${modifiedPath}/${item.boardId}`}>
+                      <LinkSytle>
+                        <div className={styles.list__container}>
+                          <div className={styles.list__title}>
+                            <span>
+                              {index + 1}. {item.title}
+                            </span>
+                          </div>
+                          <div className={styles.list__name__view}>
+                            <span>{item.nickname}</span>
+                            <span>{item.view}</span>
+                          </div>
                         </div>
-                        <div className={styles.list__name__view}>
-                          <span>{item.nickname}</span>
-                          <span>{item.view}</span>
-                        </div>
-                      </div>
-                    </LinkSytle>
-                  </a>
-                </li>
-              ))}
+                      </LinkSytle>
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>
