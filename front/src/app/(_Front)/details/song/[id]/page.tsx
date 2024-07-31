@@ -42,15 +42,30 @@ export default function Song() {
   // songID가 변경될 때만 렌더링 다시
   useEffect(() => {
     if (id) {
+      console.log("id", id)
       const fetchSongData = async () => {
         try {
-          const response = await fetch(`http://localhost:8080/music/${id}`);
+          const response = await fetch(`http://localhost:8080/music/${id}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + localStorage.getItem("token"),
+              }
+            }
+          );
           const data: SongData = await response.json();
           setSongData(data);
         } catch (error) {
           console.error("음악데이터 정보를 가져오는 데 실패했습니다.", error);
         }
       };
+
+
+
+
+     
+
 
       fetchSongData();
     }
@@ -87,10 +102,10 @@ export default function Song() {
       console.log("like수", songData.likeCount);
       console.log("like상태", songData.like);
       // 서버 요청은 비동기적으로 처리
-      // 서버에 데이터 전송
+    // 서버에 데이터 전송
       try {
         const response = await fetch(
-          `http:/localhost:8080/music/detail/${id}/songlike`,
+          `http://localhost:8080/music/detail/${id}/songlike`,
           {
             method: "POST",
             headers: {
@@ -99,8 +114,6 @@ export default function Song() {
             },
             body: JSON.stringify({
               songId: id,
-              like: newLikeStatus,
-              likeCount: newLikeCount,
             }),
           }
         );
