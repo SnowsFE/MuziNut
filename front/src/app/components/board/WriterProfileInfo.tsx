@@ -7,7 +7,7 @@ import Image from "next/image";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import AxiosURL from "@/app/axios/url";
-import { TokenInfo } from "@/app/common/common";
+import { getToken } from "@/app/common/common";
 
 // 글 작성 프로필
 interface WriterProfileInfoProps {
@@ -27,8 +27,8 @@ const WriterProfileInfo: React.FC<WriterProfileInfoProps> = ({
   view,
   isBookmark,
 }) => {
-  const tokenData = TokenInfo(); // 토큰 데이터를 가져옵니다.
-  const authToken = tokenData?.token; // 토큰을 추출합니다.
+  // const tokenData = TokenInfo(); // 토큰 데이터를 가져옵니다.
+  const authToken = getToken(); // 토큰을 추출합니다.
   const params = useParams<{ id: string }>();
   const id = params?.id;
 

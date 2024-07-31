@@ -11,6 +11,7 @@ import { BannerData, ProfileData, useFileState } from "./loungeEdit";
 import ProfileEdit from "../profileEdit";
 import { LikeIcon } from "../../../components/LikePost/like";
 import AxiosURL from "@/app/axios/url";
+import { getToken } from "@/app/common/common";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("lounge");
@@ -136,8 +137,7 @@ const UseridProfile: React.FC = () => {
     setWriteVisible(true);
   };
 
-  const authToken =
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjQ2MDczMzh9.BbvfPZE8fzZNQNJdyq0XQz7GaIUYhhLUhoup35KwlfC-92MHXOi3jkILH19lFdDVQkuwtFWRlyRbVZQW8a8QUA";
+  const authToken = getToken();
 
   const handleDelete = async (index: number) => {
     const postId = LoungeForm[index]?.id;
@@ -148,7 +148,7 @@ const UseridProfile: React.FC = () => {
         const response = await fetch(`${AxiosURL}/profile/lounge/${postId}`, {
           method: "DELETE",
           headers: {
-            Authorization: `Bearer ${authToken}`,
+            Authorization: `${authToken}`,
           },
         });
 
@@ -306,10 +306,7 @@ const UseridProfile: React.FC = () => {
               {loungeItem && (
                 <LoungeLikeCommentContainer>
                   <LoungeLike>
-                    <LikeIcon
-                      postId={LoungeForm[index]?.id || 0}
-                      authToken={authToken}
-                    />
+                    <LikeIcon postId={LoungeForm[index]?.id || 0} />
                     {loungeItem.like}
                   </LoungeLike>
                   <LoungeComment onClick={() => handleCommentToggle(index)}>

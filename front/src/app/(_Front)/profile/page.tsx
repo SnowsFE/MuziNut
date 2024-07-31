@@ -84,6 +84,7 @@ const UseridProfile: React.FC = () => {
             <SelectItem selected={selectedTab === "main"}>메인</SelectItem>
           </StyledLink>
           <StyledLink
+            // href={writerId ? `/profile/lounge${writerId}` : "/profile/lounge"}
             href={"/profile/lounge"}
             onClick={() => setSelectedTab("lounge")}
           >

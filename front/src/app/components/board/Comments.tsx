@@ -5,6 +5,8 @@ import Reply from "@/app/components/board/Reply";
 import WriteReplyForm from "../board/WriteReplyForm";
 import axios from "axios";
 import { getToken } from "@/app/common/common";
+import AxiosURL from "@/app/axios/url";
+import { CommentLikeIcon } from "../LikePost/like";
 
 // 댓글 컴포넌트
 interface CommentProps {
@@ -28,32 +30,38 @@ const Comments: React.FC<CommentProps> = ({
   commentId,
   replies,
 }) => {
-  const [comment, setComment] = useState({}); //사용자가 작성하는 댓글
-  const [comments, setComments] = useState({
-    profileImg: "",
-    writer: "",
-    createdDt: "",
-    contents: "",
-    boardLikeStatus: false,
-    likeCount: 0,
-  }); //서버로 부터 받아온 댓글들 (대댓글 포함)
   let [modal, setModal] = useState(false); //대댓글 모달창
 
   const authToken = getToken();
 
   const likeButtonHandler = async () => {
-    const response = await axios
-      .post(`http://localhost:8080/comment-like/${commentId}`, {
-        headers: {
-          Authorization: `${authToken}`,
-        },
-      })
-      .catch(function (error) {
-        if (error.response.data.status == 401) {
-          alert("만료된 토큰입니다"); //Todo 리프레시 토큰 전송
+    try {
+      const response = await axios.post(
+        `${AxiosURL}/comment-like/${commentId}`,
+        {},
+        {
+          headers: {
+            Authorization: `${authToken}`,
+          },
         }
-      })
-      .then((response) => {});
+      );
+      // 성공적으로 요청이 완료된 경우의 처리
+      console.log(response.data);
+    } catch (error) {
+      // error가 AxiosError인지 확인하고 타입을 명시적으로 변환
+      if (axios.isAxiosError(error)) {
+        if (error.response && error.response.status === 401) {
+          alert("만료된 토큰입니다"); // Todo: 리프레시 토큰 전송
+        } else if (error.response && error.response.status === 403) {
+          alert("권한이 없습니다");
+        } else {
+          console.error("Error:", error);
+        }
+      } else {
+        // AxiosError가 아닌 다른 에러 처리
+        console.error("Unexpected error:", error);
+      }
+    }
   };
 
   const replyButtonHandler = () => {
@@ -75,9 +83,8 @@ const Comments: React.FC<CommentProps> = ({
         </ProfileInfo>
         <Content>{content}</Content>
         <Option>
-          <LikeButton onClick={likeButtonHandler}>
-            <LikeIcon />
-            {boardLikeStatus ? true : false}
+          <LikeButton>
+            <CommentLikeIcon commentId={commentId} />
             <LikeCount>{likeCount}</LikeCount>
           </LikeButton>
           <span> | </span>
@@ -113,7 +120,7 @@ const CommentContainer = styled.div`
   display: flex;
   align-items: center;
   position: relative;
-  padding: 10px 0;
+  padding: 15px 0;
   border-bottom: 1px solid #ddd;
   font-family: "esamanru Medium";
 `;

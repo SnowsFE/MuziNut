@@ -6,7 +6,6 @@ import Comments from "@/app/components/board/Comments";
 import WriterProfileInfo from "@/app/components/board/WriterProfileInfo";
 import WriteCommentForm from "@/app/components/board/WriteCommentForm";
 import AxiosURL from "@/app/axios/url";
-import { getToken } from "@/app/common/common";
 import { useParams } from "next/navigation";
 import axios from "axios";
 
@@ -61,8 +60,6 @@ const PostBox: React.FC = () => {
 
   const [comments, setComments] = useState<CommentProps[]>([]);
   const [boardId, setBoardId] = useState<number | undefined>(undefined);
-
-  const authToken = getToken();
   const params = useParams();
   const id: any = params?.id;
 
@@ -134,7 +131,7 @@ const PostBox: React.FC = () => {
     };
 
     DetailBoards();
-  }, [id, authToken]);
+  }, [id]);
 
   const redirectToNotice = () => {
     window.location.href = "/community/free-boards";
@@ -167,23 +164,19 @@ const PostBox: React.FC = () => {
         </LikeButton>
       </Footer>
       <WriteCommentForm boardId={boardId} />
-      {comments && comments.length > 0 ? (
-        comments.map((comment, index) => (
-          <Comments
-            key={index}
-            profileImg={comment.commentProfileImg}
-            writer={comment.commentWriter}
-            createdDt={comment.createdDt}
-            content={comment.content}
-            boardLikeStatus={comment.boardLikeStatus}
-            likeCount={comment.likeCount}
-            replies={comment.replies}
-            commentId={comment.id}
-          />
-        ))
-      ) : (
-        <p>댓글이 없습니다.</p>
-      )}
+      {comments.map((comment, index) => (
+        <Comments
+          key={index}
+          profileImg={comment.commentProfileImg}
+          writer={comment.commentWriter}
+          createdDt={comment.createdDt}
+          content={comment.content}
+          boardLikeStatus={comment.boardLikeStatus}
+          likeCount={comment.likeCount}
+          replies={comment.replies}
+          commentId={comment.id}
+        />
+      ))}
     </Container>
   );
 };

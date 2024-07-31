@@ -12,6 +12,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
   });
 
   interface profileInfoProps {
+    userId: number;
     profileBannerImgName: string;
     profileImgName: string;
     nickname: string;
@@ -21,6 +22,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
   }
 
   const [profileInfo, setProfileInfo] = useState<profileInfoProps>({
+    userId: 0,
     profileBannerImgName: "",
     profileImgName: "",
     nickname: "닉네임",
@@ -74,7 +76,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
     });
   };
 
-  const authToken = getToken;
+  const authToken = getToken();
 
   const handleBannerSubmit = async (
     e: ChangeEvent<HTMLInputElement>,
@@ -110,7 +112,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
           {
             headers: {
               "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${authToken}`,
+              Authorization: `${authToken}`,
             },
           }
         );
@@ -155,7 +157,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
           {
             headers: {
               "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${authToken}`,
+              Authorization: `${authToken}`,
             },
           }
         );
@@ -181,9 +183,10 @@ export const useFileState = (onUpload: (data: any) => void) => {
           params: { userId },
         });
 
+        // 페이지 URL 업데이트
+
         setProfileInfo(res.data);
         setLoungeForm(res.data.loungesForms);
-        console.log(res.data);
 
         // 두 번째 요청을 첫 번째 요청의 결과를 사용하여 수행
         let temp: string[] = [];
