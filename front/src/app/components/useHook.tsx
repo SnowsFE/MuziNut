@@ -231,74 +231,9 @@ function useArtistFetchData({ url, key }: useArtistFetchDataProps) {
   return { data, loading, error };
 }
 
-
-
-
-// 검색 부분
-interface useSearchFetchDataProps {
-  url: string; // api의 url
-  keys: {
-    // 응답 객체의 키
-    Content: string;
-    PageSize: string;
-  };
-}
-export interface Content {
-  userId: number;
-  profileImg: string;
-  nickname: string;
-  followCount: number;
-}
-function useSearchFetchData({
-  url,
-  keys,
-}: useSearchFetchDataProps) {
-  const [contentData, setContentdData] = useState<Content[] | null>(
-    null
-  );
-  
-  const [contentNumData, setContentNumData] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      console.log("비동기 데이터 호출 시작!(useEffect 불림)");
-      setLoading(true);
-      try {
-        const response = await axios.get(url);
-        console.log("응답 데이터(JSON파싱 전)", response);
-
-        const serverResponse = response.data.totalData;
-        console.log("응답 데이터(JSON파싱 후)", serverResponse);
-
-        const contentData = serverResponse[keys.Content];
-        const contentNumData = serverResponse[keys.PageSize];
-        // const freeBoardData = serverResponse.freeBoardDtos;
-        // const recruitBoardData = serverResponse.recruitBoardDtos;
-        console.log("contentData!!!: ", contentData);
-        console.log("contentNumData!!!: ", contentNumData);
-
-        setContentdData(contentData);
-        setContentNumData(contentNumData);
-      } catch (error) {
-        console.error("fetching ERROR!!:", error);
-        setError(error as Error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [url, keys.Content, keys.PageSize]); // 의존성 배열에서 keys.free, keys.recruit 사용
-
-  return { contentData, contentNumData, loading, error };
-}
-
 export {
   useArtistFetchData,
   useCommunityFetchData,
   useMusicFetchData,
   useNewCommunityFetchData,
-  useSearchFetchData
 };

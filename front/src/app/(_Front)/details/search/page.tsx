@@ -1,263 +1,207 @@
 "use client";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import axios from "axios";
 import styles from "./page.module.css";
 import Image from "next/image";
-import ArtistTableRow, {
-  ArtistDataItem,
-} from "@/app/components/chart/ArtistList";
-import MusicTableRow from "@/app/components/chart/MusicList";
-import { TabContext } from "@/app/components/chart/TabProvider";
-import {
-  useArtistFetchData,
-  useMusicFetchData,
-  useSearchFetchData,
-} from "@/app/components/useHook";
+import MusicList from "@/app/components/main/MusicList";
 
-const Search = () => {
-  // TAB 선택부분 - 전체/앨범/아티스트
-  const [selectedTab, setSelectedTab] = useState("전체");
+type ArtistData = {
+  followCount: number;
+  nickname: string;
+  profileImg: string;
+  userId: number;
+};
 
-  console.log("search 페이지 접속");
+type SongData = {
+  songId: number;
+  albumImg: string;
+  title: string;
+  nickname: string;
+};
 
-  const [url, setUrl] = useState(
-    "http://localhost:8080/muzinut/이이?artistpage=1&songpage=2"
+const SearchPage: React.FC = () => {
+  const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
+  const [artistData, setArtistData] = useState<ArtistData[] | null>(null);
+  const [songData, setSongData] = useState<SongData[] | null>(null);
+  // 탭 상태 관리
+  const [selectedTab, setSelectedTab] = useState<"all" | "artist" | "song">(
+    "all"
   );
-  const [key, setKey] = useState("searchArtistDtos");
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (selectedTab === "전체") {
-      setUrl("http://localhost:8080/muzinut/이이?artistpage=1&songpage=2");
-      setKey("searchArtistDtos");
-    } else if (selectedTab === "앨범") {
-      setUrl("http://localhost:8080/muzinut/이이/song?page=1");
-      setKey("totalData");
-    } else if (selectedTab === "아티스트") {
-      setUrl("http://localhost:8080/muzinut/아이/artist?page=1");
-      setKey("totalData");
+    if (searchParams) {
+      const query = searchParams.get("query");
+      setSearchTerm(query || undefined);
     }
-  }, [selectedTab]);
+  }, [searchParams]);
 
-  // const { contentData, contentNumData, loading, error } = useSearchFetchData({
-  //   url: `http://localhost:8080/muzinut/이이?artistpage=1&songpage=2`, // 데이터 가져올 API 엔드포인트
-  //   keys: {
-  //     Content: "content",
-  //     PageSize: "pageSize",
-  //   }, // 응답 데이터의 키 });
-  // });
+  useEffect(() => {
+    if (searchTerm) {
+      const fetchData = async () => {
+        try {
+          let url = "";
 
-  // console.log("서버로부터 온 데이터(freeBoardData),", contentData);
-  // console.log("서버로부터 온 데이터(recruitBoardData),", contentNumData);
+          // 전체 탭인 경우 아티스트와 음악 정보를 모두 요청
+          if (selectedTab === "all") {
+            url = `http://localhost:8080/muzinut/${searchTerm}?artistpage=1&songpage=1`;
+          }
+          // 탭에 따라 데이터 요청
+          else if (selectedTab === "artist") {
+            url = `http://localhost:8080/muzinut/${searchTerm}/artist?page=1`;
+          } else if (selectedTab === "song") {
+            url = `http://localhost:8080/muzinut/${searchTerm}/song?page=1`;
+          }
 
-  // return (
+          const response = await axios.get(url);
+          console.log("응답 데이터(JSON파싱 전)", response.data);
+
+          if (selectedTab === "all") {
+            setArtistData(response.data.searchArtistDtos?.content || []);
+            console.log("artistData===", artistData);
+            setSongData(response.data.searchSongDtos?.content || []);
+            console.log("songData===", songData);
+          } else if (selectedTab === "artist") {
+            setArtistData(response.data.totalData?.content || []);
+            // setSongData(null);
+          } else if (selectedTab === "song") {
+            // setArtistData(null);
+            setSongData(response.data.totalData?.content || []);
+          }
+        } catch (error) {
+          console.error("데이터를 가져오는 데 실패했습니다.", error);
+        }
+      };
+      fetchData();
+    }
+  }, [searchTerm, selectedTab]);
+
+  return (
     <div className={styles.container}>
-      <h1>Search Results</h1>
-      {/* {loading && <p>Loading...</p>}
-      {error && <p>에러 발생!</p>} */}
-
-      <div className={styles.play__option__wrapper}>
-        {/* <div className={styles.container}>
-          {contentData && contentData.length > 0 ? (
-            <div className={styles.list__contents__wrap}>
-              <ul>
-                {contentData.map((item, index) => (
-                  <li key={item.userId}>
-                    <div className={styles.list__container}>
-                      <div className={styles.contents__container}>
-                        <div className={styles.ranking__Img}>
-                          <h1 className={styles.ranking}>{index + 1}.</h1>
-                          <Image
-                            src={
-                              item.profileImg
-                                ? `data:image/png;base64,${item.profileImg}`
-                                : ""
-                            }
-                            alt="album"
-                            width={80}
-                            height={80}
-                          />
-                        </div>
-
-                        <h4>{item.nickname}</h4>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <p>데이터를 불러올 수 없습니다.</p>
-          )}
-        </div> */}
-
-        <div className={styles.play__option}>
-          <button
-            className={selectedTab === "전체" ? styles.selected : ""}
-            onClick={() => setSelectedTab("전체")}
-          >
-            전체
-          </button>
-          <button
-            className={selectedTab === "앨범" ? styles.selected : ""}
-            onClick={() => setSelectedTab("앨범")}
-          >
-            앨범
-          </button>
-          <button
-            className={selectedTab === "아티스트" ? styles.selected : ""}
-            onClick={() => setSelectedTab("아티스트")}
-          >
-            아티스트
-          </button>
-        </div>
+      {/* 전체/앨범/아티스트 탭 부분 */}
+      <div className={styles.selected__tab}>
+        <button
+          className={selectedTab === "all" ? styles.selected : ""}
+          onClick={() => setSelectedTab("all")}
+        >
+          전체
+        </button>
+        <button
+          className={selectedTab === "artist" ? styles.selected : ""}
+          onClick={() => setSelectedTab("artist")}
+        >
+          아티스트
+        </button>
+        <button
+          className={selectedTab === "song" ? styles.selected : ""}
+          onClick={() => setSelectedTab("song")}
+        >
+          음악
+        </button>
       </div>
 
+      {/* 검색 결과 INFO */}
       <div className={styles.info__text}>
-        <a href="#">아이유</a> 에 대한 검색 결과 입니다.
+        <a href="#">{searchTerm}</a> 에 대한 검색 결과 입니다.
       </div>
 
-      {selectedTab === "전체" || selectedTab === "아티스트" ? (
+      {selectedTab === "all" || selectedTab === "artist" ? (
         <div className={styles.artist__wrapper}>
           <h2>아티스트</h2>
-          <ArtistList />
+          {/* <ArtistView /> */}
+          <>
+            <ul>
+              {artistData && artistData.length > 0 ? (
+                artistData.map((item) => (
+                  <li key={item.userId} className={styles.list__container}>
+                    <div className={styles.contents__container}>
+                      <div className={styles.ranking__Img}>
+                        <Image
+                          src={
+                            item.profileImg
+                              ? `data:image/png;base64,${item.profileImg}`
+                              : "/path/to/placeholder.png"
+                          }
+                          alt="artist image"
+                          width={80}
+                          height={80}
+                        />
+                      </div>
+                      <h4>{item.nickname}</h4>
+                      <p>팔로워: {item.followCount}</p>
+                    </div>
+                  </li>
+                ))
+              ) : (
+                <p>일치하는 정보가 없습니다.</p>
+              )}
+            </ul>
+          </>
         </div>
       ) : null}
 
-      {selectedTab === "전체" || selectedTab === "앨범" ? (
+      {selectedTab === "all" || selectedTab === "song" ? (
         <div className={styles.music__wrapper}>
           <h2>음악</h2>
-          <MusicList />
+          {/* <MusicView /> */}
+          <>
+            <div className={styles.play__option__container}>
+              <a href="#">
+                <button>전체 재생</button>
+              </a>
+              <a href="#">
+                <button>선택 재생</button>
+              </a>
+            </div>
+
+            <div className={styles.music__chart__container}>
+              <table className={styles.table__container}>
+                <thead>
+                  <tr className={styles.blind}>
+                    <th>체크박스</th>
+                    <th>썸네일</th>
+                    <th>랭킹</th>
+                    <th>음악이름</th>
+                    <th>가수 이름</th>
+                    <th>재생</th>
+                    <th>옵션</th>
+                  </tr>
+                </thead>
+                <tbody className={styles.table__row}>
+                  {songData && songData.length > 0 ? (
+                    songData.map((item, index) => (
+                      <MusicList
+                        key={item.songId}
+                        musicChartData={item}
+                        index={index}
+                        showCheckbox={true}
+                      />
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={7} className={styles.null__info}>
+                        {" "}
+                        일치하는 정보가 없습니다.{" "}
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </>
         </div>
       ) : null}
     </div>
-  // );
-};
-
-export default Search;
-
-const ITEMS_PER_PAGE__ARTIST = 5;
-const ITEMS_PER_PAGE__MUSIC = 10;
-const ArtistList = () => {
-  // const allRows = Array.from({ length: 32 }, (_, index) => (
-  //   <ArtistTableRow key={index} />
-  // ));
-  // const [currentPage, setCurrentPage] = useState(1);
-
-  // const totalPages = Math.ceil(allRows.length / ITEMS_PER_PAGE__ARTIST);
-
-  // const handlePageClick = (pageNum: React.SetStateAction<number>) => {
-  //   setCurrentPage(pageNum);
-  // };
-
-  // const handleNextPage = () => {
-  //   setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
-  // };
-
-  // const handlePrevPage = () => {
-  //   setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
-  // };
-
-  // const startIdx = (currentPage - 1) * ITEMS_PER_PAGE__ARTIST;
-  // const currentRows = allRows.slice(
-  //   startIdx,
-  //   startIdx + ITEMS_PER_PAGE__ARTIST
-  // );
-
-  return (
-    <div className={styles.artist__container}>
-      {/*  <table className={styles.table}>
-        <tbody>
-          {listItems && listItems.length > 0 ? (
-            listItems.map((item, index) => (
-              <ArtistList
-                key={item.userId}
-                index={index}
-                artistChartData={item}
-              />
-            ))
-          ) : (
-            // 데이터가 없을 때
-            <tr>
-              <td colSpan={6}>데이터를 불러올 수 없습니다.</td>
-            </tr>
-          )}
-        </tbody> 
-      </table>
-      <div className={styles.pagination}>
-        <button onClick={handlePrevPage} disabled={currentPage === 1}>
-          이전
-        </button>
-        {[...Array(totalPages)].map((_, index) => (
-          <button
-            key={index}
-            onClick={() => handlePageClick(index + 1)}
-            className={currentPage === index + 1 ? styles.active : ""}
-          >
-            {index + 1}
-          </button>
-        ))}
-        <button onClick={handleNextPage} disabled={currentPage === totalPages}>
-          다음
-        </button>
-      </div>*/}
-
-      검색 페이지
-    </div>
   );
 };
 
-const MusicList = () => {
-  const allRows = Array.from({ length: 25 }, (_, index) => (
-    <MusicTableRow key={index} />
-  ));
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const totalPages = Math.ceil(allRows.length / ITEMS_PER_PAGE__MUSIC);
-
-  const handlePageClick = (pageNum: React.SetStateAction<number>) => {
-    setCurrentPage(pageNum);
-  };
-
-  const handleNextPage = () => {
-    setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
-  };
-
-  const handlePrevPage = () => {
-    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
-  };
-
-  const startIdx = (currentPage - 1) * ITEMS_PER_PAGE__MUSIC;
-  const currentRows = allRows.slice(startIdx, startIdx + ITEMS_PER_PAGE__MUSIC);
-
-  return (
-    <div className={styles.music__container}>
-      <div className={styles.play__option}>
-        <a href="#">
-          <button>전체 재생</button>
-        </a>
-        <a href="#">
-          <button>선택 재생</button>
-        </a>
-      </div>
-      <table className={styles.table}>
-        <tbody>{currentRows}</tbody>
-      </table>
-      <div className={styles.pagination}>
-        <button onClick={handlePrevPage} disabled={currentPage === 1}>
-          이전
-        </button>
-        {[...Array(totalPages)].map((_, index) => (
-          <button
-            key={index}
-            onClick={() => handlePageClick(index + 1)}
-            className={currentPage === index + 1 ? styles.active : ""}
-          >
-            {index + 1}
-          </button>
-        ))}
-        <button onClick={handleNextPage} disabled={currentPage === totalPages}>
-          다음
-        </button>
-      </div>
-    </div>
-  );
+const ArtistView = () => {
+  return <div>glgl</div>;
 };
+
+const MusicView = () => {
+  return <></>;
+};
+
+export default SearchPage;
