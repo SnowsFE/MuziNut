@@ -66,10 +66,11 @@ const ProfileImage = styled.img`
 
 // 프로필 정보
 const ProfileInfo = styled.div`
-  min-width: 200px;
+  min-width: 150px;
   display: flex;
   flex-direction: column;
   gap: 5px;
+  margin-bottom: 3px;
   margin-right: 10px;
 `;
 

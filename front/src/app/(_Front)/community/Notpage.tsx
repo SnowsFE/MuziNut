@@ -13,12 +13,12 @@ const Main: React.FC = () => {
       <Headers />
       <SelectBar>
         <SelectContainer>
-          <StyledLink
+          {/* <StyledLink
             href={"/community"}
             onClick={() => setSelectedTab("community")}
           >
             <SelectItem selected={selectedTab === "community"}>메인</SelectItem>
-          </StyledLink>
+          </StyledLink> */}
           <StyledLink
             href={"/community/free-boards"}
             onClick={() => setSelectedTab("free-boards")}

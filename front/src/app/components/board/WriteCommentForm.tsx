@@ -61,12 +61,12 @@ const WriteCommentForm: React.FC<CommentFormProps> = ({ boardId }) => {
           value={comment}
           onChange={handleCommentChange}
           placeholder="댓글을 입력하세요..."
-          maxLength={500} // 최대 입력 글자 수
+          maxLength={200} // 최대 입력 글자 수
         />
         <CommentSubmitButton onClick={handleCommentSubmit}>
           <Submit />
         </CommentSubmitButton>
-        <CommentLength>{commentLength}/500</CommentLength>
+        <CommentLength>{commentLength}/200</CommentLength>
       </CommentInputContainer>
     </CommentsSection>
   );
