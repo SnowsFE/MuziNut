@@ -16,7 +16,7 @@ export type SongData = {
   lyrics: string;
   composer: string;
   lyricist: string;
-  albumId: 1;
+  albumId: number;
   genres: [];
   like: boolean;
 };
@@ -66,9 +66,6 @@ export default function Song() {
 
   if (!songData) return <div>Loading...</div>;
 
-
-
-
   // 좋아요 버튼 눌렀을 경우
   const handleLikeBtn = async () => {
     if (songData) {
@@ -87,23 +84,26 @@ export default function Song() {
         like: newLikeStatus,
       });
 
-      console.log('like수', songData.likeCount);
-      console.log('like상태', songData.like);
+      console.log("like수", songData.likeCount);
+      console.log("like상태", songData.like);
       // 서버 요청은 비동기적으로 처리
       // 서버에 데이터 전송
       try {
-        const response = await fetch("http:/localhost:8080/update-like", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            'Authorization': `Bearer ${token}`, 
-          },
-          body: JSON.stringify({
-            albumId: songData.albumId,
-            like: newLikeStatus,
-            likeCount: newLikeCount,
-          }),
-        });
+        const response = await fetch(
+          `http:/localhost:8080/music/detail/${id}/songlike`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+            body: JSON.stringify({
+              songId: id,
+              like: newLikeStatus,
+              likeCount: newLikeCount,
+            }),
+          }
+        );
 
         if (!response.ok) {
           // 서버 응답이 실패한 경우, UI 상태 제자리로
@@ -111,10 +111,12 @@ export default function Song() {
           setSongData({
             ...songData,
             likeCount: songData.likeCount,
-            like: songData.like
+            like: songData.like,
           });
-          console.log('like수22', songData.likeCount);
-          console.log('like상태22', songData.like);
+          console.log("like수22", songData.likeCount);
+          console.log("like상태22", songData.like);
+        } else {
+          alert("좋아요 업데이트 성공!");
         }
       } catch (error) {
         // 네트워크 오류가 발생한 경우, UI 상태 제자리로
@@ -122,14 +124,12 @@ export default function Song() {
         setSongData({
           ...songData,
           likeCount: songData.likeCount,
-          like: songData.like
+          like: songData.like,
         });
         console.error("Error updating like:", error);
       }
     }
   };
-
- 
 
   return (
     <div className={styles.container}>

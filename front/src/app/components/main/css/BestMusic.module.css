@@ -80,3 +80,9 @@
 .song:hover {
   text-decoration: underline;
 }
+
+.play__btn .btn, .option .btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}

@@ -14,9 +14,10 @@ props로 musicChartData(음악 데이터), index(랭킹), showCheckbox(체크박
 
 import styles from "./css/BestMusic.module.css";
 import Image from "next/image";
-import search from "../../../../public/images/favicon.png";
 import Link from "next/link";
-
+import playBtn from "@/../../public/svgs/play_btn.svg"
+import threeDot from "@/../../public/svgs/threedot.svg"
+import albumDefaultImg from "@/../../public/images/Muzinut.png"
 export type MusicDataItem = {
   songId: number;
   albumImg: string;
@@ -51,7 +52,7 @@ const MusicList: React.FC<MusicListProps> = ({
           src={
             musicChartData.albumImg
               ? `data:image/png;base64,${musicChartData.albumImg}`
-              : search
+              : albumDefaultImg
           }
           alt="album"
           width={50}
@@ -78,13 +79,13 @@ const MusicList: React.FC<MusicListProps> = ({
     {/* 6. 옵션1 */}
     <td className={styles.play__btn}>
       <button className={styles.btn}>
-        <Image src={search} alt="play" width={30} height={30} />
+        <Image src={playBtn} alt="play" width={30} height={30} />
       </button>
     </td>
-    {/* 7. 옵션2 - 재생 버튼 */}
+    {/* 7. 옵션2  */}
     <td className={styles.option}>
       <button className={styles.btn}>
-        <Image src={search} alt="option" width={30} height={30} />
+        <Image src={threeDot} alt="option" width={30} height={30} />
       </button>
     </td>
   </tr>

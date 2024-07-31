@@ -42,12 +42,8 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
     if (searchTerm.trim() === "") {
       return; // 검색어가 비어 있으면 리디렉션 XX
     }
-    // 검색어를 포함한 URL로 리디렉션
     //encodeURIComponent- 인코딩하여 URL-safe한 형식으로 변환
-    
-    // router.push(`/details/search?query=${encodeURIComponent(searchTerm)}`);
-    router.push('/details/search?');
-    // 검색어 초기화
+    router.push(`/details/search?query=${encodeURIComponent(searchTerm)}`);
     setSearchTerm("");
   };
 
