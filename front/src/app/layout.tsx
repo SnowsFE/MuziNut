@@ -7,7 +7,11 @@ import { usePathname } from "next/navigation";
 import { UserProvider } from "./components/UserContext";
 
 // Header랑 Sidebar 안 나오게 하는 페이지들
-const HIDDEN_HEADERS = ["/member/login", "/member/signup", "/member/reset-password"];
+const HIDDEN_HEADERS = [
+  "/member/login",
+  "/member/signup",
+  "/member/reset-password",
+];
 
 export default function RootLayout({
   children,
@@ -33,28 +37,26 @@ export default function RootLayout({
 
   return (
     <UserProvider>
-
-    <html lang="ko">
-      <body>
-        <div className={styles.container}>
-          <div
-            className={isSidebarOpen ? styles.side__open : styles.side__close}
-          >
-            {!isHiddenHeader && (
-              <div className={styles.header__side}>
-                <HeaderAndSide
-                  isSidebarOpen={isSidebarOpen}
-                  toggleSidebar={toggleSidebar}
-                />
-              </div>
-            )}
-            <main className={styles.main__page}>{children}</main>
+      <html lang="ko">
+        <body>
+          <div className={styles.container}>
+            <div
+              className={isSidebarOpen ? styles.side__open : styles.side__close}
+            >
+              {!isHiddenHeader && (
+                <div className={styles.header__side}>
+                  <HeaderAndSide
+                    isSidebarOpen={isSidebarOpen}
+                    toggleSidebar={toggleSidebar}
+                  />
+                </div>
+              )}
+              <main className={styles.main__page}>{children}</main>
+            </div>
           </div>
-        </div>
-      </body>
-    </html>
+        </body>
+      </html>
     </UserProvider>
-
   );
 }
 
