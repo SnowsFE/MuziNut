@@ -73,7 +73,7 @@ const UserProfile = ({ userInfo, onLogout }: UserProfileProps) => {
 
   console.log("로그인 후 사용자 정보", userInfo);
 
- const userNickName = userInfo.nickname
+  const userNickName = userInfo.nickname;
   return (
     <div>
       <div className={styles.login__btn__container}>
@@ -94,7 +94,11 @@ const UserProfile = ({ userInfo, onLogout }: UserProfileProps) => {
         <div className={styles.user__detail__box}>
           <div className={styles.my__and__book}>
             <Link
+<<<<<<< HEAD
+              href={`/profile#${userNickName}`}
+=======
               href={`/profile/#${userNickName}`}
+>>>>>>> c8f05c86ac40114376351b06b59ae91c050c1afe
               className={styles.my__page}
               onClick={handleLinkClick}
             >

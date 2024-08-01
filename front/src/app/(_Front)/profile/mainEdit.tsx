@@ -3,6 +3,7 @@ import styled from "styled-components";
 import axios from "axios";
 import AxiosUrl from "@/app/axios/url";
 import { getToken } from "@/app/common/common";
+import { useUser } from "@/app/components/UserContext";
 
 // useFileState 훅과 초기 데이터
 export const useFileState = (onUpload: (data: any) => void) => {
@@ -174,22 +175,15 @@ export const useFileState = (onUpload: (data: any) => void) => {
     }
   };
 
-  // 메인 Get 통신 데이터
-  // const [userId, setUserId] = useState<string>();
+  const { user } = useUser();
+  const UserData = user?.nickname;
 
-  // useEffect(() => {
-  //   const UserCheck = localStorage.getItem("nickname");
-  //   if (UserCheck) {
-  //     setUserId(UserCheck);
-  //   }
-  // }, []);
-
-  const [userId, setUserId] = useState(2);
+  const [userId, setUserId] = useState(UserData);
 
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const response = await axios.get(`${AxiosUrl}/profile`, {
+        const response = await axios.get(`${AxiosUrl}/profile/`, {
           params: { userId },
         });
         const data = response.data;

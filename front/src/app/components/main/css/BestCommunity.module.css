@@ -18,6 +18,11 @@
   border-bottom: 2px solid gray;
   /* background-color: yellow; */
 }
+
+.p {
+  padding: 0 0 0 25px;
+}
+
 .title h4 {
   color: rgb(161, 161, 161);
   margin-top: 20px;

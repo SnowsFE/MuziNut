@@ -9,8 +9,12 @@ import ProfileEdit from "./profileEdit";
 import Spinner from "@/app/components/LodingSpinner";
 import FollowButton from "@/app/components/button/Followingbutton";
 import { getToken } from "@/app/common/common";
+import { useUser } from "@/app/components/UserContext";
 
 const UseridProfile: React.FC = () => {
+  const { user } = useUser();
+  const UserData = user?.nickname;
+
   const [selectedTab, setSelectedTab] = useState("main");
   const [profileBannerImgName, setProfileBannerImgName] = useState<string>("");
   const [profileImgName, setProfileImgName] = useState<string>("");
@@ -101,30 +105,33 @@ const UseridProfile: React.FC = () => {
       </Profile>
       <SelectBar>
         <SelectContainer>
-          <StyledLink href={"/profile"} onClick={() => setSelectedTab("main")}>
+          <StyledLink
+            href={`/profile#${UserData}`}
+            onClick={() => setSelectedTab("main")}
+          >
             <SelectItem selected={selectedTab === "main"}>메인</SelectItem>
           </StyledLink>
           <StyledLink
-            href={"/profile/lounge"}
+            href={`/profile/lounge#${UserData}`}
             onClick={() => setSelectedTab("lounge")}
           >
             <SelectItem selected={selectedTab === "lounge"}>라운지</SelectItem>
           </StyledLink>
           <StyledLink
-            href={"/profile/boards"}
+            href={`/profile/boards#${UserData}`}
             onClick={() => setSelectedTab("boards")}
           >
             <SelectItem selected={selectedTab === "boards"}>게시글</SelectItem>
           </StyledLink>
           <StyledLink
-            href={"/profile/plynut"}
+            href={`/profile/plynut#${UserData}`}
             onClick={() => setSelectedTab("plynut")}
           >
             <SelectItem selected={selectedTab === "plynut"}>플리넛</SelectItem>
           </StyledLink>
           |
           <StyledLink
-            href={"/profile/nuts"}
+            href={`/profile/nuts#${UserData}`}
             onClick={() => setSelectedTab("nuts")}
           >
             <SelectItem selected={selectedTab === "nuts"}>넛츠</SelectItem>
