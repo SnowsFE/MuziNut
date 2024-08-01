@@ -6,7 +6,8 @@ import { useMusicFetchData } from "../useHook";
 import { useEffect, useState } from "react";
 import useMusicPlayer from "../player/useMusicPlayer"; // useMusicPlayer 훅 가져오기
 import Player from "../player/Player";
-import playBtn from "@/../../public/svgs/play_btn.svg"
+import playBtn from "@/../../public/svgs/play_btn.svg";
+import Link from "next/link";
 
 export default function NewMusic() {
   const {
@@ -18,8 +19,8 @@ export default function NewMusic() {
     key: "newSongs",
   });
 
-   // 재생 기능 불러오기================
-   const {
+  // 재생 기능 불러오기================
+  const {
     currentTrack,
     isPlaying,
     playlist,
@@ -27,7 +28,6 @@ export default function NewMusic() {
     handlePlayButtonClick,
     handlePlayPause,
   } = useMusicPlayer();
-
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsPerPage = 5;
@@ -45,7 +45,7 @@ export default function NewMusic() {
       nextSlide();
     }, 3000); // 1초마다 이동
 
-    return () => clearInterval(intervalId); 
+    return () => clearInterval(intervalId);
   }, [currentIndex, listItems]);
 
   const nextSlide = () => {
@@ -72,7 +72,7 @@ export default function NewMusic() {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
-  
+
   return (
     <div className={styles.container}>
       {listItems && listItems.length > 0 ? (
@@ -100,12 +100,20 @@ export default function NewMusic() {
                       className={styles.playButton}
                       onClick={() => handlePlay(item.songId)}
                     >
-                      <Image src={playBtn} alt="play" width={150} height={150}/>
+                      <Image
+                        src={playBtn}
+                        alt="play"
+                        width={150}
+                        height={150}
+                      />
                     </button>
                   </div>
                   <div className={styles.info}>
-                    <h2>{item.title}</h2>
-                    <h3>{item.nickname}</h3>
+                  <h2>
+                      <Link href={`/details/song/${item.songId}`}>{item.title}</Link>
+                    </h2>
+
+                    <h3><Link href="/profile/lounge">{item.nickname}</Link></h3>
                   </div>
                 </div>
               ))}

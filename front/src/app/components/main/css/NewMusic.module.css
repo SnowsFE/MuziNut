@@ -44,6 +44,17 @@
     text-align: center;
     /* border: 1px solid red; */
 }
+.info a {
+  text-decoration: none;
+  color: inherit;
+}
+.info h2:hover {
+  text-decoration: underline;
+}
+.info h3:hover {
+  color: green;
+}
+
 .container {
   /* 기존 스타일 */
 }
