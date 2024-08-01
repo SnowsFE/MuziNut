@@ -5,6 +5,9 @@ import axios from "axios";
 import styles from "./page.module.css";
 import Image from "next/image";
 import MusicList from "@/app/components/main/MusicList";
+import useMusicPlayer from "@/app/components/player/useMusicPlayer";
+import Player from "@/app/components/player/Player";
+import Link from "next/link";
 
 type ArtistData = {
   followCount: number;
@@ -30,6 +33,18 @@ const SearchPage: React.FC = () => {
   );
   const searchParams = useSearchParams();
 
+    // 재생 기능 불러오기================
+    const {
+      currentTrack,
+      isPlaying,
+      playlist,
+      setPlaylist,
+      handlePlayButtonClick,
+      handlePlayPause,
+    } = useMusicPlayer();
+
+    
+    
   useEffect(() => {
     if (searchParams) {
       const query = searchParams.get("query");
@@ -128,8 +143,10 @@ const SearchPage: React.FC = () => {
                           height={80}
                         />
                       </div>
-                      <h4>{item.nickname}</h4>
-                      <p>팔로워: {item.followCount}</p>
+                      <div className={styles.artist__info}>
+                        <h4><Link href='/profile/lounge'>{item.nickname}</Link></h4>
+                        <p>팔로워: {item.followCount}</p>
+                      </div>
                     </div>
                   </li>
                 ))
@@ -176,6 +193,9 @@ const SearchPage: React.FC = () => {
                         musicChartData={item}
                         index={index}
                         showCheckbox={true}
+                        onPlayButtonClick={(songId) =>
+                          handlePlayButtonClick(songId, songData)
+                        }
                       />
                     ))
                   ) : (
@@ -192,6 +212,19 @@ const SearchPage: React.FC = () => {
           </>
         </div>
       ) : null}
+
+{currentTrack && (
+        <Player
+          toggleModal={() => {}}
+          hidePlayer={() => {}}
+          currentTrack={currentTrack}
+          isPlaying={isPlaying}
+          onPlayPause={handlePlayPause}
+          playlist={playlist}
+          setPlaylist={setPlaylist}
+        />
+      )}
+      
     </div>
   );
 };
