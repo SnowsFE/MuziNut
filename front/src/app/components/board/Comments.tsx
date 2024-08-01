@@ -62,38 +62,6 @@ const Comments: React.FC<CommentProps> = ({
     }
   };
 
-  // const authToken = getToken();
-
-  // const likeButtonHandler = async () => {
-  //   try {
-  //     const response = await axios.post(
-  //       `${AxiosURL}/comment-like/${commentId}`,
-  //       {},
-  //       {
-  //         headers: {
-  //           Authorization: `${authToken}`,
-  //         },
-  //       }
-  //     );
-  //     // 성공적으로 요청이 완료된 경우의 처리
-  //     console.log(response.data);
-  //   } catch (error) {
-  //     // error가 AxiosError인지 확인하고 타입을 명시적으로 변환
-  //     if (axios.isAxiosError(error)) {
-  //       if (error.response && error.response.status === 401) {
-  //         alert("만료된 토큰입니다"); // Todo: 리프레시 토큰 전송
-  //       } else if (error.response && error.response.status === 403) {
-  //         alert("권한이 없습니다");
-  //       } else {
-  //         console.error("Error:", error);
-  //       }
-  //     } else {
-  //       // AxiosError가 아닌 다른 에러 처리
-  //       console.error("Unexpected error:", error);
-  //     }
-  //   }
-  // };
-
   const replyButtonHandler = () => {
     modal == true ? setModal(false) : setModal(true);
   };
@@ -122,11 +90,9 @@ const Comments: React.FC<CommentProps> = ({
             <ReplyIcon></ReplyIcon>
           </ReplyButton>
         </Option>
-        {/* 대댓글 모달창 */}
         {modal == true ? (
           <WriteReplyForm commentId={commentId}></WriteReplyForm>
         ) : null}
-        {/* 대댓글 리스트 */}
       </CommentContainer>
 
       {replies.map((reply, index) => (
@@ -194,8 +160,6 @@ const ProfileInfo = styled.div`
   flex-direction: column;
   padding-right: 10px;
   gap: 5px;
-  min-width: 100px;
-  max-width: 100px;
 `;
 
 // 프로필 이름
