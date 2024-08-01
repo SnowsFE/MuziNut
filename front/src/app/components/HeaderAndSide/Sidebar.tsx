@@ -95,13 +95,14 @@ export default function Sidebar({ isSidebarOpen }: SidebarProps) {
                       </Link>
                     </li>
                     <li>
-                      <Link href="/community/request-boards">
-                        <span>게시판 요청</span>
+                      {" "}
+                      <Link href="/community/recruit-boards">
+                        <span>모집</span>
                       </Link>
                     </li>
                     <li>
-                      <Link href="/community/recruit-boards">
-                        <span>모집</span>
+                      <Link href="/community/request-boards">
+                        <span>게시판 요청</span>
                       </Link>
                     </li>
                   </ul>
