@@ -54,15 +54,11 @@ function useCommunityFetchData({ url, key }: UseCommunityFetchDataProps) {
         // error.response가 존재하는 경우에만 에러 처리
         if (axios.isAxiosError(error) && error.response) {
           if (error.response.status === 204) {
-            console.log("데이터가 존재하지 않습니다.")
+            console.log("데이터가 존재하지 않습니다.");
             return;
-          }
-           else {
+          } else {
             alert("[error] 서버와 통신 오류 발생.");
           }
-        } else {
-          //axios 에러가 아닌 다른 예외가 발생한 경우
-          alert("[error] 오류가 발생했습니다. 다시 시도해주세요.");
         }
       } finally {
         setLoading(false);
@@ -131,15 +127,11 @@ function useNewCommunityFetchData({
         // error.response가 존재하는 경우에만 에러 처리
         if (axios.isAxiosError(error) && error.response) {
           if (error.response.status === 204) {
-            console.log("데이터가 존재하지 않습니다.")
+            console.log("데이터가 존재하지 않습니다.");
             return;
-          }
-           else {
+          } else {
             alert("[error] 서버와 통신 오류 발생.");
           }
-        } else {
-          //axios 에러가 아닌 다른 예외가 발생한 경우
-          alert("[error] 오류가 발생했습니다. 다시 시도해주세요.");
         }
       } finally {
         setLoading(false);
@@ -224,7 +216,7 @@ function useArtistFetchData({ url, key }: useArtistFetchDataProps) {
           headers: {
             "Content-Type": "application/json",
             Authorization: token ? `Bearer ${token}` : "", // 토큰이 없으면 빈 문자열로 설정
-          }
+          },
         });
         console.log("응답 데이터(JSON파싱 전)", response);
 
@@ -246,15 +238,11 @@ function useArtistFetchData({ url, key }: useArtistFetchDataProps) {
         // error.response가 존재하는 경우에만 에러 처리
         if (axios.isAxiosError(error) && error.response) {
           if (error.response.status === 204) {
-            console.log("데이터가 존재하지 않습니다.")
+            console.log("데이터가 존재하지 않습니다.");
             return;
-          }
-           else {
+          } else {
             alert("[error] 서버와 통신 오류 발생.");
           }
-        } else {
-          //axios 에러가 아닌 다른 예외가 발생한 경우
-          alert("[error] 오류가 발생했습니다. 다시 시도해주세요.");
         }
       } finally {
         setLoading(false);
