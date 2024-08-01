@@ -132,7 +132,7 @@ const NoticeWriteQuill = forwardRef(
         const response = await fetch(url, {
           method,
           headers: {
-            Authorization: `${authToken}`,
+            Authorization: authToken,
           },
           body: formData,
         });
@@ -163,7 +163,7 @@ const NoticeWriteQuill = forwardRef(
     const handleOverlayClick = (e: React.MouseEvent) => {
       if (e.target === e.currentTarget) {
         setVisible(false);
-        setTimeout(() => onClose(), 500);
+        onClose();
       }
     };
 
@@ -194,6 +194,7 @@ const NoticeWriteQuill = forwardRef(
               onClick={() => {
                 setVisible(false);
                 onClose();
+                window.location.reload();
               }}
             >
               취소

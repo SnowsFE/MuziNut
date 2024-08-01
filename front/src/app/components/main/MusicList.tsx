@@ -72,7 +72,7 @@
 //     </td>
 //     {/* 5. 가수 = 프로필 페이지로 이동 */}
 //     <td className={styles.artist}>
-//       <Link href={`/profile/lounge`}>
+//       <Link href={`/profile`}>
 //         <span>{musicChartData.nickname}</span>
 //       </Link>
 //     </td>

@@ -7,6 +7,8 @@ import { BannerData, ProfileData, useFileState } from "./mainEdit";
 import { BaseImgBox } from "@/app/components/icon/icon";
 import ProfileEdit from "./profileEdit";
 import Spinner from "@/app/components/LodingSpinner";
+import FollowButton from "@/app/components/button/Followingbutton";
+import { getToken } from "@/app/common/common";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("main");
@@ -43,6 +45,8 @@ const UseridProfile: React.FC = () => {
 
   const limitedAlbums = albumArrayInfo.slice(0, 5); // 최대 5곡
 
+  const Token = getToken();
+
   return (
     <ProfileContainer>
       <Banner>
@@ -69,13 +73,30 @@ const UseridProfile: React.FC = () => {
         <ProfileData onUpload={onUpload} />
         <ProfileInfo>
           <ProfileName>{profileInfo.nickname}</ProfileName>
-          <FollowInfo>
-            팔로잉 {profileInfo.followingCount} &nbsp; 팔로워{" "}
-            {profileInfo.followersCount}
-          </FollowInfo>
-          <ProfileDescription>
-            {profileInfo.intro || "자기소개를 입력하세요"}
-          </ProfileDescription>
+          {Token ? (
+            <>
+              <FollowInfo>
+                팔로잉 {profileInfo.followingCount} &nbsp; 팔로워{" "}
+                {profileInfo.followersCount}
+              </FollowInfo>
+              <ProfileDescription>
+                {profileInfo.intro || "자기소개를 입력하세요"}
+              </ProfileDescription>
+            </>
+          ) : (
+            <>
+              <FollowInfo>
+                팔로잉 {profileInfo.followingCount} &nbsp; 팔로워{" "}
+                {profileInfo.followersCount}
+              </FollowInfo>
+              <Link href="/member/login">
+                <FollowButton />
+              </Link>
+              <ProfileDescription>
+                {profileInfo.intro || "자기소개를 입력하세요"}
+              </ProfileDescription>
+            </>
+          )}
         </ProfileInfo>
       </Profile>
       <SelectBar>
@@ -84,7 +105,6 @@ const UseridProfile: React.FC = () => {
             <SelectItem selected={selectedTab === "main"}>메인</SelectItem>
           </StyledLink>
           <StyledLink
-            // href={writerId ? `/profile/lounge${writerId}` : "/profile/lounge"}
             href={"/profile/lounge"}
             onClick={() => setSelectedTab("lounge")}
           >

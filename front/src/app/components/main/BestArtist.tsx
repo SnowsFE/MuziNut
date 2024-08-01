@@ -91,7 +91,7 @@ export default function BestArtist() {
                   <div className={styles.contents__container}>
                     <div className={styles.ranking__Img}>
                       <h1 className={styles.ranking}>{index + 1}.</h1>
-                      <Link href={`/profile/lounge`}>
+                      <Link href={`/profile`}>
                         <Image
                           src={
                             item.profileImg
@@ -105,7 +105,7 @@ export default function BestArtist() {
                       </Link>
                     </div>
 
-                    <Link href={`/profile/lounge`}>
+                    <Link href={`/profile`}>
                       {/* musicCharData의 이미지가 없으면 기본 이미지(album)으로 설정 */}
                       <h4>{item.nickname}</h4>
                     </Link>
@@ -114,7 +114,7 @@ export default function BestArtist() {
                     <h6>
                       아티스트 <br /> 바로가기
                     </h6>
-                    <Link href={`/profile/lounge`}>
+                    <Link href={`/profile`}>
                       <Image src={search} alt="search" width={30} height={30} />
                     </Link>
                   </div>

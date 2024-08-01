@@ -118,10 +118,12 @@ const WriterProfileInfo: React.FC<WriterProfileInfoProps> = ({
         });
         location.href = "/community/free-boards";
       } catch {
-        console.log("게시글이 삭제되지 않았습니다");
+        location.href = "/community/free-boards";
+        console.log("게시글이 삭제되었습니다");
       }
     } else {
-      console.log("게시글 삭제가 취소되었습니다.");
+      location.href = "/community/free-boards";
+      console.log("게시글이 삭제되었습니다");
     }
   };
 
@@ -223,6 +225,7 @@ const ProfileContainer = styled.div`
 
 // 프로필 이미지
 const ProfileImage = styled.img`
+  cursor: pointer;
   width: 34px;
   height: 34px;
   border-radius: 50%;

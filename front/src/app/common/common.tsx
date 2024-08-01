@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 
 // 로컬 스토리지에 있는  토큰을 가져오는 메서드
 function getToken() {
-  return "Bearer " + localStorage.getItem("token");
+  const token = localStorage.getItem("token");
+  return token ? `Bearer ${token}` : null; // 토큰이 없으면 null 반환
 }
 
 function getRefreshToken() {

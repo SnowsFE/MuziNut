@@ -153,7 +153,6 @@ const PostBox: React.FC = () => {
           writer={comment.commentWriter}
           createdDt={comment.createdDt}
           content={comment.content}
-          boardLikeStatus={comment.boardLikeStatus}
           likeCount={comment.likeCount}
           replies={comment.replies}
           commentId={comment.id}
