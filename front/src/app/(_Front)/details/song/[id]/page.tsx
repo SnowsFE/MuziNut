@@ -45,12 +45,14 @@ export default function Song() {
       console.log("id", id)
       const fetchSongData = async () => {
         try {
+          const token = localStorage.getItem("token");
+
           const response = await fetch(`http://localhost:8080/music/${id}`,
             {
               method: "GET",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + localStorage.getItem("token"),
+                Authorization: token ? `Bearer ${token}` : "", // 토큰이 없으면 빈 문자열로 설정
               }
             }
           );

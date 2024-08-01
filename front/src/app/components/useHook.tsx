@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { array } from "zod";
-import { parse } from "path";
 import axios from "axios";
 import { MusicDataItem } from "./main/MusicList";
 import { ArtistDataItem } from "./chart/ArtistList";
@@ -200,7 +198,14 @@ function useArtistFetchData({ url, key }: useArtistFetchDataProps) {
       console.log("비동기 데이터 호출 시작!(useEffect 불림)");
       setLoading(true); // 데이터 요청 시작 시 loading 상태를 true로 설정
       try {
-        const response = await axios.get(url);
+        const token = localStorage.getItem("token");
+
+        const response = await axios.get(url, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token ? `Bearer ${token}` : "", // 토큰이 없으면 빈 문자열로 설정
+          }
+        });
         console.log("응답 데이터(JSON파싱 전)", response);
 
         // JSON으로 변환된 데이터를 response.data에 axios가 자동 저장해줌
