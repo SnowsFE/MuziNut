@@ -74,7 +74,7 @@ export default function BestCommunity() {
           </div>
         </div>
       ) : (
-        <p>데이터를 불러올 수 없습니다.</p>
+        <p className={styles.p}>데이터를 불러올 수 없습니다.</p>
       )}
     </div>
   );
