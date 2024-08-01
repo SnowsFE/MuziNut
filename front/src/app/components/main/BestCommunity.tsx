@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import styles from "../main/css/BestCommunity.module.css";
 import { useCommunityFetchData } from "../useHook";
 import { styled } from "styled-components";
@@ -51,7 +52,7 @@ export default function BestCommunity() {
                 const modifiedPath = modifyPath(item.dtype);
                 return (
                   <li key={item.boardId}>
-                    <a href={`/community/${modifiedPath}/${item.boardId}`}>
+                    <Link href={`/community/${modifiedPath}/${item.boardId}`}>
                       <LinkSytle>
                         <div className={styles.list__container}>
                           <div className={styles.list__title}>
@@ -65,7 +66,7 @@ export default function BestCommunity() {
                           </div>
                         </div>
                       </LinkSytle>
-                    </a>
+                    </Link>
                   </li>
                 );
               })}
