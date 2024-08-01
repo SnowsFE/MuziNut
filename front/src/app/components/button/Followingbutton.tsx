@@ -22,11 +22,14 @@ const FollowButton: React.FC = () => {
 export default FollowButton;
 
 const FollowBefore = styled.button`
+  position: absolute;
+  left: 333px;
+  top: 47px;
   background-color: white;
-  border: 1px solid #1bb373;
-  border-radius: 50px;
+  border: 1px solid #16be78;
+  border-radius: 15px;
   padding: 10px;
-  margin-top: 16px;
+  margin: 10px 0;
 
   &:hover {
     transform: scale(1.05);
@@ -38,11 +41,14 @@ const FollowBefore = styled.button`
 `;
 
 const FollowAfter = styled.button`
+  position: absolute;
+  left: 330px;
+  top: 48px;
   background-color: white;
-  border: 1px solid #1bb373;
+  border: 1px solid #16be78;
   border-radius: 50px;
   padding: 10px;
-  margin-top: 16px;
+  margin: 10px 0;
 
   &:hover {
     transform: scale(1.05);

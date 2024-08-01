@@ -132,7 +132,7 @@ const NoticeWriteQuill = forwardRef(
         const response = await fetch(url, {
           method,
           headers: {
-            Authorization: `${authToken}`,
+            Authorization: authToken,
           },
           body: formData,
         });
@@ -151,7 +151,7 @@ const NoticeWriteQuill = forwardRef(
           console.error("글 등록 또는 수정에 실패했습니다.");
         }
       } catch (error) {
-        console.log("글이 성공적으로 등록되었습니다.");
+        alert("글이 성공적으로 등록되었습니다.");
         window.location.reload();
       }
     };
@@ -160,9 +160,16 @@ const NoticeWriteQuill = forwardRef(
       handleSubmit();
     };
 
+    const handleOverlayClick = (e: React.MouseEvent) => {
+      if (e.target === e.currentTarget) {
+        setVisible(false);
+        onClose();
+      }
+    };
+
     return (
       <>
-        <Overlay visible={visible} />
+        <Overlay visible={visible} onClick={handleOverlayClick} />
         <EditorContainer visible={visible}>
           <Title>글쓰기</Title>
           <MainTitle>
@@ -187,6 +194,7 @@ const NoticeWriteQuill = forwardRef(
               onClick={() => {
                 setVisible(false);
                 onClose();
+                window.location.reload();
               }}
             >
               취소
@@ -214,12 +222,14 @@ const fadeOut = keyframes`
   }
 `;
 
-const Overlay = ({ visible }: { visible: boolean }) => {
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-  };
-
-  return <OverlayStyled visible={visible} onClick={handleOverlayClick} />;
+const Overlay = ({
+  visible,
+  onClick,
+}: {
+  visible: boolean;
+  onClick: (e: React.MouseEvent) => void;
+}) => {
+  return <OverlayStyled visible={visible} onClick={onClick} />;
 };
 
 const OverlayStyled = styled.div<{ visible: boolean }>`

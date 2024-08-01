@@ -7,11 +7,11 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { UserInfo, useUser } from "../../UserContext";
 
-  // export type UserInfo = {
-  //   avatar: string;
-  //   username: string;
-  //   useremail: string;
-  // };
+// export type UserInfo = {
+//   avatar: string;
+//   username: string;
+//   useremail: string;
+// };
 
 const LoginBtn = () => {
   const router = useRouter();
@@ -29,11 +29,10 @@ const LoginBtn = () => {
     router.push("/");
   };
 
-
   return (
     <div>
       {/* 로그인 전 */}
-      {!user  && (
+      {!user && (
         <div className={styles.login__btn__container}>
           <div onClick={login} className={styles.login__btn__wrap}>
             <div className={styles.user__img}>
@@ -45,19 +44,17 @@ const LoginBtn = () => {
       )}
 
       {/* 로그인 후 */}
-      {user  &&  <UserProfile  userInfo={user} onLogout={logout} />}
+      {user && <UserProfile userInfo={user} onLogout={logout} />}
     </div>
   );
 };
 
 export default LoginBtn;
 
-
 type UserProfileProps = {
   userInfo: UserInfo;
   onLogout: () => void;
 };
-
 
 const UserProfile = ({ userInfo, onLogout }: UserProfileProps) => {
   //사용자 정보가 들어오면 디테일 박스 열리게
@@ -76,13 +73,17 @@ const UserProfile = ({ userInfo, onLogout }: UserProfileProps) => {
 
   console.log("로그인 후 사용자 정보", userInfo);
 
-
   return (
     <div>
       <div className={styles.login__btn__container}>
         <div onClick={toggleUserDetails} className={styles.login__btn__wrap}>
           <div className={styles.user__img}>
-            <Image src={`data:image/png;base64, ${userInfo.avatar}`} alt="addalbum" width={30} height={30} />
+            <Image
+              src={`data:image/png;base64, ${userInfo.avatar}`}
+              alt="addalbum"
+              width={30}
+              height={30}
+            />
           </div>
           <div className={styles.user__name}> {userInfo.nickname}</div>
         </div>
@@ -92,7 +93,7 @@ const UserProfile = ({ userInfo, onLogout }: UserProfileProps) => {
         <div className={styles.user__detail__box}>
           <div className={styles.my__and__book}>
             <Link
-              href="profile/lounge"
+              href="/profile"
               className={styles.my__page}
               onClick={handleLinkClick}
             >
@@ -143,4 +144,3 @@ const UserProfile = ({ userInfo, onLogout }: UserProfileProps) => {
     </div>
   );
 };
-
