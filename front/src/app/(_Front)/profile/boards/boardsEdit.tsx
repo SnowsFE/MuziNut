@@ -154,8 +154,22 @@ export const useFileState = (onUpload: (data: any) => void) => {
     boardsData: boardsData[];
   }
 
+  interface BookMarkboardsData {
+    id: number;
+    bookmarkTitle: string;
+    boardType: string;
+    bookmarks: string;
+  }
+
+  interface BookMarkboardsForm {
+    BookMarkboardsData: BookMarkboardsData[];
+  }
+
   const [userId, setUserId] = useState(2);
   const [boards, setBoards] = useState<boardsForm>({ boardsData: [] });
+  const [BookMarkboards, setBookMarkboards] = useState<BookMarkboardsForm>({
+    BookMarkboardsData: [],
+  });
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -167,7 +181,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
             Authorization: `${authToken}`,
           },
         });
-
+        console.log("게시글", res.data);
         setProfileInfo(res.data);
 
         let getboards: boardsData[] = res.data.boards.map((board: any) => ({
@@ -176,7 +190,17 @@ export const useFileState = (onUpload: (data: any) => void) => {
           boardType: board.boardType,
         }));
 
+        let getBookMarkboards: BookMarkboardsData[] = res.data.bookmarks.map(
+          (board: any) => ({
+            id: board.id,
+            bookmarkTitle: board.bookmarkTitle,
+            boardType: board.boardType,
+            bookmarks: board.bookmarks,
+          })
+        );
+
         setBoards({ boardsData: getboards });
+        setBookMarkboards({ BookMarkboardsData: getBookMarkboards });
       } catch (error) {
         console.error("프로필 데이터를 가져오는데 실패했습니다.", error);
       }
@@ -191,6 +215,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
     handleBannerSubmit,
     handleProfileSubmit,
     boards,
+    BookMarkboards,
   };
 };
 
