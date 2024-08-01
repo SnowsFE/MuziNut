@@ -3,7 +3,6 @@ import styled from "styled-components";
 import axios from "axios";
 import AxiosUrl from "@/app/axios/url";
 import { getToken } from "@/app/common/common";
-import { useUser } from "@/app/components/UserContext";
 
 // useFileState 훅과 초기 데이터
 export const useFileState = (onUpload: (data: any) => void) => {
@@ -175,16 +174,16 @@ export const useFileState = (onUpload: (data: any) => void) => {
     }
   };
 
-  const { user } = useUser();
-  const UserData = user?.nickname;
-
-  const [userId, setUserId] = useState(UserData);
-
+  // userId가 업데이트될 때마다 데이터를 가져옵니다.
   useEffect(() => {
     const fetchProfileData = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const nickname = urlParams.get("nickname");
+
+      console.log("유저 정보", nickname);
       try {
-        const response = await axios.get(`${AxiosUrl}/profile/`, {
-          params: { userId },
+        const response = await axios.get(`${AxiosUrl}/profile`, {
+          params: { nickname },
         });
         const data = response.data;
 
@@ -220,7 +219,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
     };
 
     fetchProfileData();
-  }, [userId]);
+  }, []);
 
   return {
     profileInfo,

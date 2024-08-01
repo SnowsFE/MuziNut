@@ -116,6 +116,9 @@ const UseridProfile: React.FC = () => {
     }
   };
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const nickname = urlParams.get("nickname");
+
   return (
     <ProfileContainer>
       <Banner>
@@ -149,30 +152,33 @@ const UseridProfile: React.FC = () => {
       </Profile>
       <SelectBar>
         <SelectContainer>
-          <StyledLink href={"/profile"} onClick={() => setSelectedTab("main")}>
+          <StyledLink
+            href={`/profile?nickname=${nickname}`}
+            onClick={() => setSelectedTab("main")}
+          >
             <SelectItem selected={selectedTab === "main"}>메인</SelectItem>
           </StyledLink>
           <StyledLink
-            href={"/profile/lounge"}
+            href={`/profile/lounge?nickname=${nickname}`}
             onClick={() => setSelectedTab("lounge")}
           >
             <SelectItem selected={selectedTab === "lounge"}>라운지</SelectItem>
           </StyledLink>
           <StyledLink
-            href={"/profile/boards"}
+            href={`/profile/boards?nickname=${nickname}`}
             onClick={() => setSelectedTab("boards")}
           >
             <SelectItem selected={selectedTab === "boards"}>게시글</SelectItem>
           </StyledLink>
           <StyledLink
-            href={"/profile/plynut"}
+            href={`/profile/plynut?nickname=${nickname}`}
             onClick={() => setSelectedTab("plynut")}
           >
             <SelectItem selected={selectedTab === "plynut"}>플리넛</SelectItem>
           </StyledLink>
           |
           <StyledLink
-            href={"/profile/nuts"}
+            href={`/profile/nuts?nickname=${nickname}`}
             onClick={() => setSelectedTab("nuts")}
           >
             <SelectItem selected={selectedTab === "nuts"}>넛츠</SelectItem>

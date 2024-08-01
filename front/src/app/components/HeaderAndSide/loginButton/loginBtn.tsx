@@ -94,11 +94,7 @@ const UserProfile = ({ userInfo, onLogout }: UserProfileProps) => {
         <div className={styles.user__detail__box}>
           <div className={styles.my__and__book}>
             <Link
-<<<<<<< HEAD
-              href={`/profile#${userNickName}`}
-=======
-              href={`/profile/#${userNickName}`}
->>>>>>> c8f05c86ac40114376351b06b59ae91c050c1afe
+              href={`/profile?nickname=${userNickName}`}
               className={styles.my__page}
               onClick={handleLinkClick}
             >
