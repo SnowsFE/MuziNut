@@ -5,6 +5,8 @@ import { TabContext, TabProvider } from "@/app/components/chart/TabProvider";
 import MusicTab from "@/app/components/chart/MusicTab";
 import MusicList from "@/app/components/main/MusicList";
 import { useMusicFetchData } from "@/app/components/useHook";
+import useMusicPlayer from "@/app/components/player/useMusicPlayer";
+import Player from "@/app/components/player/Player";
 
 const MusicInner = () => {
   const { url } = useContext(TabContext); // 현재 URL 가져오기
@@ -18,14 +20,26 @@ const MusicInner = () => {
     key: "content",
   });
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
 
-  console.log("현재 URL은:", url); // 현재 url 콘솔로 출력
+// 재생 로직==============
 
-  console.log("listItems은", listItems);
-  console.log("listItem 사이즈", listItems?.length);
+const {
+  currentTrack,
+  isPlaying,
+  playlist,
+  setPlaylist,
+  handlePlayButtonClick,
+  handlePlayPause,
+} = useMusicPlayer();
 
+
+if (loading) return <div>Loading...</div>;
+if (error) return <div>Error: {error.message}</div>;
+
+console.log("현재 URL은:", url); // 현재 url 콘솔로 출력
+
+console.log("listItems은", listItems);
+console.log("listItem 사이즈", listItems?.length);
   return (
     <div className={styles.container}>
       {/* <TabProvider> */}
@@ -60,6 +74,7 @@ const MusicInner = () => {
                   musicChartData={item}
                   index={index}
                   showCheckbox={true}
+                  onPlayButtonClick={(songId) => handlePlayButtonClick(songId, listItems)}
                 />
               ))
             ) : (
@@ -69,6 +84,17 @@ const MusicInner = () => {
             )}
           </tbody>
         </table>
+        {currentTrack && (
+          <Player
+            toggleModal={() => {}}
+            hidePlayer={() => {}}
+            currentTrack={currentTrack}
+            isPlaying={isPlaying}
+            onPlayPause={handlePlayPause}
+            playlist={playlist}
+            setPlaylist={setPlaylist}
+          />
+        )}
       </div>
       {/* </TabProvider> */}
     </div>

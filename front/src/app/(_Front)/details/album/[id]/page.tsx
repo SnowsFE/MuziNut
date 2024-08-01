@@ -3,9 +3,11 @@ import React, { useEffect, useState } from "react";
 import styles from "./page.module.css";
 import Image from "next/image";
 import Link from "next/link";
-import MusicList from "@/app/components/main/MusicList";
+import MusicList, { MusicDataItem } from "@/app/components/main/MusicList";
 import { useParams } from "next/navigation";
 import closeBtn from "@/../../public/svgs/close_btn.svg"
+import useMusicPlayer from "@/app/components/player/useMusicPlayer";
+import Player from "@/app/components/player/Player";
 
 type SongData = {
   nickname: string;
@@ -36,6 +38,20 @@ export default function Album() {
   const [albumData, setAlbumData] = useState<AlbumData | null>(null);
   console.log(albumData?.songs);
 
+
+    // 재생 기능 불러오기================
+    const {
+      currentTrack,
+      isPlaying,
+      playlist,
+      setPlaylist,
+      handlePlayButtonClick,
+      handlePlayPause,
+    } = useMusicPlayer();
+  
+
+    
+    
   useEffect(() => {
     if (id) {
       const fetchSongData = async () => {
@@ -55,6 +71,17 @@ export default function Album() {
   if (!albumData) return <div>Loading...</div>;
 
   console.log("음악 정보들", albumData.songs);
+
+
+    //SongData[] 를 MusicDataItem[]형식으로 변환
+    const musicDataItems: MusicDataItem[] = albumData.songs.map(song => ({
+      songId: song.songId,
+      albumImg: albumData.albumImg, 
+      title: song.title,
+      nickname: song.nickname,
+    }));
+
+    
 
   return (
     <div className={styles.container}>
@@ -142,18 +169,14 @@ export default function Album() {
               </tr>
             </thead>
             <tbody className={styles.table__row}>
-              {albumData.songs ? (
-                albumData.songs.map((songs, index) => (
+            {musicDataItems.length > 0 ? (
+                musicDataItems.map((song, index) => (
                   <MusicList
-                    key={songs.songId}
-                    musicChartData={{
-                      songId: songs.songId,
-                      albumImg: albumData.albumImg,
-                      title: songs.title,
-                      nickname: songs.nickname,
-                    }}
+                    key={song.songId}
+                    musicChartData={song}
                     index={index}
                     showCheckbox={true}
+                    onPlayButtonClick={(songId) => handlePlayButtonClick(songId, musicDataItems)}
                   />
                 ))
               ) : (
@@ -182,6 +205,18 @@ export default function Album() {
           </button>
         </div>
       </div>
+
+      {currentTrack && (
+        <Player
+        toggleModal={() => {}}
+        hidePlayer={() => {}}
+        currentTrack={currentTrack}
+        isPlaying={isPlaying}
+        onPlayPause={handlePlayPause}
+        playlist={playlist}
+        setPlaylist={setPlaylist}
+        />
+      )}
     </div>
   );
 }

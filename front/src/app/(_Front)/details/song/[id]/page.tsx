@@ -189,14 +189,15 @@ export default function Song() {
               </div>
             </div>
 
-            <button className={styles.play__btn}>
+            {/* 재생 버튼으로 재생 불가(서버에서 songId 값이 안 넘어옴) */}
+            {/* <button className={styles.play__btn}>
               <Image
                 src="/svgs/play_btn.svg"
                 alt="Services"
                 width={60}
                 height={60}
               />
-            </button>
+            </button> */}
           </div>
 
           <div className={styles.divider}> </div>

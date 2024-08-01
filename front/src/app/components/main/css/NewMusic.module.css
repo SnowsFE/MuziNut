@@ -44,3 +44,59 @@
     text-align: center;
     /* border: 1px solid red; */
 }
+.container {
+  /* 기존 스타일 */
+}
+
+.slider {
+  display: flex;
+  align-items: center;
+}
+
+.arrow {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.sliderContainer {
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+.item {
+  position: relative;
+  margin: 10px;
+}
+
+.thumbnail {
+  position: relative;
+}
+
+.playButton {
+  position: absolute;
+
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: white;
+  font-size: 24px;
+  border-radius: 50%;
+width: 60%;
+height: 60%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.thumbnail:hover .playButton {
+  opacity: 1;
+}
+
+.info {
+  /* 기존 스타일 */
+}
