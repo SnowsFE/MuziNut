@@ -118,9 +118,6 @@ const PostBox: React.FC = () => {
           if (!jsonData) throw new Error("JSON 데이터가 없습니다.");
 
           const data = JSON.parse(jsonData.trim());
-
-          console.log("받은 데이터:", data.writerId);
-
           setBoardId(data.id);
 
           const profileData = {
@@ -151,7 +148,7 @@ const PostBox: React.FC = () => {
           setComments(data.comments);
 
           const resdata = await axios.get(
-            `http://localhost:8080/boards/get-file?filename=${boardsData.quillFilename}`
+            `${AxiosURL}/boards/get-file?filename=${boardsData.quillFilename}`
           );
           setQuillData(resdata.data);
         }

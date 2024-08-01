@@ -132,13 +132,13 @@ const NoticeWriteQuill = forwardRef(
         const response = await fetch(url, {
           method,
           headers: {
-            Authorization: authToken,
+            Authorization: `${authToken}`,
           },
           body: formData,
         });
 
         if (response.ok) {
-          console.log("글이 성공적으로 등록되었습니다.");
+          alert("글이 성공적으로 등록되었습니다.");
 
           const updatedContent = content;
           onPublish(updatedContent);

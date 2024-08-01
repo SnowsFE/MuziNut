@@ -1,15 +1,16 @@
 // useAPI.tsx
-import axios from 'axios';
-import { useState } from 'react';
-import { MusicDataItem } from '../main/MusicList';
+import axios from "axios";
+import { useState } from "react";
+import { MusicDataItem } from "../main/MusicList";
+import { headers } from "next/headers";
 
 const useAPI = () => {
   const [playlist, setPlaylist] = useState<MusicDataItem[]>([]);
 
   const fetchPlaylist = async () => {
-    console.log("fetchPlaylist호출!!")
+    console.log("fetchPlaylist호출!!");
     try {
-      const response = await axios.get('http://localhost:8080/playlist/get', {
+      const response = await axios.get("http://localhost:8080/playlist/get", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -25,16 +26,16 @@ const useAPI = () => {
   };
 
   const addTrackToPlaylist = async (songIds: number[]) => {
-    console.log("addTrackToPlaylist 호출!!")
+    console.log("addTrackToPlaylist 호출!!");
     try {
       await axios.put(
-        'http://localhost:8080/playlist/add',
+        "http://localhost:8080/playlist/add",
         {
           addList: songIds,
         },
         {
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
@@ -45,12 +46,17 @@ const useAPI = () => {
   };
 
   const fetchStreamingUrl = async (songId: number) => {
-    console.log("fetchStreamingUrl 호출!!")
+    console.log("fetchStreamingUrl 호출!!");
     try {
-      const response = await axios.get(`http://localhost:8080/streaming/${songId}`, {
-        responseType: 'blob'
-      });
-
+      const response = await axios.get(
+        `http://localhost:8080/streaming/${songId}`,
+        {
+          responseType: "blob",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
       const audioBlob = response.data;
       const audioUrl = URL.createObjectURL(audioBlob);
 
