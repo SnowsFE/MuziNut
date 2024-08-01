@@ -33,6 +33,36 @@ interface QuillProps {
 }
 
 const PostBox: React.FC = () => {
+  const timeAgo = (timestamp: string): string => {
+    const now = new Date();
+
+    const postTime = new Date(timestamp);
+
+    const diffTime = now.getTime() - postTime.getTime();
+
+    const diffMinutes = Math.floor(diffTime / (1000 * 60));
+
+    const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    const diffMonths = Math.floor(diffDays / 30);
+
+    const diffYears = Math.floor(diffDays / 365);
+
+    if (diffMinutes < 60) {
+      return `${diffMinutes}분 전`;
+    } else if (diffHours < 24) {
+      return `${diffHours}시간 전`;
+    } else if (diffDays < 30) {
+      return `${diffDays}일 전`;
+    } else if (diffMonths < 12) {
+      return `${diffMonths}달 전`;
+    } else {
+      return `${diffYears}년 전`;
+    }
+  };
+
   const [boardsData, setBoardsData] = useState<BoardsDataProps>({
     id: 0,
     title: "",
@@ -127,6 +157,8 @@ const PostBox: React.FC = () => {
         }
       } catch (error) {
         console.error("데이터를 받지 못했습니다", error);
+        window.location.href = "/community/free-boards";
+        alert("존재하지 않는 게시판입니다.");
       }
     };
 
@@ -148,7 +180,7 @@ const PostBox: React.FC = () => {
           profileImg={profileInfo.profileImg}
           writer={profileInfo.writer}
           writerId={profileInfo.writerId}
-          createdDt={profileInfo.createdDt}
+          createdDt={timeAgo(profileInfo.createdDt)}
           view={profileInfo.view}
           isBookmark={profileInfo.isBookmark ? true : false}
         />
@@ -169,7 +201,7 @@ const PostBox: React.FC = () => {
           key={index}
           profileImg={comment.commentProfileImg}
           writer={comment.commentWriter}
-          createdDt={comment.createdDt}
+          createdDt={timeAgo(comment.createdDt)}
           content={comment.content}
           likeCount={comment.likeCount}
           replies={comment.replies}
@@ -228,78 +260,6 @@ const Title = styled.h1`
   padding-bottom: 10px;
   margin-bottom: 20px;
   font-family: "esamanru Medium";
-`;
-
-// 프로필 컨테이너
-const ProfileContainer = styled.div`
-  display: flex;
-  align-items: center;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #ddd;
-  font-family: "esamanru Medium";
-`;
-
-// 프로필 이미지
-const ProfileImage = styled.img`
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  margin-right: 10px;
-`;
-
-// 프로필 정보
-const ProfileInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-`;
-
-// 프로필 이름
-const ProfileName = styled.div`
-  font-size: 14px;
-  font-weight: bold;
-`;
-
-// 시간과 조회수 컨테이너
-const TimeViewsContainer = styled.div`
-  display: flex;
-  gap: 10px;
-`;
-
-// 업로드 시간
-const Time = styled.div`
-  font-size: 12px;
-  color: #888;
-`;
-
-// 조회수
-const Views = styled.div`
-  display: flex;
-  font-size: 12px;
-  color: #888;
-
-  img {
-    width: 24px;
-    height: 24px;
-  }
-`;
-
-// 북마크와 삼각바 (공유하기, 신고하기) 컨테이너
-const ShareContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin-left: auto;
-  gap: 3px;
-  cursor: pointer;
-
-  img {
-    width: 24px;
-    height: 32px;
-    &:hover {
-      background-color: #e7e7e7; /* 배경색을 설정 */
-      border-radius: 8px;
-    }
-  }
 `;
 
 // 바디

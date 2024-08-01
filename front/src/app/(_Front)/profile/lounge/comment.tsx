@@ -4,6 +4,7 @@ import { CommentLikeIcon } from "@/app/components/LikePost/like";
 import AxiosURL from "@/app/axios/url";
 import { useFileState } from "./loungeEdit";
 import axios from "axios";
+import { getToken } from "@/app/common/common";
 
 interface CommentProps {
   id: number;
@@ -52,8 +53,7 @@ const OpenComment: React.FC<{
   const [newComment, setNewComment] = useState<string>("");
   const [ID, setID] = useState<string | null>(null);
 
-  const authToken =
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjQ2MDczMzh9.BbvfPZE8fzZNQNJdyq0XQz7GaIUYhhLUhoup35KwlfC-92MHXOi3jkILH19lFdDVQkuwtFWRlyRbVZQW8a8QUA";
+  const authToken = getToken();
 
   useEffect(() => {
     const hash = window.location.hash;
@@ -77,7 +77,7 @@ const OpenComment: React.FC<{
           { content: newComment },
           {
             headers: {
-              Authorization: `Bearer ${authToken}`,
+              Authorization: `${authToken}`,
               "Content-Type": "application/json",
             },
           }
@@ -213,6 +213,7 @@ const BestCommentNickname = styled.div`
 // 베스트 픽 댓글 작성 시간
 const BestCommentTime = styled.div`
   font-size: 13px;
+  margin-top: 3px;
 `;
 
 // 베스트 픽 댓글 본문
@@ -246,22 +247,6 @@ const BestCommentLike = styled.div`
   :first-child {
     margin-top: 1px;
   }
-`;
-
-// 베스트 픽 댓글 좋아요
-const BestCommentComment = styled.div`
-  display: flex;
-  align-items: center;
-  margin-right: auto;
-  font-size: 14px;
-  gap: 7px;
-  margin-left: 18px;
-
-  :first-child {
-    margin-top: 3px;
-  }
-
-  cursor: pointer; /* 대댓글 아이콘에 커서 포인터 추가 */
 `;
 
 // 베스트 픽 댓글 신고

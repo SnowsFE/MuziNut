@@ -94,7 +94,6 @@ const Time = styled.div`
 
 //댓글 내용
 const Content = styled.span`
-  margin-top: 9px;
   padding: 15px 15px 10px 15px;
   border-radius: 5px;
   font-size: 14px;

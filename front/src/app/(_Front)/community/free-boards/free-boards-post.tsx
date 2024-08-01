@@ -91,6 +91,36 @@ const FreeBoardsPost: React.FC<NoticePostProps> = ({
     );
   };
 
+  const timeAgo = (timestamp: string): string => {
+    const now = new Date();
+
+    const postTime = new Date(timestamp);
+
+    const diffTime = now.getTime() - postTime.getTime();
+
+    const diffMinutes = Math.floor(diffTime / (1000 * 60));
+
+    const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    const diffMonths = Math.floor(diffDays / 30);
+
+    const diffYears = Math.floor(diffDays / 365);
+
+    if (diffMinutes < 60) {
+      return `${diffMinutes}분 전`;
+    } else if (diffHours < 24) {
+      return `${diffHours}시간 전`;
+    } else if (diffDays < 30) {
+      return `${diffDays}일 전`;
+    } else if (diffMonths < 12) {
+      return `${diffMonths}달 전`;
+    } else {
+      return `${diffYears}년 전`;
+    }
+  };
+
   const sortedPosts = sortPosts(selected, freeBoardsForms);
   const filteredPosts = filterPostsBySearchQuery(sortedPosts, searchQuery);
 
@@ -138,7 +168,7 @@ const FreeBoardsPost: React.FC<NoticePostProps> = ({
             >
               <PostItem>{post.title}</PostItem>
               <PostItem>{post.writer}</PostItem>
-              <PostItem>{post.createdDt}</PostItem>
+              <PostItem>{timeAgo(post.createdDt)}</PostItem>
               <PostItem>{post.view}</PostItem>
               <PostItem>{post.like}</PostItem>
             </Post>

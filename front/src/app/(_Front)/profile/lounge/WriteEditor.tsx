@@ -5,33 +5,30 @@ import styled, { keyframes, css } from "styled-components";
 import QuillToolbar from "./EditorOption";
 import Quill from "quill";
 import AxiosURL from "@/app/axios/url";
+import { getToken } from "@/app/common/common";
 
-const Font = Quill.import("formats/font");
-Font.whitelist = ["esamanruLight", "esamanruMedium", "esamanruBold"];
-Quill.register(Font, true);
-
-const Size = Quill.import("attributors/style/size");
-Size.whitelist = ["13px", "16px", "18px", "24px", "28px", "32px"];
-Quill.register(Size, true);
-
-const NoticeWriteQuill: React.FC<{
+const WriteQuill: React.FC<{
   onPublish: (content: string) => void;
   onClose: () => void;
   initialContent?: string;
 }> = ({ onPublish, onClose, initialContent }) => {
   const quillRef = useRef<ReactQuill>(null);
   const [content, setContent] = useState<string>(initialContent || "");
-  const [title, setTitle] = useState<string>("");
   const [visible, setVisible] = useState<boolean>(true);
-  const [id, setId] = useState<string | null>(null); // id 상태를 추가합니다.
+  const [id, setId] = useState<string | null>(null);
 
   useEffect(() => {
-    // 해시값을 읽어와서 id 상태를 설정합니다.
     const hash = window.location.hash;
     if (hash) {
-      setId(hash.replace("#", "")); // #을 제거한 id를 설정합니다.
+      setId(hash.replace("#", ""));
     }
   }, []);
+
+  useEffect(() => {
+    if (initialContent) {
+      setContent(initialContent);
+    }
+  }, [initialContent]);
 
   useEffect(() => {
     if (!visible) {
@@ -51,14 +48,6 @@ const NoticeWriteQuill: React.FC<{
     }),
     []
   );
-
-  useEffect(() => {
-    const quill = quillRef.current?.getEditor();
-    if (quill) {
-      quill.format("font", "esamanruLight");
-      quill.format("size", "13px");
-    }
-  }, []);
 
   const handleChange = (content: string) => {
     setContent(content);
@@ -80,7 +69,6 @@ const NoticeWriteQuill: React.FC<{
           if (quill) {
             const range = quill.getSelection();
             if (range) {
-              // 이미지를 Base64 형태로 Quill 에디터에 삽입
               quill.clipboard.dangerouslyPasteHTML(
                 range.index,
                 `<img src="${base64Data}" />`
@@ -96,11 +84,9 @@ const NoticeWriteQuill: React.FC<{
     input.click();
   };
 
-  const authToken =
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MjQ2MDczMzh9.BbvfPZE8fzZNQNJdyq0XQz7GaIUYhhLUhoup35KwlfC-92MHXOi3jkILH19lFdDVQkuwtFWRlyRbVZQW8a8QUA";
+  const authToken = getToken();
 
   const handleSubmit = async () => {
-    // 내용이 비어있는 경우에 대한 검사
     if (content.trim() === "") {
       alert("내용을 입력해주세요");
       return;
@@ -109,14 +95,13 @@ const NoticeWriteQuill: React.FC<{
     const formData = new FormData();
     formData.append(
       "form",
-      new Blob([JSON.stringify({ title })], { type: "application/json" })
+      new Blob([JSON.stringify({})], { type: "application/json" })
     );
 
     const contentBlob = new Blob([content], { type: "text/html" });
     formData.append("quillFile", contentBlob);
 
     try {
-      // id가 있을 때 PUT 요청, 없을 때 POST 요청
       const url = id
         ? `${AxiosURL}/profile/lounge/${id}`
         : `${AxiosURL}/profile/lounge`;
@@ -125,7 +110,7 @@ const NoticeWriteQuill: React.FC<{
       const response = await fetch(url, {
         method,
         headers: {
-          Authorization: `Bearer ${authToken}`,
+          Authorization: `${authToken}`,
         },
         body: formData,
       });
@@ -157,7 +142,7 @@ const NoticeWriteQuill: React.FC<{
     <>
       <Overlay visible={visible} />
       <EditorContainer visible={visible}>
-        <Title>글쓰기</Title>
+        <Title>라운지 Talk</Title>
         <QuillToolbar />
         <CustomReactQuill
           placeholder="여러분의 소식을 공유해보세요."
@@ -176,8 +161,8 @@ const NoticeWriteQuill: React.FC<{
           >
             취소
           </CancelButton>
-          <StyledButton onClick={() => handleSubmit()}>
-            {initialContent ? "글 수정" : "글 등록"}
+          <StyledButton onClick={handleSubmit}>
+            {id ? "글 수정" : "글 등록"}
           </StyledButton>
         </ButtonContainer>
       </EditorContainer>
@@ -185,7 +170,7 @@ const NoticeWriteQuill: React.FC<{
   );
 };
 
-export default NoticeWriteQuill;
+export default WriteQuill;
 
 const fadeOut = keyframes`
   from {

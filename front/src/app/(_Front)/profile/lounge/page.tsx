@@ -24,6 +24,30 @@ const UseridProfile: React.FC = () => {
   const [openComments, setOpenComments] = useState<boolean[]>([]);
   const threedotRefs = useRef<Array<HTMLDivElement | null>>([]);
 
+  const timeAgo = (timestamp: string): string => {
+    const now = new Date();
+    const postTime = new Date(timestamp);
+
+    const diffTime = now.getTime() - postTime.getTime();
+    const diffMinutes = Math.floor(diffTime / (1000 * 60));
+    const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const diffMonths = Math.floor(diffDays / 30);
+    const diffYears = Math.floor(diffDays / 365);
+
+    if (diffMinutes < 60) {
+      return `${diffMinutes}분 전`;
+    } else if (diffHours < 24) {
+      return `${diffHours}시간 전`;
+    } else if (diffDays < 30) {
+      return `${diffDays}일 전`;
+    } else if (diffMonths < 12) {
+      return `${diffMonths}달 전`;
+    } else {
+      return `${diffYears}년 전`;
+    }
+  };
+
   const onUpload = (data: {
     profileBannerImgName?: string | object;
     profileImgName?: string | object;
@@ -273,7 +297,7 @@ const UseridProfile: React.FC = () => {
                 </LoungeProfileImage>
                 <LoungeProfileName>{profileInfo.nickname}</LoungeProfileName>
                 <LoungeProfileUploadTime>
-                  {new Date().toLocaleDateString()}
+                  {timeAgo(loungeItem.createdDt)}
                 </LoungeProfileUploadTime>
                 <LoungeProfileDetail
                   ref={(el) => {
@@ -324,9 +348,7 @@ const UseridProfile: React.FC = () => {
         <WriteEditor
           onPublish={handlePublish}
           onClose={() => setWriteVisible(false)}
-          initialContent={
-            editingIndex !== null ? LoungePost[editingIndex] : undefined
-          }
+          initialContent={editingIndex !== null ? LoungePost[editingIndex] : ""}
         />
       )}
     </ProfileContainer>
@@ -499,7 +521,7 @@ const LoungeProfileName = styled.div`
 
 // 라운지 프로필 업로드 시간 ~ 기간
 const LoungeProfileUploadTime = styled.div`
-  margin-bottom: 2px;
+  margin-bottom: 0px;
 `;
 
 // 라운지 프로필 삼각점바 (공유하기, 신고하기 기능)

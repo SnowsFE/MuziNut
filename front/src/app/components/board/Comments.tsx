@@ -32,6 +32,36 @@ const Comments: React.FC<CommentProps> = ({
 }) => {
   let [modal, setModal] = useState(false); //대댓글 모달창
 
+  const timeAgo = (timestamp: string): string => {
+    const now = new Date();
+
+    const postTime = new Date(timestamp);
+
+    const diffTime = now.getTime() - postTime.getTime();
+
+    const diffMinutes = Math.floor(diffTime / (1000 * 60));
+
+    const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    const diffMonths = Math.floor(diffDays / 30);
+
+    const diffYears = Math.floor(diffDays / 365);
+
+    if (diffMinutes < 60) {
+      return `${diffMinutes}분 전`;
+    } else if (diffHours < 24) {
+      return `${diffHours}시간 전`;
+    } else if (diffDays < 30) {
+      return `${diffDays}일 전`;
+    } else if (diffMonths < 12) {
+      return `${diffMonths}달 전`;
+    } else {
+      return `${diffYears}년 전`;
+    }
+  };
+
   // const authToken = getToken();
 
   // const likeButtonHandler = async () => {
@@ -106,7 +136,7 @@ const Comments: React.FC<CommentProps> = ({
           content={reply.content}
           replyWriter={reply.replyWriter}
           replyProfileImg={reply.replyProfileImg}
-          createdDt={reply.createdDt}
+          createdDt={timeAgo(reply.createdDt)}
         />
       ))}
     </>
@@ -128,7 +158,6 @@ const CommentContainer = styled.div`
 //댓글 내용
 const Content = styled.span`
   max-width: 820px;
-  margin-top: 19px;
   padding: 5px 15px;
   border-radius: 5px;
   font-size: 14px;
@@ -165,8 +194,8 @@ const ProfileInfo = styled.div`
   flex-direction: column;
   padding-right: 10px;
   gap: 5px;
-  min-width: 200px;
-  max-width: 200px;
+  min-width: 100px;
+  max-width: 100px;
 `;
 
 // 프로필 이름
