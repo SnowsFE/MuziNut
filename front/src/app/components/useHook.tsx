@@ -49,16 +49,25 @@ function useCommunityFetchData({ url, key }: UseCommunityFetchDataProps) {
         // 데이터를 상태에 저장
         setData(resultData);
         console.log("use훅에서 전달할 데이터(배열)", data);
-      } catch (error) {
-        console.error("fetching ERROR!!:", error);
-
-        setError(error as Error);
+      } catch (error: unknown) {
+        // axios 헬퍼 함수 - isAxiosError(error)를 사용하여 error가 axios 에러인지 확인하고,
+        // error.response가 존재하는 경우에만 에러 처리
+        if (axios.isAxiosError(error) && error.response) {
+          if (error.response.status === 204) {
+            console.log("데이터가 존재하지 않습니다.")
+            return;
+          }
+           else {
+            alert("[error] 서버와 통신 오류 발생.");
+          }
+        } else {
+          //axios 에러가 아닌 다른 예외가 발생한 경우
+          alert("[error] 오류가 발생했습니다. 다시 시도해주세요.");
+        }
       } finally {
-        //비동기 작업이 완료된 후 항상 실행되는 코드
         setLoading(false);
       }
     };
-
     fetchData(); // 비동기 함수 호출
   }, [url, key]); // 컴포넌트가 마운트 or key or url 변경될 때마다 fetchData 호출
   return { data, loading, error };
@@ -117,14 +126,25 @@ function useNewCommunityFetchData({
 
         setFreeBoardData(freeBoardData);
         setRecruitBoardData(recruitBoardData);
-      } catch (error) {
-        console.error("fetching ERROR!!:", error);
-        setError(error as Error);
+      } catch (error: unknown) {
+        // axios 헬퍼 함수 - isAxiosError(error)를 사용하여 error가 axios 에러인지 확인하고,
+        // error.response가 존재하는 경우에만 에러 처리
+        if (axios.isAxiosError(error) && error.response) {
+          if (error.response.status === 204) {
+            console.log("데이터가 존재하지 않습니다.")
+            return;
+          }
+           else {
+            alert("[error] 서버와 통신 오류 발생.");
+          }
+        } else {
+          //axios 에러가 아닌 다른 예외가 발생한 경우
+          alert("[error] 오류가 발생했습니다. 다시 시도해주세요.");
+        }
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
   }, [url, keys.FreeBoard, keys.RecruitBoard]); // 의존성 배열에서 keys.free, keys.recruit 사용
 
@@ -221,12 +241,22 @@ function useArtistFetchData({ url, key }: useArtistFetchDataProps) {
         // 데이터를 상태에 저장
         setData(resultData);
         console.log("use훅에서 전달할 데이터(배열)", data);
-      } catch (error) {
-        console.error("fetching ERROR!!:", error);
-
-        setError(error as Error);
+      } catch (error: unknown) {
+        // axios 헬퍼 함수 - isAxiosError(error)를 사용하여 error가 axios 에러인지 확인하고,
+        // error.response가 존재하는 경우에만 에러 처리
+        if (axios.isAxiosError(error) && error.response) {
+          if (error.response.status === 204) {
+            console.log("데이터가 존재하지 않습니다.")
+            return;
+          }
+           else {
+            alert("[error] 서버와 통신 오류 발생.");
+          }
+        } else {
+          //axios 에러가 아닌 다른 예외가 발생한 경우
+          alert("[error] 오류가 발생했습니다. 다시 시도해주세요.");
+        }
       } finally {
-        //비동기 작업이 완료된 후 항상 실행되는 코드
         setLoading(false);
       }
     };
