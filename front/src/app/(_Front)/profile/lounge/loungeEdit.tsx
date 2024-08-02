@@ -239,6 +239,8 @@ const BannerData: React.FC<{ onUpload: (data: any) => void }> = ({
 
   const { user } = useUser();
   const UserData = user?.nickname;
+  const urlParams = new URLSearchParams(window.location.search);
+  const nickname = urlParams.get("nickname");
 
   return (
     <UploadForm>
@@ -248,7 +250,7 @@ const BannerData: React.FC<{ onUpload: (data: any) => void }> = ({
           onChange={handleFileInputChange}
           id="profileBannerImgName"
         />
-        {UserData ? (
+        {UserData === nickname ? (
           <CustomButton htmlFor="profileBannerImgName">⚙️</CustomButton>
         ) : null}
       </Label>
@@ -268,6 +270,8 @@ const ProfileData: React.FC<{ onUpload: (data: any) => void }> = ({
 
   const { user } = useUser();
   const UserData = user?.nickname;
+  const urlParams = new URLSearchParams(window.location.search);
+  const nickname = urlParams.get("nickname");
 
   return (
     <>
@@ -278,7 +282,7 @@ const ProfileData: React.FC<{ onUpload: (data: any) => void }> = ({
             onChange={handleFileInputChange}
             id="profileImgName"
           />
-          {UserData ? (
+          {UserData === nickname ? (
             <CustomButton2 htmlFor="profileImgName">⚙️</CustomButton2>
           ) : null}
         </Label>

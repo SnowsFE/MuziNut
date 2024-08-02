@@ -92,10 +92,12 @@ const ProfileEdit: React.FC = () => {
 
   const { user } = useUser();
   const UserData = user?.nickname;
+  const urlParams = new URLSearchParams(window.location.search);
+  const nicknames = urlParams.get("nickname");
 
   return (
     <ShowBox>
-      {UserData ? <Icon onClick={openModal}>⚙️</Icon> : null}
+      {UserData === nicknames ? <Icon onClick={openModal}>⚙️</Icon> : null}
       <OutContainer visible={visible}>
         <ProfileEditContainer visible={visible}>
           <Title>프로필 수정</Title>

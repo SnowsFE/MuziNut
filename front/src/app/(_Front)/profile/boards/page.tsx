@@ -6,6 +6,7 @@ import Link from "next/link";
 import { BannerData, ProfileData, useFileState } from "./boardsEdit";
 import ProfileEdit from "../profileEdit";
 import { useRouter } from "next/navigation";
+import Spinner from "@/app/components/LodingSpinner";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("boards");
@@ -122,22 +123,30 @@ const UseridProfile: React.FC = () => {
   return (
     <ProfileContainer>
       <Banner>
-        <Image
-          src={`data:image/png;base64,${profileBannerImgName}`}
-          alt="배너 이미지"
-          width={1280}
-          height={210}
-        />
+        {profileBannerImgName ? (
+          <Image
+            src={`data:image/png;base64,${profileBannerImgName}`}
+            alt="배너 이미지"
+            width={1280}
+            height={210}
+          />
+        ) : (
+          <Spinner />
+        )}
         <BannerData onUpload={onUpload} />
       </Banner>
       <Profile>
         <ProfileEdit />
-        <Image
-          src={`data:image/png;base64,${profileImgName}`}
-          alt="프로필 이미지"
-          width={160}
-          height={160}
-        />
+        {profileImgName ? (
+          <Image
+            src={`data:image/png;base64,${profileImgName}`}
+            alt="프로필 이미지"
+            width={160}
+            height={160}
+          />
+        ) : (
+          <Spinner />
+        )}
         <ProfileData onUpload={onUpload} />
         <ProfileInfo>
           <ProfileName>{profileInfo.nickname}</ProfileName>
@@ -252,7 +261,8 @@ const Banner = styled.div`
   position: relative;
 
   img {
-    background-color: var(--text-color);
+    background-color: white;
+    font-size: 60px;
     border-radius: 20px;
     overflow: hidden;
   }
@@ -275,7 +285,6 @@ const Profile = styled.div`
 
   // 프로필 이미지
   img {
-    background-color: var(--text-color);
     border-radius: 100px;
     overflow: hidden;
   }

@@ -57,18 +57,16 @@ const UseridProfile: React.FC = () => {
   return (
     <ProfileContainer>
       <Banner>
-        <Suspense fallback={<Spinner />}>
-          {profileBannerImgName ? (
-            <Image
-              src={`data:image/png;base64,${profileBannerImgName}`}
-              alt="배너 이미지"
-              width={1280}
-              height={210}
-            />
-          ) : (
-            <Spinner />
-          )}
-        </Suspense>
+        {profileBannerImgName ? (
+          <Image
+            src={`data:image/png;base64,${profileBannerImgName}`}
+            alt="배너 이미지"
+            width={1280}
+            height={210}
+          />
+        ) : (
+          <Spinner />
+        )}
         <BannerData onUpload={onUpload} />
       </Banner>
       <Profile>

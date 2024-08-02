@@ -118,7 +118,6 @@ const PostBox: React.FC = () => {
           };
 
           setBoardsData(boardsData);
-
           console.log(res.data.quillFilename);
           setCommentForm({
             comments: res.data.comments,
@@ -165,7 +164,7 @@ const PostBox: React.FC = () => {
       <Footer>
         <LikeButton>
           <LikeIcon
-            postId={boardsData.id}
+            postId={id}
             initialLiked={boardsData.boardLikeStatus ? true : false}
           />
           {boardsData.likeCount}

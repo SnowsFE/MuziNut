@@ -8,6 +8,7 @@ import WriteCommentForm from "@/app/components/board/WriteCommentForm";
 import AxiosURL from "@/app/axios/url";
 import { useParams } from "next/navigation";
 import axios from "axios";
+import Spinner from "@/app/components/LodingSpinner";
 
 interface BoardsDataProps {
   id: number;

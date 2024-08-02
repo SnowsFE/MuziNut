@@ -14,7 +14,7 @@ import AxiosURL from "@/app/axios/url";
 import { getToken } from "@/app/common/common";
 import { useUser } from "@/app/components/UserContext";
 import FollowButton from "@/app/components/button/Followingbutton";
-import Spinner from "../../../../../public/images/Spinner.png";
+import Spinner from "@/app/components/LodingSpinner";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("lounge");
@@ -227,22 +227,30 @@ const UseridProfile: React.FC = () => {
   return (
     <ProfileContainer>
       <Banner>
-        <Image
-          src={`data:image/png;base64,${profileBannerImgName}`}
-          alt="배너 이미지"
-          width={1280}
-          height={210}
-        />
+        {profileBannerImgName ? (
+          <Image
+            src={`data:image/png;base64,${profileBannerImgName}`}
+            alt="배너 이미지"
+            width={1280}
+            height={210}
+          />
+        ) : (
+          <Spinner />
+        )}
         <BannerData onUpload={onUpload} />
       </Banner>
       <Profile>
         <ProfileEdit />
-        <Image
-          src={`data:image/png;base64,${profileImgName}`}
-          alt="프로필 이미지"
-          width={160}
-          height={160}
-        />
+        {profileImgName ? (
+          <Image
+            src={`data:image/png;base64,${profileImgName}`}
+            alt="프로필 이미지"
+            width={160}
+            height={160}
+          />
+        ) : (
+          <Spinner />
+        )}
         <ProfileData onUpload={onUpload} />
         <ProfileInfo>
           <ProfileName>{profileInfo.nickname}</ProfileName>
