@@ -105,7 +105,7 @@ const WriterProfileInfo: React.FC<WriterProfileInfoProps> = ({
   const router = useRouter();
 
   const userMove = () => {
-    router.push(`/profile?userId=${writerId}`);
+    router.push(`/profile?nickname=${writer}`);
   };
 
   const BoardsDelete = async () => {

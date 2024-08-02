@@ -94,7 +94,7 @@ const UserProfile = ({ userInfo, onLogout }: UserProfileProps) => {
         <div className={styles.user__detail__box}>
           <div className={styles.my__and__book}>
             <Link
-              href={`/profile#${userNickName}`}
+              href={`/profile?nickname=${userNickName}`}
               className={styles.my__page}
               onClick={handleLinkClick}
             >

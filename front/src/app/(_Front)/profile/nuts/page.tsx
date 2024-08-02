@@ -70,6 +70,9 @@ const UseridProfile: React.FC = () => {
     setEditFormVisible(false);
   };
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const nickname = urlParams.get("nickname");
+
   return (
     <>
       <OverlayBox>
@@ -131,13 +134,13 @@ const UseridProfile: React.FC = () => {
         <SelectBar>
           <SelectContainer>
             <StyledLink
-              href={"/profile"}
+              href={`/profile?nickname=${nickname}`}
               onClick={() => setSelectedTab("main")}
             >
               <SelectItem selected={selectedTab === "main"}>메인</SelectItem>
             </StyledLink>
             <StyledLink
-              href={"/profile/lounge"}
+              href={`/profile/lounge?nickname=${nickname}`}
               onClick={() => setSelectedTab("lounge")}
             >
               <SelectItem selected={selectedTab === "lounge"}>
@@ -145,7 +148,7 @@ const UseridProfile: React.FC = () => {
               </SelectItem>
             </StyledLink>
             <StyledLink
-              href={"/profile/boards"}
+              href={`/profile/boards?nickname=${nickname}`}
               onClick={() => setSelectedTab("boards")}
             >
               <SelectItem selected={selectedTab === "boards"}>
@@ -153,7 +156,7 @@ const UseridProfile: React.FC = () => {
               </SelectItem>
             </StyledLink>
             <StyledLink
-              href={"/profile/plynut"}
+              href={`/profile/plynut?nickname=${nickname}`}
               onClick={() => setSelectedTab("plynut")}
             >
               <SelectItem selected={selectedTab === "plynut"}>
@@ -162,7 +165,7 @@ const UseridProfile: React.FC = () => {
             </StyledLink>
             |
             <StyledLink
-              href={"/profile/nuts"}
+              href={`/profile/nuts?nickname=${nickname}`}
               onClick={() => {
                 setSelectedTab("nuts");
                 setSubTab(null);
