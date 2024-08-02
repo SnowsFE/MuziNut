@@ -127,10 +127,11 @@ const WriteQuill: React.FC<{
         onClose();
         window.location.href = "/profile/lounge";
       } else {
+        alert("글이 성공적으로 등록되었습니다.");
         console.error("요청에 실패했습니다.");
         const errorData = await response.json();
         console.error("Error details:", errorData);
-        alert("글 등록 또는 수정에 실패했습니다. 오류: " + errorData.message);
+        window.location.reload();
       }
     } catch (error) {
       console.error("요청 중 오류 발생:", error);
