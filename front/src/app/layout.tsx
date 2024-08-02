@@ -38,6 +38,9 @@ export default function RootLayout({
   return (
     <UserProvider>
       <html lang="ko">
+        <head>
+          <link rel="icon" href="/images/Muzinut.png" />
+        </head>
         <body>
           <div className={styles.container}>
             <div

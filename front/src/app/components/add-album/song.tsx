@@ -89,12 +89,17 @@ export default function SongForm({ onSongsChange }: SongFormProps) {
         console.log("장르 다시 추가할거임.");
         return arrayGenres.filter((g) => g !== translatedGenre);
       }
+      if(genres.includes(genre)) {
+        setGenres(genres.filter(param => param != genre))
+        return [...arrayGenres, translatedGenre];
+      }
       // 선택된 장르가 3개 미만이면 새로운 장르 추가
-      if (arrayGenres.length < 3) {
+      else if (arrayGenres.length < 3) {
         console.log("첫 번째 if 문 통과! 두 번 째 if문 시작");
+        setGenres(genres.concat(genre))
         return [...arrayGenres, translatedGenre];
       } else {
-        console.log(arrayGenres);
+        alert("장르는 3가지 이상 설정할 수 없습니다.")
         return arrayGenres;
       }
     });
@@ -144,7 +149,7 @@ export default function SongForm({ onSongsChange }: SongFormProps) {
       return false;
     }
     // 음원 파일 용량 검증 (MB = 1024*1024)
-    if (file.size > 1 * 1024 * 1024) {
+    if (file.size > 15 * 1024 * 1024) {
       alert("파일 용량이 너무 큽니다. (제한: 1MB)");
       setFile(null);
       setOriginFilename("");
@@ -235,14 +240,14 @@ export default function SongForm({ onSongsChange }: SongFormProps) {
             <div className={styles.modal__container__top}>
               <div className={styles.modal__close__btn} onClick={closeModal}>
                 {/* &times; */}
-                <Image src={closeBtn} alt="album" width={30} height={30} />
+                {/* <Image src={closeBtn} alt="album" width={30} height={30} /> */}
               </div>
               <div>
                 <h3>음원 추가하기</h3>
               </div>
               <div className={styles.modal__close__btn} onClick={closeModal}>
                 {/* &times; */}
-                <Image src={closeBtn} alt="album" width={30} height={30} />
+                {/* <Image src={closeBtn} alt="album" width={30} height={30} /> */}
               </div>
             </div>
 
@@ -371,7 +376,7 @@ export default function SongForm({ onSongsChange }: SongFormProps) {
                 {/* 버튼 부분 */}
                 <div className={styles.modal__container__bottom}>
                   <div className={styles.btns}>
-                    <button type="submit" className={styles.submit__close__btn}>
+                    <button onClick={closeModal} className={styles.submit__close__btn}>
                       닫 기
                     </button>
                     <button type="submit" className={styles.submit__btn}>

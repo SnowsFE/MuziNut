@@ -117,7 +117,7 @@ const checkValidationFile = (file?: File): boolean => {
     return false;
   }
   // 이미지 파일 용량 검증 (MB = 1024*1024)
-  if (file.size > 5 * 1024 * 1024) {
+  if (file.size > 15 * 1024 * 1024) {
     alert("파일 용량이 너무 큽니다. (제한: 5MB)");
     return false;
   }
