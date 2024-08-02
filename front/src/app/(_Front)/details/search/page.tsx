@@ -144,7 +144,7 @@ const SearchPage: React.FC = () => {
                         />
                       </div>
                       <div className={styles.artist__info}>
-                        <h4><Link href='/profile/lounge'>{item.nickname}</Link></h4>
+                        <h4><Link href={`/profile?nickname=${item.nickname}`}>{item.nickname}</Link></h4>
                         <p>팔로워: {item.followCount}</p>
                       </div>
                     </div>

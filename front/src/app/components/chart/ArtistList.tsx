@@ -47,7 +47,7 @@ const ArtistList: React.FC<ArtistDataProps> = ({ artistChartData, index }) => (
     <td className={styles.td3__info__section}>
       <div>
         <div className={styles.name}>
-          <Link href={`/profile/lounge`}>
+          <Link href={`/profile?nickname=${artistChartData.nickname}`}>
             <span>{artistChartData.nickname}</span>
           </Link>
         </div>

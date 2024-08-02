@@ -113,7 +113,7 @@ export default function NewMusic() {
                       <Link href={`/details/song/${item.songId}`}>{item.title}</Link>
                     </h2>
 
-                    <h3><Link href="/profile/lounge">{item.nickname}</Link></h3>
+                    <h3><Link href={`/profile?nickname=${item.nickname}`}>{item.nickname}</Link></h3>
                   </div>
                 </div>
               ))}

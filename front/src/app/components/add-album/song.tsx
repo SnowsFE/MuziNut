@@ -89,14 +89,9 @@ export default function SongForm({ onSongsChange }: SongFormProps) {
         console.log("장르 다시 추가할거임.");
         return arrayGenres.filter((g) => g !== translatedGenre);
       }
-      if(genres.includes(genre)) {
-        setGenres(genres.filter(param => param != genre))
-        return [...arrayGenres, translatedGenre];
-      }
       // 선택된 장르가 3개 미만이면 새로운 장르 추가
-      else if (arrayGenres.length < 3) {
+      if (arrayGenres.length < 3) {
         console.log("첫 번째 if 문 통과! 두 번 째 if문 시작");
-        setGenres(genres.concat(genre))
         return [...arrayGenres, translatedGenre];
       } else {
         alert("장르는 3가지 이상 설정할 수 없습니다.")

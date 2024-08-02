@@ -96,7 +96,7 @@ const UserProfile = ({ userInfo, onLogout }: UserProfileProps) => {
             <Link
               href={`/profile?nickname=${userNickName}`}
               className={styles.my__page}
-              onClick={handleLinkClick}
+              onClick={() => {window.location.href = `/profile?nickname=${userNickName}`}}
             >
               <Image src={profileBtn} alt="addalbum" width={30} height={30} />
               <span>마이페이지</span>

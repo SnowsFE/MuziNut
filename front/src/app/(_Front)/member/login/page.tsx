@@ -47,7 +47,7 @@ const LoginPage = () => {
       return;
     }
     // 모든 입력값이 유효한 경우
-    setError("에러X 주석ㄱㄱ"); //에러 메시지 없음
+    // setError("에러X 주석ㄱㄱ"); //에러 메시지 없음
 
     try {
       const response = await axios.post(

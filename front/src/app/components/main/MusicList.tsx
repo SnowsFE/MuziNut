@@ -56,7 +56,7 @@ const MusicList: React.FC<MusicListProps> = ({
         </Link>
       </td>
       <td className={styles.artist}>
-        <Link href={`/profile/lounge?nickname=${nickname}`}>
+        <Link href={`/profile?nickname=${musicChartData.nickname}`}>
           <span>{musicChartData.nickname}</span>
         </Link>
       </td>
