@@ -14,7 +14,6 @@ const FollowButton: React.FC = () => {
 
   const authToken = getToken();
 
-  console.log(authToken);
   const FollowData = async () => {
     const res = await axios.post(
       `${AxiosURL}/follow/${profileInfo.userId}`,
@@ -34,8 +33,6 @@ const FollowButton: React.FC = () => {
   const UserData = user?.nickname;
   const urlParams = new URLSearchParams(window.location.search);
 
-  // localStorage.setItem("followStatus", JSON.stringify(!buttonFollow));
-
   // 현재 사용자 토큰에 있는 닉네임
   const myNickname = UserData;
 
@@ -49,8 +46,6 @@ const FollowButton: React.FC = () => {
       setButtonVisible(true); // 다른 경우 버튼 보이기
     }
   }, [myNickname, ParamsNickname]);
-
-  console.log("이거", profileInfo.followStatus);
 
   return (
     <>

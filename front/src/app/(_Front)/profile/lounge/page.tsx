@@ -90,7 +90,7 @@ const UseridProfile: React.FC = () => {
 
   const handleThreeDotClick = (index: number, postId: number) => {
     // 게시글 ID를 사용하여 라우트 변경
-    const url = `/profile/lounge?nickname=${nickname}/${postId}`;
+    const url = `/profile/lounge?nickname=${nickname}#${postId}`;
     window.history.replaceState(null, "", url);
 
     // 해당 요소로 스크롤
@@ -109,9 +109,10 @@ const UseridProfile: React.FC = () => {
 
   useEffect(() => {
     // 페이지 새로고침 감지
+    const currentUrl = window.location.href;
     if (window.performance.navigation.type === 1) {
-      // 새로고침 시에만 URL 변경
-      window.location.href = `/profile/lounge?nickname=${nickname}`;
+      // 새로고침 시 URL 유지
+      window.location.href = currentUrl;
     }
   }, []);
 
@@ -159,7 +160,6 @@ const UseridProfile: React.FC = () => {
       setLoungePost(updatedContent);
       setEditingIndex(null);
     } else {
-      console.log(`새 게시글 내용: ${content}`);
     }
     setWriteVisible(false);
   };
@@ -177,7 +177,7 @@ const UseridProfile: React.FC = () => {
 
     if (window.confirm("정말로 이 게시글을 삭제하시겠습니까?")) {
       try {
-        const response = await fetch(`${AxiosURL}/profile/lounge/${postId}`, {
+        const response = await fetch(`${AxiosURL}/profile/lounge#${postId}`, {
           method: "DELETE",
           headers: {
             Authorization: `${authToken}`,
@@ -210,7 +210,7 @@ const UseridProfile: React.FC = () => {
   };
 
   const handlePostClick = (postId: number) => {
-    const url = `/profile/lounge?nickname=${nickname}/${postId}`;
+    const url = `/profile/lounge?nickname=${nickname}#${postId}`;
     window.history.replaceState(null, "", url);
 
     setTimeout(() => {
