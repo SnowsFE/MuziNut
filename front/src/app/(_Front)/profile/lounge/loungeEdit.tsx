@@ -3,6 +3,7 @@ import styled from "styled-components";
 import axios from "axios";
 import AxiosURL from "@/app/axios/url";
 import { getToken } from "@/app/common/common";
+import { useUser } from "@/app/components/UserContext";
 
 // useFileState 훅과 초기 데이터
 export const useFileState = (onUpload: (data: any) => void) => {
@@ -172,15 +173,19 @@ export const useFileState = (onUpload: (data: any) => void) => {
     }
   };
 
+  const { user } = useUser();
+  const UserData = user?.nickname;
+  const urlParams = new URLSearchParams(window.location.search);
+  const nickname = urlParams.get("nickname");
+
   // 메인 Get 통신 데이터
-  const [userId, setUserId] = useState(2);
   const [quiilFiles, setQuillFile] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
         const res = await axios.get(`${AxiosURL}/profile/lounge`, {
-          params: { userId },
+          params: { nickname },
         });
 
         // 페이지 URL 업데이트
@@ -209,7 +214,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
     };
 
     fetchProfileData();
-  }, [userId]);
+  }, [nickname]);
 
   return {
     profileInfo,
@@ -232,6 +237,9 @@ const BannerData: React.FC<{ onUpload: (data: any) => void }> = ({
     await handleBannerSubmit(e, "profileBannerImgName");
   };
 
+  const { user } = useUser();
+  const UserData = user?.nickname;
+
   return (
     <UploadForm>
       <Label>
@@ -240,7 +248,9 @@ const BannerData: React.FC<{ onUpload: (data: any) => void }> = ({
           onChange={handleFileInputChange}
           id="profileBannerImgName"
         />
-        <CustomButton htmlFor="profileBannerImgName">⚙️</CustomButton>
+        {UserData ? (
+          <CustomButton htmlFor="profileBannerImgName">⚙️</CustomButton>
+        ) : null}
       </Label>
     </UploadForm>
   );
@@ -256,6 +266,9 @@ const ProfileData: React.FC<{ onUpload: (data: any) => void }> = ({
     await handleProfileSubmit(e, "profileImgName");
   };
 
+  const { user } = useUser();
+  const UserData = user?.nickname;
+
   return (
     <>
       <UploadForm>
@@ -265,7 +278,9 @@ const ProfileData: React.FC<{ onUpload: (data: any) => void }> = ({
             onChange={handleFileInputChange}
             id="profileImgName"
           />
-          <CustomButton2 htmlFor="profileImgName">⚙️</CustomButton2>
+          {UserData ? (
+            <CustomButton2 htmlFor="profileImgName">⚙️</CustomButton2>
+          ) : null}
         </Label>
       </UploadForm>
     </>

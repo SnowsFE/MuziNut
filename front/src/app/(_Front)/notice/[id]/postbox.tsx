@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { LikeIcon } from "@/app/components/icon/icon";
+import { LikeIcon } from "@/app/components/LikePost/like";
 import Comments from "../../../components/board/Comments";
 import WriterProfileInfo from "../../../components/board/WriterProfileInfo";
 import WriteCommentForm from "../../../components/board/WriteCommentForm";
@@ -34,6 +34,29 @@ interface QuillProps {
 }
 
 const PostBox: React.FC = () => {
+  const timeAgo = (timestamp: string): string => {
+    const now = new Date();
+    const postTime = new Date(timestamp);
+    const diffTime = now.getTime() - postTime.getTime();
+    const diffMinutes = Math.floor(diffTime / (1000 * 60));
+    const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const diffMonths = Math.floor(diffDays / 30);
+    const diffYears = Math.floor(diffDays / 365);
+
+    if (diffMinutes < 60) {
+      return `${diffMinutes}분 전`;
+    } else if (diffHours < 24) {
+      return `${diffHours}시간 전`;
+    } else if (diffDays < 30) {
+      return `${diffDays}일 전`;
+    } else if (diffMonths < 12) {
+      return `${diffMonths}달 전`;
+    } else {
+      return `${diffYears}년 전`;
+    }
+  };
+
   const [boardsData, setBoardsData] = useState<BoardsDataProps>({
     id: 0,
     title: "",
@@ -132,7 +155,7 @@ const PostBox: React.FC = () => {
           profileImg={profileInfo.profileImg}
           writer={profileInfo.writer}
           writerId={profileInfo.writerId}
-          createdDt={profileInfo.createdDt}
+          createdDt={timeAgo(profileInfo.createdDt)}
           view={profileInfo.view}
           isBookmark={profileInfo.isBookmark ? true : false}
         />
@@ -141,7 +164,10 @@ const PostBox: React.FC = () => {
       {/* 본문 내용 출력 */}
       <Footer>
         <LikeButton>
-          <LikeIcon /> {boardsData.boardLikeStatus ? true : false}
+          <LikeIcon
+            postId={boardsData.id}
+            initialLiked={boardsData.boardLikeStatus ? true : false}
+          />
           {boardsData.likeCount}
         </LikeButton>
       </Footer>
@@ -151,7 +177,7 @@ const PostBox: React.FC = () => {
           key={index}
           profileImg={comment.commentProfileImg}
           writer={comment.commentWriter}
-          createdDt={comment.createdDt}
+          createdDt={timeAgo(comment.createdDt)}
           content={comment.content}
           likeCount={comment.likeCount}
           replies={comment.replies}

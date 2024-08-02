@@ -58,87 +58,106 @@ const UseridProfile: React.FC = () => {
     <ProfileContainer>
       <Banner>
         <Suspense fallback={<Spinner />}>
-          <Image
-            src={`data:image/png;base64,${profileBannerImgName}`}
-            alt="배너 이미지"
-            width={1280}
-            height={210}
-          />
+          {profileBannerImgName ? (
+            <Image
+              src={`data:image/png;base64,${profileBannerImgName}`}
+              alt="배너 이미지"
+              width={1280}
+              height={210}
+            />
+          ) : (
+            <Spinner />
+          )}
         </Suspense>
         <BannerData onUpload={onUpload} />
       </Banner>
       <Profile>
         <ProfileEdit />
         <Suspense fallback={<Spinner />}>
-          <Image
-            src={`data:image/png;base64,${profileImgName}`}
-            alt="프로필 이미지"
-            width={160}
-            height={160}
-          />
+          {profileImgName ? (
+            <Image
+              src={`data:image/png;base64,${profileImgName}`}
+              alt="프로필 이미지"
+              width={160}
+              height={160}
+            />
+          ) : (
+            <Spinner />
+          )}
         </Suspense>
         <ProfileData onUpload={onUpload} />
         <ProfileInfo>
           <ProfileName>{profileInfo.nickname}</ProfileName>
-          {Token ? (
-            <>
-              <FollowInfo>
-                팔로잉 {profileInfo.followingCount} &nbsp; 팔로워{" "}
-                {profileInfo.followersCount}
-              </FollowInfo>
-              <ProfileDescription>
-                {profileInfo.intro || "자기소개를 입력하세요"}
-              </ProfileDescription>
-            </>
-          ) : (
-            <>
-              <FollowInfo>
-                팔로잉 {profileInfo.followingCount} &nbsp; 팔로워{" "}
-                {profileInfo.followersCount}
-              </FollowInfo>
-              <Link href="/member/login">
-                <FollowButton />
-              </Link>
-              <ProfileDescription>
-                {profileInfo.intro || "자기소개를 입력하세요"}
-              </ProfileDescription>
-            </>
-          )}
+          <FollowInfo>
+            팔로잉 {profileInfo.followingCount} &nbsp; 팔로워{" "}
+            {profileInfo.followersCount}
+          </FollowInfo>
+          <FollowButton />
+          <ProfileDescription>
+            {profileInfo.intro || "자기소개를 입력하세요"}
+          </ProfileDescription>
         </ProfileInfo>
       </Profile>
       <SelectBar>
         <SelectContainer>
-          <StyledLink
-            href={`/profile?nickname=${nickname}`}
-            onClick={() => setSelectedTab("main")}
-          >
-            <SelectItem selected={selectedTab === "main"}>메인</SelectItem>
-          </StyledLink>
-          <StyledLink
-            href={`/profile/lounge?nickname=${nickname}`}
-            onClick={() => setSelectedTab("lounge")}
-          >
-            <SelectItem selected={selectedTab === "lounge"}>라운지</SelectItem>
-          </StyledLink>
-          <StyledLink
-            href={`/profile/boards?nickname=${nickname}`}
-            onClick={() => setSelectedTab("boards")}
-          >
-            <SelectItem selected={selectedTab === "boards"}>게시글</SelectItem>
-          </StyledLink>
-          <StyledLink
-            href={`/profile/plynut?nickname=${nickname}`}
-            onClick={() => setSelectedTab("plynut")}
-          >
-            <SelectItem selected={selectedTab === "plynut"}>플리넛</SelectItem>
-          </StyledLink>
-          |
-          <StyledLink
-            href={`/profile/nuts?nickname=${nickname}`}
-            onClick={() => setSelectedTab("nuts")}
-          >
-            <SelectItem selected={selectedTab === "nuts"}>넛츠</SelectItem>
-          </StyledLink>
+          {nickname === UserData ? (
+            <>
+              <StyledLink
+                href={`/profile?nickname=${nickname}`}
+                onClick={() => setSelectedTab("main")}
+              >
+                <SelectItem selected={selectedTab === "main"}>메인</SelectItem>
+              </StyledLink>
+              <StyledLink
+                href={`/profile/lounge?nickname=${nickname}`}
+                onClick={() => setSelectedTab("lounge")}
+              >
+                <SelectItem selected={selectedTab === "lounge"}>
+                  라운지
+                </SelectItem>
+              </StyledLink>
+              <StyledLink
+                href={`/profile/boards?nickname=${nickname}`}
+                onClick={() => setSelectedTab("boards")}
+              >
+                <SelectItem selected={selectedTab === "boards"}>
+                  게시글
+                </SelectItem>
+              </StyledLink>
+              <StyledLink
+                href={`/profile/plynut?nickname=${nickname}`}
+                onClick={() => setSelectedTab("plynut")}
+              >
+                <SelectItem selected={selectedTab === "plynut"}>
+                  플리넛
+                </SelectItem>
+              </StyledLink>
+              |
+              <StyledLink
+                href={`/profile/nuts?nickname=${nickname}`}
+                onClick={() => setSelectedTab("nuts")}
+              >
+                <SelectItem selected={selectedTab === "nuts"}>넛츠</SelectItem>
+              </StyledLink>
+            </>
+          ) : (
+            <>
+              <StyledLink
+                href={`/profile?nickname=${nickname}`}
+                onClick={() => setSelectedTab("main")}
+              >
+                <SelectItem selected={selectedTab === "main"}>메인</SelectItem>
+              </StyledLink>
+              <StyledLink
+                href={`/profile/lounge?nickname=${nickname}`}
+                onClick={() => setSelectedTab("lounge")}
+              >
+                <SelectItem selected={selectedTab === "lounge"}>
+                  라운지
+                </SelectItem>
+              </StyledLink>
+            </>
+          )}
         </SelectContainer>
       </SelectBar>
       <MainMusicContainer>

@@ -3,6 +3,7 @@ import styled, { keyframes, css } from "styled-components";
 import axios from "axios";
 import AxiosURL from "@/app/axios/url";
 import { useFileState } from "./mainEdit";
+import { useUser } from "@/app/components/UserContext";
 
 const ProfileEdit: React.FC = () => {
   const { profileInfo } = useFileState((data) => {
@@ -89,9 +90,12 @@ const ProfileEdit: React.FC = () => {
     setNameDuplicateError(false);
   }, [profileInfo, visible]);
 
+  const { user } = useUser();
+  const UserData = user?.nickname;
+
   return (
     <ShowBox>
-      <Icon onClick={openModal}>⚙️</Icon>
+      {UserData ? <Icon onClick={openModal}>⚙️</Icon> : null}
       <OutContainer visible={visible}>
         <ProfileEditContainer visible={visible}>
           <Title>프로필 수정</Title>

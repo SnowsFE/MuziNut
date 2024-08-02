@@ -1,5 +1,12 @@
 "use client";
-import React, { useRef, useState, useEffect, useMemo } from "react";
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useMemo,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
 import styled, { keyframes, css } from "styled-components";
@@ -16,179 +23,193 @@ const Size = Quill.import("attributors/style/size");
 Size.whitelist = ["13px", "16px", "18px", "24px", "28px", "32px"];
 Quill.register(Size, true);
 
-const EventWriteQuill: React.FC<{
+interface EventWriteQuillProps {
   onPublish: (content: string) => void;
   onClose: () => void;
   initialContent?: string;
-}> = ({ onPublish, onClose, initialContent }) => {
-  const quillRef = useRef<ReactQuill>(null);
-  const [content, setContent] = useState<string>(initialContent || "");
-  const [title, setTitle] = useState<string>("");
-  const [visible, setVisible] = useState<boolean>(true);
+  boardId?: string;
+}
 
-  useEffect(() => {
-    if (!visible) {
-      const timer = setTimeout(() => setVisible(false), 500);
-      return () => clearTimeout(timer);
-    }
-  }, [visible]);
+const EventWriteQuill = forwardRef(
+  (
+    { onPublish, onClose, initialContent, boardId }: EventWriteQuillProps,
+    ref
+  ) => {
+    const quillRef = useRef<ReactQuill>(null);
+    const [content, setContent] = useState<string>(initialContent || "");
+    const [title, setTitle] = useState<string>("");
+    const [visible, setVisible] = useState<boolean>(true);
 
-  const modules = useMemo(
-    () => ({
-      toolbar: {
-        container: "#toolbar",
-        handlers: {
-          image: handleImageUpload,
+    useImperativeHandle(ref, () => ({
+      handleEditSubmit,
+    }));
+
+    useEffect(() => {
+      if (!visible) {
+        const timer = setTimeout(() => setVisible(false), 500);
+        return () => clearTimeout(timer);
+      }
+    }, [visible]);
+
+    const modules = useMemo(
+      () => ({
+        toolbar: {
+          container: "#toolbar",
+          handlers: {
+            image: handleImageUpload,
+          },
         },
-      },
-    }),
-    []
-  );
+      }),
+      []
+    );
 
-  useEffect(() => {
-    const quill = quillRef.current?.getEditor();
-    if (quill) {
-      quill.format("font", "esamanruLight");
-      quill.format("size", "13px");
-    }
-  }, []);
+    useEffect(() => {
+      const quill = quillRef.current?.getEditor();
+      if (quill) {
+        quill.format("font", "esamanruLight");
+        quill.format("size", "13px");
+      }
+    }, []);
 
-  const handleChange = (content: string) => {
-    setContent(content);
-  };
+    const handleChange = (content: string) => {
+      setContent(content);
+    };
 
-  const handleImageUpload = () => {
-    const input = document.createElement("input");
-    input.setAttribute("type", "file");
-    input.setAttribute("accept", "image/*");
+    const handleImageUpload = () => {
+      const input = document.createElement("input");
+      input.setAttribute("type", "file");
+      input.setAttribute("accept", "image/*");
 
-    input.onchange = async () => {
-      const file = input.files?.[0];
-      if (file) {
-        const reader = new FileReader();
+      input.onchange = async () => {
+        const file = input.files?.[0];
+        if (file) {
+          const reader = new FileReader();
 
-        reader.onload = async (e) => {
-          const base64Data = e.target?.result as string;
-          const quill = quillRef.current?.getEditor();
-          if (quill) {
-            const range = quill.getSelection();
-            if (range) {
-              // 이미지를 Base64 형태로 Quill 에디터에 삽입
-              quill.clipboard.dangerouslyPasteHTML(
-                range.index,
-                `<img src="${base64Data}" />`
-              );
+          reader.onload = async (e) => {
+            const base64Data = e.target?.result as string;
+            const quill = quillRef.current?.getEditor();
+            if (quill) {
+              const range = quill.getSelection();
+              if (range) {
+                quill.clipboard.dangerouslyPasteHTML(
+                  range.index,
+                  `<img src="${base64Data}" />`
+                );
+              }
             }
-          }
-        };
+          };
 
-        reader.readAsDataURL(file);
+          reader.readAsDataURL(file);
+        }
+      };
+
+      input.click();
+    };
+
+    const authToken = getToken();
+
+    const handleSubmit = async () => {
+      if (title.trim() === "" || content.trim() === "") {
+        alert("제목과 내용을 입력해 주세요");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append(
+        "EventForms",
+        new Blob([JSON.stringify({ title })], { type: "application/json" })
+      );
+
+      const contentBlob = new Blob([content], { type: "text/html" });
+      formData.append("quillFile", contentBlob);
+
+      try {
+        const url = boardId
+          ? `${AxiosURL}/community/event-boards/${boardId}`
+          : `${AxiosURL}/community/event-boards`;
+        const method = boardId ? "PUT" : "POST";
+
+        const response = await fetch(url, {
+          method,
+          headers: {
+            Authorization: `${authToken}`,
+          },
+          body: formData,
+        });
+
+        if (response.ok) {
+          alert("글이 성공적으로 등록되었습니다.");
+
+          const updatedContent = content;
+          onPublish(updatedContent);
+
+          setVisible(false);
+          onClose();
+
+          window.location.reload();
+        } else {
+          console.error("글 등록 또는 수정에 실패했습니다.");
+        }
+      } catch (error) {
+        alert("글이 성공적으로 등록되었습니다.");
+        window.location.reload();
       }
     };
 
-    input.click();
-  };
+    const handleEditSubmit = () => {
+      handleSubmit();
+    };
 
-  const authToken = getToken();
-
-  const handleSubmit = async () => {
-    if ((title.trim() === "" || null) && (content.trim() === "" || null)) {
-      alert("작성하고 싶은 글을 작성해 주세요");
-      return;
-    }
-
-    if (title.trim() === "") {
-      alert("제목을 입력해주세요");
-      return;
-    }
-
-    if (content.trim() === "") {
-      alert("내용을 입력해주세요");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append(
-      "form",
-      new Blob([JSON.stringify({ title })], { type: "application/json" })
-    );
-
-    const contentBlob = new Blob([content], { type: "text/html" });
-    formData.append("quillFile", contentBlob);
-
-    try {
-      const response = await fetch(`${AxiosURL}/community/event-boards`, {
-        method: "POST",
-        headers: {
-          Authorization: `${authToken}`,
-        },
-        body: formData,
-      });
-
-      if (response.ok) {
-        console.log("글이 성공적으로 등록되었습니다.");
-
-        // 글 등록 또는 수정 후에 최신 상태 반영
-        if (initialContent !== null && initialContent !== undefined) {
-          const updatedContent = content;
-          onPublish(updatedContent);
-        } else {
-          onPublish(content);
-        }
-
-        // 에디터 닫기
+    const handleOverlayClick = (e: React.MouseEvent) => {
+      if (e.target === e.currentTarget) {
         setVisible(false);
         onClose();
-
-        // 페이지 새로 고침
-        window.location.reload();
-      } else {
-        console.error("글 등록에 실패했습니다.");
       }
-    } catch (error) {
-      console.error("글 등록 중 오류 발생:", error);
-    }
-  };
+    };
 
-  return (
-    <>
-      <Overlay visible={visible} />
-      <EditorContainer visible={visible}>
-        <Title>글쓰기</Title>
-        <MainTitle>
-          <MainTitleInput
-            type="text"
-            placeholder="제목"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+    return (
+      <>
+        <Overlay visible={visible} onClick={handleOverlayClick} />
+        <EditorContainer visible={visible}>
+          <Title>글쓰기</Title>
+          <MainTitle>
+            <MainTitleInput
+              type="text"
+              placeholder="제목"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </MainTitle>
+          <QuillToolbar />
+          <CustomReactQuill
+            placeholder="이벤트, 공지사항 작성해주세요."
+            theme="snow"
+            ref={quillRef}
+            value={content}
+            onChange={handleChange}
+            modules={modules}
           />
-        </MainTitle>
-        <QuillToolbar />
-        <CustomReactQuill
-          placeholder="이벤트 및 공지사항"
-          theme="snow"
-          ref={quillRef}
-          value={content}
-          onChange={handleChange}
-          modules={modules}
-        />
-        <ButtonContainer>
-          <CancelButton
-            onClick={() => {
-              setVisible(false);
-              onClose();
-            }}
-          >
-            취소
-          </CancelButton>
-          <StyledButton onClick={() => handleSubmit()}>
-            {initialContent ? "글 수정" : "글 등록"}
-          </StyledButton>
-        </ButtonContainer>
-      </EditorContainer>
-    </>
-  );
-};
+          <ButtonContainer>
+            <CancelButton
+              onClick={() => {
+                setVisible(false);
+                onClose();
+                window.location.reload();
+              }}
+            >
+              취소
+            </CancelButton>
+            <StyledButton onClick={() => handleEditSubmit()}>
+              {boardId ? "글 수정" : "글 등록"}
+            </StyledButton>
+          </ButtonContainer>
+        </EditorContainer>
+      </>
+    );
+  }
+);
+
+EventWriteQuill.displayName = "EventWriteQuill";
 
 export default EventWriteQuill;
 
@@ -201,12 +222,14 @@ const fadeOut = keyframes`
   }
 `;
 
-const Overlay = ({ visible }: { visible: boolean }) => {
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    e.preventDefault(); // 기본 동작 막기
-  };
-
-  return <OverlayStyled visible={visible} onClick={handleOverlayClick} />;
+const Overlay = ({
+  visible,
+  onClick,
+}: {
+  visible: boolean;
+  onClick: (e: React.MouseEvent) => void;
+}) => {
+  return <OverlayStyled visible={visible} onClick={onClick} />;
 };
 
 const OverlayStyled = styled.div<{ visible: boolean }>`

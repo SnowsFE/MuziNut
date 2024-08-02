@@ -11,6 +11,9 @@
   /* overflow: hidden; */
 }
 
+.ptag {
+  padding: 17px 0 0 22px;
+}
 /* 제목 부분 */
 .title {
   display: flex;

@@ -75,7 +75,10 @@ export default function Sidebar({ isSidebarOpen }: SidebarProps) {
             {/* 커뮤니티 부분 */}
             <li>
               <div className={styles.service__btn}>
-                <Link href="/community" className={styles.wrap__icon}>
+                <Link
+                  href="/community/free-boards"
+                  className={styles.wrap__icon}
+                >
                   <Image
                     src="/svgs/community.svg"
                     alt="Services"
@@ -87,7 +90,9 @@ export default function Sidebar({ isSidebarOpen }: SidebarProps) {
                 {isSidebarOpen && (
                   <ul>
                     <li>
-                      <span>커뮤니티</span>
+                      <Link href="/community/free-boards">
+                        <span>커뮤니티</span>
+                      </Link>
                     </li>
                     <li>
                       <Link href="/community/free-boards">
@@ -173,7 +178,7 @@ export default function Sidebar({ isSidebarOpen }: SidebarProps) {
             {/* 이벤트 */}
             <li>
               <div className={styles.service__btn}>
-                <Link href="/event" className={styles.wrap__icon}>
+                <Link href="/notice" className={styles.wrap__icon}>
                   <Image
                     src="/svgs/event.svg"
                     alt="Services"
@@ -185,7 +190,9 @@ export default function Sidebar({ isSidebarOpen }: SidebarProps) {
                 {isSidebarOpen && (
                   <ul>
                     <li>
-                      <span>뮤지넛 소식</span>
+                      <Link href="/notice">
+                        <span>뮤지넛 소식</span>
+                      </Link>
                     </li>
                     <li>
                       <Link href="/notice">

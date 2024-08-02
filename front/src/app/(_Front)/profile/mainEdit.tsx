@@ -3,6 +3,7 @@ import styled from "styled-components";
 import axios from "axios";
 import AxiosUrl from "@/app/axios/url";
 import { getToken } from "@/app/common/common";
+import { useUser } from "@/app/components/UserContext";
 
 // useFileState 훅과 초기 데이터
 export const useFileState = (onUpload: (data: any) => void) => {
@@ -14,9 +15,11 @@ export const useFileState = (onUpload: (data: any) => void) => {
   });
 
   interface profileInfoProps {
+    userId: number;
     profileBannerImgName: string;
     profileImgName: string;
     nickname: string;
+    followStatus: boolean;
     followingCount: number;
     followersCount: number;
     intro: string;
@@ -38,9 +41,11 @@ export const useFileState = (onUpload: (data: any) => void) => {
   }
 
   const [profileInfo, setProfileInfo] = useState<profileInfoProps>({
+    userId: 0,
     profileBannerImgName: "",
     profileImgName: "",
     nickname: "닉네임",
+    followStatus: false,
     followingCount: 0,
     followersCount: 0,
     intro: "자기소개를 입력하세요",
@@ -180,17 +185,21 @@ export const useFileState = (onUpload: (data: any) => void) => {
       const urlParams = new URLSearchParams(window.location.search);
       const nickname = urlParams.get("nickname");
 
-      console.log("유저 정보", nickname);
       try {
         const response = await axios.get(`${AxiosUrl}/profile`, {
           params: { nickname },
+          headers: {
+            Authorization: `${authToken}`,
+          },
         });
         const data = response.data;
 
         setProfileInfo({
+          userId: data.userId,
           profileBannerImgName: data.profileBannerImgName,
           profileImgName: data.profileImgName,
           nickname: data.nickname,
+          followStatus: data.followStatus,
           followingCount: data.followingCount,
           followersCount: data.followersCount,
           intro: data.intro,
@@ -225,6 +234,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
     profileInfo,
     albumInfo,
     albumArrayInfo,
+    setProfileInfo,
     handleBannerSubmit,
     handleProfileSubmit,
   };
@@ -240,6 +250,9 @@ const BannerData: React.FC<{ onUpload: (data: any) => void }> = ({
     await handleBannerSubmit(e, "profileBannerImgName");
   };
 
+  const { user } = useUser();
+  const UserData = user?.nickname;
+
   return (
     <UploadForm>
       <Label>
@@ -248,7 +261,9 @@ const BannerData: React.FC<{ onUpload: (data: any) => void }> = ({
           onChange={handleFileInputChange}
           id="profileBannerImgName"
         />
-        <CustomButton htmlFor="profileBannerImgName">⚙️</CustomButton>
+        {UserData ? (
+          <CustomButton htmlFor="profileBannerImgName">⚙️</CustomButton>
+        ) : null}
       </Label>
     </UploadForm>
   );
@@ -264,6 +279,9 @@ const ProfileData: React.FC<{ onUpload: (data: any) => void }> = ({
     await handleProfileSubmit(e, "profileImgName");
   };
 
+  const { user } = useUser();
+  const UserData = user?.nickname;
+
   return (
     <>
       <UploadForm>
@@ -273,7 +291,9 @@ const ProfileData: React.FC<{ onUpload: (data: any) => void }> = ({
             onChange={handleFileInputChange}
             id="profileImgName"
           />
-          <CustomButton2 htmlFor="profileImgName">⚙️</CustomButton2>
+          {UserData ? (
+            <CustomButton2 htmlFor="profileImgName">⚙️</CustomButton2>
+          ) : null}
         </Label>
       </UploadForm>
     </>

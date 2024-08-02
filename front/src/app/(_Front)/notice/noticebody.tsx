@@ -6,6 +6,7 @@ import Image from "next/image";
 import Noticebanner from "../../../../public/images/eventbanner.png";
 import WriteQuill from "./noticewritequill";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/app/components/UserContext";
 
 const NoticeBody: React.FC = () => {
   const [selected, setSelected] = useState<string>("최신순");
@@ -28,13 +29,15 @@ const NoticeBody: React.FC = () => {
     router.push(`?sort=${queryParams[selected]}`);
   }, [router, selected]);
 
+  const { user } = useUser();
+  const username = user?.nickname;
+
   const openWriteForm = () => {
-    const token = localStorage.getItem("token");
-    if (token) {
+    if (username === "muzi") {
       setWriteVisible(true);
     } else {
-      alert("로그인이 필요합니다.");
-      router.push("/member/login");
+      setWriteVisible(false);
+      alert("글작성 권한이 없습니다");
     }
   };
 
@@ -65,7 +68,9 @@ const NoticeBody: React.FC = () => {
           </ul>
         </NoticeOptions>
         <SearchContainer>
-          <Write onClick={openWriteForm}>글쓰기</Write>
+          {username === "muzi" ? (
+            <Write onClick={openWriteForm}>글쓰기</Write>
+          ) : null}
           <ControllerSearch
             placeholder="바로 검색"
             value={searchQuery}

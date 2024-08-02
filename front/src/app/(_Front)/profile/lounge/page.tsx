@@ -12,6 +12,9 @@ import ProfileEdit from "../profileEdit";
 import { LikeIcon } from "../../../components/LikePost/like";
 import AxiosURL from "@/app/axios/url";
 import { getToken } from "@/app/common/common";
+import { useUser } from "@/app/components/UserContext";
+import FollowButton from "@/app/components/button/Followingbutton";
+import Spinner from "../../../../../public/images/Spinner.png";
 
 const UseridProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("lounge");
@@ -23,7 +26,8 @@ const UseridProfile: React.FC = () => {
   const [threedotopen, setThreeDotOpen] = useState<boolean[]>([]);
   const [openComments, setOpenComments] = useState<boolean[]>([]);
   const threedotRefs = useRef<Array<HTMLDivElement | null>>([]);
-
+  const { user } = useUser();
+  const UserData = user?.nickname;
   const timeAgo = (timestamp: string): string => {
     const now = new Date();
     const postTime = new Date(timestamp);
@@ -86,7 +90,7 @@ const UseridProfile: React.FC = () => {
 
   const handleThreeDotClick = (index: number, postId: number) => {
     // 게시글 ID를 사용하여 라우트 변경
-    const url = `/profile/lounge#${postId}`;
+    const url = `/profile/lounge?nickname=${nickname}/${postId}`;
     window.history.replaceState(null, "", url);
 
     // 해당 요소로 스크롤
@@ -107,7 +111,7 @@ const UseridProfile: React.FC = () => {
     // 페이지 새로고침 감지
     if (window.performance.navigation.type === 1) {
       // 새로고침 시에만 URL 변경
-      window.location.href = "/profile/lounge";
+      window.location.href = `/profile/lounge?nickname=${nickname}`;
     }
   }, []);
 
@@ -122,7 +126,11 @@ const UseridProfile: React.FC = () => {
       }
 
       // 삼각형 버튼 외부 클릭 시 해시값 제거
-      window.history.replaceState(null, "", "/profile/lounge");
+      window.history.replaceState(
+        null,
+        "",
+        `/profile/lounge?nickname=${nickname}`
+      );
       setThreeDotOpen(Array(LoungePost.length).fill(false));
     };
 
@@ -202,7 +210,7 @@ const UseridProfile: React.FC = () => {
   };
 
   const handlePostClick = (postId: number) => {
-    const url = `/profile/lounge#${postId}`;
+    const url = `/profile/lounge?nickname=${nickname}/${postId}`;
     window.history.replaceState(null, "", url);
 
     setTimeout(() => {
@@ -242,6 +250,7 @@ const UseridProfile: React.FC = () => {
             팔로잉 {profileInfo.followingCount} &nbsp; 팔로워{" "}
             {profileInfo.followersCount}
           </FollowInfo>
+          <FollowButton />
           <ProfileDescription>
             {profileInfo.intro || "자기소개를 입력하세요"}
           </ProfileDescription>
@@ -249,38 +258,65 @@ const UseridProfile: React.FC = () => {
       </Profile>
       <SelectBar>
         <SelectContainer>
-          <StyledLink
-            href={`/profile?nickname=${nickname}`}
-            onClick={() => setSelectedTab("main")}
-          >
-            <SelectItem selected={selectedTab === "main"}>메인</SelectItem>
-          </StyledLink>
-          <StyledLink
-            href={`/profile/lounge?nickname=${nickname}`}
-            onClick={() => setSelectedTab("lounge")}
-          >
-            <SelectItem selected={selectedTab === "lounge"}>라운지</SelectItem>
-          </StyledLink>
-          <StyledLink
-            href={`/profile/boards?nickname=${nickname}`}
-            onClick={() => setSelectedTab("boards")}
-          >
-            <SelectItem selected={selectedTab === "boards"}>게시글</SelectItem>
-          </StyledLink>
-          <StyledLink
-            href={`/profile/plynut?nickname=${nickname}`}
-            onClick={() => setSelectedTab("plynut")}
-          >
-            <SelectItem selected={selectedTab === "plynut"}>플리넛</SelectItem>
-          </StyledLink>
-          |
-          <StyledLink
-            href={`/profile/nuts?nickname=${nickname}`}
-            onClick={() => setSelectedTab("nuts")}
-          >
-            <SelectItem selected={selectedTab === "nuts"}>넛츠</SelectItem>
-          </StyledLink>
-          <Write onClick={handleWriteClick}>Talk</Write>
+          {nickname === UserData ? (
+            <>
+              <StyledLink
+                href={`/profile?nickname=${nickname}`}
+                onClick={() => setSelectedTab("main")}
+              >
+                <SelectItem selected={selectedTab === "main"}>메인</SelectItem>
+              </StyledLink>
+              <StyledLink
+                href={`/profile/lounge?nickname=${nickname}`}
+                onClick={() => setSelectedTab("lounge")}
+              >
+                <SelectItem selected={selectedTab === "lounge"}>
+                  라운지
+                </SelectItem>
+              </StyledLink>
+              <StyledLink
+                href={`/profile/boards?nickname=${nickname}`}
+                onClick={() => setSelectedTab("boards")}
+              >
+                <SelectItem selected={selectedTab === "boards"}>
+                  게시글
+                </SelectItem>
+              </StyledLink>
+              <StyledLink
+                href={`/profile/plynut?nickname=${nickname}`}
+                onClick={() => setSelectedTab("plynut")}
+              >
+                <SelectItem selected={selectedTab === "plynut"}>
+                  플리넛
+                </SelectItem>
+              </StyledLink>
+              |
+              <StyledLink
+                href={`/profile/nuts?nickname=${nickname}`}
+                onClick={() => setSelectedTab("nuts")}
+              >
+                <SelectItem selected={selectedTab === "nuts"}>넛츠</SelectItem>
+              </StyledLink>
+              <Write onClick={handleWriteClick}>Talk</Write>
+            </>
+          ) : (
+            <>
+              <StyledLink
+                href={`/profile?nickname=${nickname}`}
+                onClick={() => setSelectedTab("main")}
+              >
+                <SelectItem selected={selectedTab === "main"}>메인</SelectItem>
+              </StyledLink>
+              <StyledLink
+                href={`/profile/lounge?nickname=${nickname}`}
+                onClick={() => setSelectedTab("lounge")}
+              >
+                <SelectItem selected={selectedTab === "lounge"}>
+                  라운지
+                </SelectItem>
+              </StyledLink>
+            </>
+          )}
         </SelectContainer>
       </SelectBar>
       <Lounge>

@@ -105,7 +105,7 @@ export default function BasicCommunity() {
           </div>
         </div>
       ) : (
-        <p>데이터를 불러올 수 없습니다.</p>
+        <p className={styles.ptag}>데이터를 불러올 수 없습니다.</p>
       )}
     </div>
   );

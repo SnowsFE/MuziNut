@@ -14,15 +14,15 @@ interface Post {
   like: number;
 }
 
-interface EventPostProps {
+interface NoticePostProps {
   selected: string;
   searchQuery: string;
 }
 
-const EventPost: React.FC<EventPostProps> = ({ selected, searchQuery }) => {
+const EventPost: React.FC<NoticePostProps> = ({ selected, searchQuery }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 10;
-  const [adminBoardsForms, setAdminBoardsForms] = useState<Post[]>([]);
+  const [EventForms, setEventForms] = useState<Post[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -34,22 +34,19 @@ const EventPost: React.FC<EventPostProps> = ({ selected, searchQuery }) => {
     setIsLoading(true);
     try {
       const res = await axios.get(`${AxiosURL}/community/event-boards`, {
-        headers: {
-          Authorization: `${authToken}`,
-        },
         params: {
           page: page - 1, // API가 0부터 시작하는 페이지 번호를 사용하는 경우
           size: postsPerPage,
         },
       });
+      console.log("콘솔데이터", res.data);
+      const { EventForms, totalPage } = res.data;
 
-      const { adminBoardsForms, totalPage } = res.data;
-
-      setAdminBoardsForms(adminBoardsForms || []);
+      setEventForms(EventForms || []);
       setTotalPages(totalPage || 1);
 
       console.log("totalPage:", totalPage);
-      console.log("adminBoardsForms:", adminBoardsForms);
+      console.log("EventForms:", EventForms);
       console.log("res.data:", res.data);
     } catch (error) {
       console.error("데이터를 불러오는 중 오류가 발생했습니다", error);
@@ -91,7 +88,37 @@ const EventPost: React.FC<EventPostProps> = ({ selected, searchQuery }) => {
     );
   };
 
-  const sortedPosts = sortPosts(selected, adminBoardsForms);
+  const timeAgo = (timestamp: string): string => {
+    const now = new Date();
+
+    const postTime = new Date(timestamp);
+
+    const diffTime = now.getTime() - postTime.getTime();
+
+    const diffMinutes = Math.floor(diffTime / (1000 * 60));
+
+    const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    const diffMonths = Math.floor(diffDays / 30);
+
+    const diffYears = Math.floor(diffDays / 365);
+
+    if (diffMinutes < 60) {
+      return `${diffMinutes}분 전`;
+    } else if (diffHours < 24) {
+      return `${diffHours}시간 전`;
+    } else if (diffDays < 30) {
+      return `${diffDays}일 전`;
+    } else if (diffMonths < 12) {
+      return `${diffMonths}달 전`;
+    } else {
+      return `${diffYears}년 전`;
+    }
+  };
+
+  const sortedPosts = sortPosts(selected, EventForms);
   const filteredPosts = filterPostsBySearchQuery(sortedPosts, searchQuery);
 
   const handlePageClick = (pageNumber: number) => {
@@ -126,7 +153,7 @@ const EventPost: React.FC<EventPostProps> = ({ selected, searchQuery }) => {
 
         {isLoading ? (
           <LoadingMessage>로딩 중...</LoadingMessage>
-        ) : adminBoardsForms.length === 0 ? (
+        ) : EventForms.length === 0 ? (
           <NoDataMessage>진행중인 이벤트가 없습니다!</NoDataMessage>
         ) : filteredPosts.length === 0 ? (
           <NoDataMessage>검색 결과가 없습니다!</NoDataMessage>
@@ -134,11 +161,11 @@ const EventPost: React.FC<EventPostProps> = ({ selected, searchQuery }) => {
           filteredPosts.map((post) => (
             <Post
               key={post.id}
-              onClick={() => router.push(`/Event/${post.id}`)}
+              onClick={() => router.push(`/event/${post.id}`)}
             >
               <PostItem>{post.title}</PostItem>
               <PostItem>{post.writer}</PostItem>
-              <PostItem>{post.createdDt}</PostItem>
+              <PostItem>{timeAgo(post.createdDt)}</PostItem>
               <PostItem>{post.view}</PostItem>
               <PostItem>{post.like}</PostItem>
             </Post>

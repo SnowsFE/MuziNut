@@ -81,7 +81,7 @@ const UseridProfile: React.FC = () => {
           <SelectBar2>
             <SelectContainer2>
               <StyledLink2
-                href={"/profile"}
+                href={`/profile?nickname=${nickname}`}
                 onClick={() => setSelectedTab("main")}
               >
                 <SelectItem2 selected={selectedTab === "main"}>
@@ -89,7 +89,7 @@ const UseridProfile: React.FC = () => {
                 </SelectItem2>
               </StyledLink2>
               <StyledLink2
-                href={"/profile/lounge"}
+                href={`/profile/lounge?nickname=${nickname}`}
                 onClick={() => setSelectedTab("lounge")}
               >
                 <SelectItem2 selected={selectedTab === "lounge"}>
@@ -97,7 +97,7 @@ const UseridProfile: React.FC = () => {
                 </SelectItem2>
               </StyledLink2>
               <StyledLink2
-                href={"/profile/boards"}
+                href={`/profile/boards?nickname=${nickname}`}
                 onClick={() => setSelectedTab("boards")}
               >
                 <SelectItem2 selected={selectedTab === "boards"}>

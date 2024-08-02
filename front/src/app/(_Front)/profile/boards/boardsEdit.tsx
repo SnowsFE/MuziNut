@@ -165,7 +165,9 @@ export const useFileState = (onUpload: (data: any) => void) => {
     BookMarkboardsData: BookMarkboardsData[];
   }
 
-  const [userId, setUserId] = useState(2);
+  const urlParams = new URLSearchParams(window.location.search);
+  const nickname = urlParams.get("nickname");
+
   const [boards, setBoards] = useState<boardsForm>({ boardsData: [] });
   const [BookMarkboards, setBookMarkboards] = useState<BookMarkboardsForm>({
     BookMarkboardsData: [],
@@ -175,13 +177,12 @@ export const useFileState = (onUpload: (data: any) => void) => {
     const fetchProfileData = async () => {
       try {
         const res = await axios.get(`${AxiosUrl}/profile/board`, {
-          params: { userId },
+          params: { nickname },
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: `${authToken}`,
           },
         });
-        console.log("게시글", res.data);
         setProfileInfo(res.data);
 
         let getboards: boardsData[] = res.data.boards.map((board: any) => ({
@@ -207,7 +208,7 @@ export const useFileState = (onUpload: (data: any) => void) => {
     };
 
     fetchProfileData();
-  }, [userId]);
+  }, [nickname, authToken]);
 
   return {
     files,

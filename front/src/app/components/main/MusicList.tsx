@@ -12,7 +12,6 @@ export type MusicDataItem = {
   title: string;
   nickname: string;
   audio?: Howl | null; // 추가: 오디오 객체
-
 };
 
 interface MusicListProps {
@@ -28,6 +27,8 @@ const MusicList: React.FC<MusicListProps> = ({
   showCheckbox,
   onPlayButtonClick, // 핸들러 props 추가
 }) => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const nickname = urlParams.get("nickname");
   return (
     <tr className={styles.tr__styles}>
       {showCheckbox && (
@@ -55,7 +56,7 @@ const MusicList: React.FC<MusicListProps> = ({
         </Link>
       </td>
       <td className={styles.artist}>
-        <Link href={`/profile/lounge`}>
+        <Link href={`/profile/lounge?nickname=${nickname}`}>
           <span>{musicChartData.nickname}</span>
         </Link>
       </td>
